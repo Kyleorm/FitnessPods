@@ -1,161 +1,54 @@
-FitnessPod IOM — Full Project Brief
-What We're Building
-A complete digital package for FitnessPod Isle of Man (fitnesspod.im). Replacing their existing ClubSolution booking system with a modern, mobile-first solution. The package includes a website, mobile app, admin dashboard and shared design system.
-Folder Structure
-fitnesspod/
+# CLAUDE.md — Frontend Website Rules
 
-CLAUDE.md
-app/ → mobile app (the main product)
-website/ → public facing website
-admin/ → owner dashboard
-shared/ → colours, fonts, components used by both
+## Always Do First
+- **Invoke the `frontend-design` skill** before writing any frontend code, every session, no exceptions.
 
-Design System (shared across everything)
+## Reference Images
+- If a reference image is provided: match layout, spacing, typography, and color exactly. Swap in placeholder content (images via `https://placehold.co/`, generic copy). Do not improve or add to the design.
+- If no reference image: design from scratch with high craft (see guardrails below).
+- Screenshot your output, compare against reference, fix mismatches, re-screenshot. Do at least 2 comparison rounds. Stop only when no visible differences remain or user says so.
 
-Bold and energetic aesthetic
-Dark theme (#0d1b2a background)
-Primary accent: Red (#CC1F2D)
-Secondary accent: Navy Blue (#1B3A6B)
-White text throughout
-Fonts: Bebas Neue (headings) + Barlow (body)
-Mobile first throughout
-Reference: fitnesspod-demo.html (already built as demo)
+## Local Server
+- **Always serve on localhost** — never screenshot a `file:///` URL.
+- Start the dev server: `node serve.mjs` (serves the project root at `http://localhost:3000`)
+- `serve.mjs` lives in the project root. Start it in the background before taking any screenshots.
+- If the server is already running, do not start a second instance.
 
-Brand Colours (from official logo)
+## Screenshot Workflow
+- Puppeteer is installed at `C:/Users/nateh/AppData/Local/Temp/puppeteer-test/`. Chrome cache is at `C:/Users/nateh/.cache/puppeteer/`.
+- **Always screenshot from localhost:** `node screenshot.mjs http://localhost:3000`
+- Screenshots are saved automatically to `./temporary screenshots/screenshot-N.png` (auto-incremented, never overwritten).
+- Optional label suffix: `node screenshot.mjs http://localhost:3000 label` → saves as `screenshot-N-label.png`
+- `screenshot.mjs` lives in the project root. Use it as-is.
+- After screenshotting, read the PNG from `temporary screenshots/` with the Read tool — Claude can see and analyze the image directly.
+- When comparing, be specific: "heading is 32px but reference shows ~24px", "card gap is 16px but should be 24px"
+- Check: spacing/padding, font size/weight/line-height, colors (exact hex), alignment, border-radius, shadows, image sizing
 
-Red: #CC1F2D
-Navy: #t
-Background: #0d1b2a
-Tagline: "YOUR PERSONAL GYM 24/7"
+## Output Defaults
+- Single `index.html` file, all styles inline, unless user says otherwise
+- Tailwind CSS via CDN: `<script src="https://cdn.tailwindcss.com"></script>`
+- Placeholder images: `https://placehold.co/WIDTHxHEIGHT`
+- Mobile-first responsive
 
-1. WEBSITE
-The public facing site. Simpler than the app but same look and feel.
-Pages
+## Brand Assets
+- Always check the `brand_assets/` folder before designing. It may contain logos, color guides, style guides, or images.
+- If assets exist there, use them. Do not use placeholders where real assets are available.
+- If a logo is present, use it. If a color palette is defined, use those exact values — do not invent brand colors.
 
-Home — hero, live pod availability, pricing, CTA to book
-How It Works — two pathways explained (website booking vs app)
-Pods — all 6 pods with images, descriptions and equipment
-Pricing — pay as you go rates and credit bundles
-PT Marketplace — list of available personal trainers
-FAQ — common questions in accordion style
-Contact — basic contact form
+## Anti-Generic Guardrails
+- **Colors:** Never use default Tailwind palette (indigo-500, blue-600, etc.). Pick a custom brand color and derive from it.
+- **Shadows:** Never use flat `shadow-md`. Use layered, color-tinted shadows with low opacity.
+- **Typography:** Never use the same font for headings and body. Pair a display/serif with a clean sans. Apply tight tracking (`-0.03em`) on large headings, generous line-height (`1.7`) on body.
+- **Gradients:** Layer multiple radial gradients. Add grain/texture via SVG noise filter for depth.
+- **Animations:** Only animate `transform` and `opacity`. Never `transition-all`. Use spring-style easing.
+- **Interactive states:** Every clickable element needs hover, focus-visible, and active states. No exceptions.
+- **Images:** Add a gradient overlay (`bg-gradient-to-t from-black/60`) and a color treatment layer with `mix-blend-multiply`.
+- **Spacing:** Use intentional, consistent spacing tokens — not random Tailwind steps.
+- **Depth:** Surfaces should have a layering system (base → elevated → floating), not all sit at the same z-plane.
 
-Features
-
-Book a session via the booking grid
-View credit bundle options
-View available PTs
-Mobile responsive
-Free session CTA driving app downloads
-
-Website Goal
-Gets people in the door. Drives them to download the app. Less features than the app — app is always the better experience.
-2. BOOKING SYSTEM
-The booking grid shows all 6 pods as columns and 24 hours as rows. Each pod has a staggered start time offset:
-
-GymPod 1 — starts on the hour (6:00, 7:00, 8:00 etc)
-GymPod 2 — starts at :15 past (6:15, 7:15, 8:15 etc)
-GymPod 3 — starts at :30 past (6:30, 7:30, 8:30 etc)
-GymPod 4 — starts at :45 past (6:45, 7:45, 8:45 etc)
-HIITPod — starts on the hour same as GymPod 1
-PowerPod — starts at :30 past same as GymPod 3
-
-Each session is 1 hour long. Pods run 24 hours a day. Grid defaults to today on page load. Day selector shows next 7 days as buttons (Mon 16th, Tue 17th etc).
-3. PRICING & REVENUE MODEL
-Pay As You Go
-
-Daytime sessions (before 4:30pm): £6.50/hr per pod
-Evening sessions (after 4:30pm): £10/hr per pod
-Prices are per pod not per person (up to 3 users)
-
-Credit Bundles
-Credits replace memberships. Customers buy credits upfront and spend them on sessions.
-
-1 credit = £6.50 (daytime session)
-Evening sessions cost 1.5 credits
-Credits expire after 3 months
-Maximum 7 days advance booking for all customers regardless of credits
-
-Bundle options:
-
-10 credits — £65
-20 credits — £120 (4 credits free)
-30 credits — £175 (5 credits free)
-
-Gift Cards
-
-Customers buy gift cards with a £ value
-Recipient redeems gift card for credits
-Pure upfront revenue for the owner
-
-Specialist Pod Pricing
-
-Standard pods — £6.50 daytime / £10 evening
-Specialist pods (HIITPod, PowerPod) — slight premium TBC with owner
-
-4. APP
-The main product. More powerful than the website in every way.
-Core Features
-
-Pod selection across all 6 pods with live availability
-Full booking grid same as website
-Payment integration (PayPal or SumUp — NOT Stripe)
-Instant door access code delivery via SMS and email
-Saved payment details — one tap checkout
-Credit bundle purchasing and management
-Credits balance visible on dashboard
-Gift card purchasing and redemption
-Push notifications for offers and filling dead time slots
-Post session review prompts
-PT booking
-7 day advance booking limit enforced
-
-Free Session Incentive
-
-Download app → create account → get 1 free session
-Drives app downloads and builds customer database
-
-PT Marketplace
-
-Trainers list themselves in the app
-Customers browse and book direct
-Trainers pay a monthly listing fee (separate revenue stream)
-
-App Goal
-Keeps customers coming back. Everything in one place. Faster, more powerful and more valuable than the website.
-5. ADMIN DASHBOARD
-For the business owner only. Private login.
-Core Features
-
-View all bookings in real time
-See which pods are booked and when
-Revenue overview — daily, weekly, monthly
-Customer list and history
-Credits sold and redeemed tracking
-Gift card sales tracking
-Push notification sender — blast deals to app users
-Manage PT listings
-
-Upsell Feature (Premium)
-
-Expense tracking — owner logs outgoings
-Profit and loss overview
-Charged as an extra monthly fee on top of base package
-
-6. PAYMENT PROCESSOR
-
-DO NOT use Stripe (owner is IOM based, no UK entity)
-Use PayPal or SumUp — integrate via their API
-Owner sets up their own business account
-We connect via API key they provide
-
-7. BUSINESS CONTEXT
-
-First client: FitnessPod IOM
-Goal: Replace clunky system, reduce friction, grow their revenue
-Bigger goal: Help them open a second location on the island
-Long term: Roll this out as a SaaS to other IOM businesses
-Monthly fee charged to client: £100-£150/month base
-Expense tracking dashboard: additional monthly upsell
-
-
+## Hard Rules
+- Do not add sections, features, or content not in the reference
+- Do not "improve" a reference design — match it
+- Do not stop after one screenshot pass
+- Do not use `transition-all`
+- Do not use default Tailwind blue/indigo as primary color
