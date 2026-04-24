@@ -1,3 +1,5 @@
 {
-  "rootDirectory": "website"
+  "buildCommand": "",
+  "outputDirectory": "website",
+  "installCommand": ""
 }
