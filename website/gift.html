@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buy Pod Points — FitnessPod IOM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080808;
+      --red: #e8181a;
+      --gold: #C9940A;
+      --gold-light: #F5C842;
+      --gold-dim: rgba(201,148,10,0.15);
+      --white: #ffffff;
+      --muted: rgba(255,255,255,0.42);
+      --card-bg: #0f0f0f;
+      --font-head: 'Bebas Neue', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 45% at 15% -5%, rgba(232,24,26,0.07) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 40% at 85% 105%, rgba(201,148,10,0.07) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* NAV */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      background: rgba(8,8,8,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .nav__logo { display: flex; align-items: center; text-decoration: none; }
+    .nav__logo img { height: 70px; width: auto; }
+    .nav__back { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav__back:hover { color: var(--white); }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 140px 40px 60px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero__eyebrow {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+
+    .hero__title {
+      font-family: var(--font-head);
+      font-size: clamp(3.8rem, 6.5vw, 6rem);
+      line-height: 0.93;
+      letter-spacing: 0.02em;
+      margin-bottom: 22px;
+    }
+    .hero__title .accent { color: var(--red); }
+
+    .hero__sub {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.55);
+      font-weight: 300;
+      max-width: 420px;
+    }
+
+    .hero__coin {
+      width: 180px;
+      height: 180px;
+      object-fit: contain;
+      animation: float 3.8s ease-in-out infinite;
+      filter: drop-shadow(0 14px 36px rgba(201,148,10,0.55)) drop-shadow(0 0 60px rgba(201,148,10,0.22));
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+      50%       { transform: translateY(-16px) rotate(1.5deg); }
+    }
+
+    @media (max-width: 720px) {
+      .hero { grid-template-columns: 1fr; padding: 110px 24px 50px; text-align: center; }
+      .hero__coin { width: 120px; height: 120px; margin: 0 auto; display: block; }
+      .hero__sub { max-width: 100%; }
+    }
+
+    /* WRAP */
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px 64px;
+    }
+    @media (max-width: 720px) { .wrap { padding: 0 24px 48px; } }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .rule { height: 1px; background: rgba(255,255,255,0.06); margin-bottom: 56px; }
+
+    /* ── STEP 1: WHO FOR ── */
+    .who-for {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      max-width: 560px;
+    }
+    @media (max-width: 560px) { .who-for { grid-template-columns: 1fr; } }
+
+    .who-btn {
+      background: #0f0f0f;
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 26px 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: border-color 0.25s, transform 0.25s, background 0.25s, box-shadow 0.25s;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .who-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(201,148,10,0.07) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.25s;
+      pointer-events: none;
+    }
+
+    .who-btn:hover {
+      border-color: rgba(201,148,10,0.35);
+      transform: translateY(-2px);
+    }
+    .who-btn:hover::before { opacity: 1; }
+
+    /* For Me — fills red */
+    #btn-me.active {
+      border-color: var(--gold);
+      background: linear-gradient(135deg, rgba(232,24,26,0.28) 0%, rgba(232,24,26,0.16) 100%);
+      box-shadow: 0 0 0 1px rgba(201,148,10,0.2), 0 8px 36px rgba(232,24,26,0.2);
+    }
+    #btn-me.active::before { opacity: 0; }
+    #btn-me.active .who-btn__label { color: var(--gold); }
+    #btn-me.active .who-btn__sub { color: rgba(255,255,255,0.85); }
+
+    /* As a Gift — fills blue */
+    #btn-gift.active {
+      border-color: var(--gold);
+      background: linear-gradient(135deg, rgba(42,79,168,0.35) 0%, rgba(42,79,168,0.2) 100%);
+      box-shadow: 0 0 0 1px rgba(201,148,10,0.2), 0 8px 36px rgba(42,79,168,0.25);
+    }
+    #btn-gift.active::before { opacity: 0; }
+    #btn-gift.active .who-btn__label { color: var(--gold-light); }
+    #btn-gift.active .who-btn__sub { color: rgba(255,255,255,0.85); }
+
+    .who-btn__icon {
+      font-size: 2rem;
+      line-height: 1;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 6px rgba(201,148,10,0.4));
+    }
+
+    .who-btn__label {
+      font-family: var(--font-head);
+      font-size: 1.5rem;
+      letter-spacing: 0.05em;
+      line-height: 1;
+      margin-bottom: 4px;
+      transition: color 0.25s;
+    }
+
+    .who-btn__sub {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.45;
+    }
+
+    /* ── STEP 2: BUNDLES ── */
+    .tiers {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 720px) { .tiers { grid-template-columns: 1fr; } }
+
+    .tier {
+      background: linear-gradient(160deg, #111318 0%, #0c0d10 60%, #0e0c10 100%);
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 30px 26px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.22s, background 0.3s, box-shadow 0.3s;
+    }
+
+    .tier::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 140px; height: 140px;
+      background: radial-gradient(circle, rgba(201,148,10,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .tier::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(145deg, rgba(201,148,10,0.06) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity 0.22s;
+      pointer-events: none;
+    }
+
+    /* Default hover/selected — gold */
+    .tier:hover { transform: translateY(-3px); border-color: rgba(201,148,10,0.28); }
+    .tier:hover::after { opacity: 1; }
+    .tier.selected { border-color: var(--gold); transform: translateY(-4px); }
+    .tier.selected::after { opacity: 1; }
+
+    /* For Me mode — all cards fill red (muted) */
+    .tiers--me .tier {
+      background: linear-gradient(160deg, rgba(232,24,26,0.1) 0%, rgba(232,24,26,0.06) 100%);
+      border-color: rgba(232,24,26,0.12);
+    }
+    .tiers--me .tier::before { background: radial-gradient(circle, rgba(255,80,80,0.07) 0%, transparent 70%); }
+    .tiers--me .tier:hover {
+      border-color: var(--gold);
+      box-shadow: 0 8px 36px rgba(232,24,26,0.18), 0 0 0 1px rgba(201,148,10,0.12);
+    }
+    .tiers--me .tier.selected {
+      border-color: var(--gold);
+      background: linear-gradient(160deg, rgba(232,24,26,0.3) 0%, rgba(232,24,26,0.18) 100%);
+      box-shadow: 0 8px 40px rgba(232,24,26,0.25), 0 0 0 1px rgba(201,148,10,0.25);
+    }
+
+    /* As a Gift mode — all cards fill blue (muted) */
+    .tiers--gift .tier {
+      background: linear-gradient(160deg, rgba(42,79,168,0.12) 0%, rgba(42,79,168,0.07) 100%);
+      border-color: rgba(42,79,168,0.15);
+    }
+    .tiers--gift .tier::before { background: radial-gradient(circle, rgba(80,120,255,0.08) 0%, transparent 70%); }
+    .tiers--gift .tier:hover {
+      border-color: var(--gold);
+      box-shadow: 0 8px 36px rgba(42,79,168,0.22), 0 0 0 1px rgba(201,148,10,0.12);
+    }
+    .tiers--gift .tier.selected {
+      border-color: var(--gold);
+      background: linear-gradient(160deg, rgba(42,79,168,0.38) 0%, rgba(42,79,168,0.22) 100%);
+      box-shadow: 0 8px 40px rgba(42,79,168,0.28), 0 0 0 1px rgba(201,148,10,0.25);
+    }
+
+    .tier__check {
+      position: absolute;
+      top: 14px; right: 14px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.18);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .tier.selected .tier__check { background: var(--gold); border-color: var(--gold); }
+    .tier.selected .tier__check::after {
+      content: '';
+      display: block;
+      width: 5px; height: 9px;
+      border-right: 2px solid #000;
+      border-bottom: 2px solid #000;
+      transform: rotate(45deg) translate(-1px, -1px);
+    }
+
+    .tier__coin {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      margin-bottom: 14px;
+      filter: drop-shadow(0 4px 12px rgba(201,148,10,0.5));
+      transition: transform 0.3s, filter 0.3s;
+    }
+    .tier:hover .tier__coin { transform: translateY(-3px) rotate(5deg); filter: drop-shadow(0 8px 20px rgba(201,148,10,0.7)); }
+
+    .tier__you-pay {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .tier__price {
+      font-family: var(--font-head);
+      font-size: 3rem;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .tier__divider { height: 1px; background: rgba(255,255,255,0.07); margin-bottom: 16px; }
+
+    .tier__receive-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .tier__value {
+      font-family: var(--font-head);
+      font-size: 2.1rem;
+      color: var(--gold-light);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .tier__badge {
+      display: inline-block;
+      background: var(--gold-dim);
+      border: 1px solid rgba(201,148,10,0.28);
+      color: var(--gold-light);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+    }
+
+    .tier__note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ── STEP 3: GIFT PERSONALISE ── */
+    #gift-section {
+      display: none;
+    }
+    #gift-section.show { display: block; }
+
+    .personalise {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 52px;
+      align-items: start;
+    }
+    @media (max-width: 900px) { .personalise { grid-template-columns: 1fr; } }
+
+    .form-group { margin-bottom: 22px; }
+
+    .form-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 10px;
+      padding: 13px 16px;
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      transition: border-color 0.2s, background 0.2s;
+      outline: none;
+      appearance: none;
+    }
+    .form-input:focus, .form-textarea:focus { border-color: var(--gold); background: rgba(201,148,10,0.04); }
+    .form-textarea { resize: none; height: 110px; line-height: 1.65; }
+    .form-hint { font-size: 0.76rem; color: rgba(255,255,255,0.28); margin-top: 5px; }
+
+    .toggle-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px; cursor: pointer; user-select: none;
+    }
+    .toggle-knob {
+      width: 42px; height: 23px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px; position: relative; flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .toggle-knob::after {
+      content: ''; position: absolute;
+      top: 3px; left: 3px;
+      width: 17px; height: 17px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.45);
+      transition: transform 0.2s, background 0.2s;
+    }
+    #scheduleToggle { display: none; }
+    #scheduleToggle:checked ~ .toggle-row .toggle-knob { background: var(--gold); }
+    #scheduleToggle:checked ~ .toggle-row .toggle-knob::after { transform: translateX(19px); background: #000; }
+    .toggle-text { font-size: 0.88rem; color: rgba(255,255,255,0.65); }
+    .date-field { display: none; }
+    .date-field.show { display: block; }
+
+    /* Gift card preview */
+    .preview-wrap { position: sticky; top: 96px; }
+    .preview-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+
+    .gift-card-preview {
+      background: linear-gradient(145deg, #1c1500 0%, #110d00 45%, #140000 100%);
+      border: 1.5px solid rgba(201,148,10,0.22);
+      border-radius: 22px;
+      padding: 34px 30px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(201,148,10,0.06), 0 24px 64px rgba(0,0,0,0.55);
+    }
+    .gift-card-preview::before {
+      content: ''; position: absolute; top: -50px; right: -50px;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(201,148,10,0.13) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .gift-card-preview::after {
+      content: ''; position: absolute; bottom: -40px; left: -40px;
+      width: 150px; height: 150px;
+      background: radial-gradient(circle, rgba(232,24,26,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* diagonal stripe texture */
+    .gift-card-preview .card-texture {
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(255,255,255,0.015) 0px,
+        rgba(255,255,255,0.015) 1px,
+        transparent 1px,
+        transparent 12px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .gift-card-preview > *:not(.card-texture) { position: relative; z-index: 1; }
+
+    .preview-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .preview-logo { height: 70px; width: auto; }
+    .preview-never-expire {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(201,148,10,0.3);
+      background: rgba(201,148,10,0.08);
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+
+    .preview-to { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(201,148,10,0.55); margin-bottom: 5px; }
+    .preview-name { font-family: var(--font-head); font-size: 2rem; letter-spacing: 0.04em; line-height: 1; min-height: 2rem; margin-bottom: 22px; }
+    .preview-coin { width: 58px; height: 58px; object-fit: contain; margin-bottom: 12px; filter: drop-shadow(0 4px 14px rgba(201,148,10,0.45)); }
+    .preview-value { font-family: var(--font-head); font-size: 2.8rem; color: var(--gold-light); line-height: 1; margin-bottom: 3px; }
+    .preview-value-sub { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(201,148,10,0.55); margin-bottom: 22px; }
+    .preview-message { font-size: 0.88rem; line-height: 1.7; color: rgba(255,255,255,0.55); font-style: italic; font-weight: 300; border-top: 1px solid rgba(255,255,255,0.07); padding-top: 18px; margin-bottom: 16px; min-height: 1.4em; }
+    .preview-from { font-size: 0.75rem; color: rgba(255,255,255,0.3); letter-spacing: 0.06em; margin-bottom: 20px; }
+    .preview-from strong { color: rgba(255,255,255,0.65); font-weight: 600; }
+
+    .preview-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 14px;
+    }
+    .preview-card-num {
+      font-family: 'Courier New', monospace;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.1em;
+    }
+    .preview-valid {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* CTA BAR */
+    .cta-bar {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    @media (max-width: 720px) { .cta-bar { padding: 0 24px 60px; flex-direction: column; align-items: flex-start; } }
+
+    .cta-total-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .cta-total-amount { font-family: var(--font-head); font-size: 3rem; line-height: 1; margin-bottom: 4px; }
+    .cta-total-sub { font-size: 0.84rem; color: var(--gold-light); font-weight: 500; }
+
+    .btn-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--red);
+      color: var(--white);
+      font-family: var(--font-head);
+      font-size: 1.25rem;
+      letter-spacing: 0.12em;
+      padding: 18px 52px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      box-shadow: 0 8px 32px rgba(232,24,26,0.38);
+    }
+    .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 44px rgba(232,24,26,0.52); background: #ff1f21; }
+    .btn-cta:active { transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav__logo">
+      <img src="logo.png" alt="FitnessPod" />
+    </a>
+    <a href="index.html" class="nav__back">← Back to site</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <p class="hero__eyebrow">Pod Points</p>
+      <h1 class="hero__title">Load Up.<br><span class="accent">Save More.</span></h1>
+      <p class="hero__sub">Buy Pod Points upfront and get more sessions for your money. Use them on any pod, any time. Points never expire.</p>
+    </div>
+    <img src="Podpoint.png" alt="Pod Point coin" class="hero__coin" />
+  </div>
+
+  <!-- STEP 1: WHO FOR -->
+  <div class="wrap">
+    <p class="section-label">Step 1 — Who are you buying for?</p>
+    <div class="who-for">
+      <button class="who-btn active" id="btn-me" onclick="setMode('me')">
+        <span class="who-btn__icon">🏋️</span>
+        <div>
+          <p class="who-btn__label">For Me</p>
+          <p class="who-btn__sub">Load points onto my account</p>
+        </div>
+      </button>
+      <button class="who-btn" id="btn-gift" onclick="setMode('gift')">
+        <span class="who-btn__icon">🎁</span>
+        <div>
+          <p class="who-btn__label">As a Gift</p>
+          <p class="who-btn__sub">Send points to someone else</p>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <div class="wrap" style="padding-bottom:0"><div class="rule"></div></div>
+
+  <!-- STEP 2: BUNDLES -->
+  <div class="wrap">
+    <p class="section-label" id="bundles-label">Step 2 — Choose your bundle</p>
+    <div class="tiers" id="tiers">
+
+      <div class="tier" data-pay="30" data-value="35" data-bonus="5" data-points="5" onclick="selectTier(this)">
+        <div class="tier__check"></div>
+        <img src="Podpoint.png" alt="Pod Point" class="tier__coin" />
+        <p class="tier__you-pay">You Pay</p>
+        <p class="tier__price">£30</p>
+        <div class="tier__divider"></div>
+        <p class="tier__receive-label js-receive-label">You Get</p>
+        <p class="tier__value">5 <span style="font-size:1.2rem;color:rgba(245,200,66,0.7)">Points</span></p>
+        <span class="tier__badge">+1 free point</span>
+        <p class="tier__note">5 daytime sessions<br>or 3 evening sessions</p>
+      </div>
+
+      <div class="tier selected" data-pay="55" data-value="63" data-bonus="8" data-points="9" onclick="selectTier(this)">
+        <div class="tier__check"></div>
+        <img src="Podpoint.png" alt="Pod Point" class="tier__coin" />
+        <p class="tier__you-pay">You Pay</p>
+        <p class="tier__price">£55</p>
+        <div class="tier__divider"></div>
+        <p class="tier__receive-label js-receive-label">You Get</p>
+        <p class="tier__value">9 <span style="font-size:1.2rem;color:rgba(245,200,66,0.7)">Points</span></p>
+        <span class="tier__badge">+2 free points</span>
+        <p class="tier__note">9 daytime sessions<br>or 6 evening sessions</p>
+      </div>
+
+      <div class="tier" data-pay="100" data-value="140" data-bonus="40" data-points="20" onclick="selectTier(this)">
+        <div class="tier__check"></div>
+        <img src="Podpoint.png" alt="Pod Point" class="tier__coin" />
+        <p class="tier__you-pay">You Pay</p>
+        <p class="tier__price">£100</p>
+        <div class="tier__divider"></div>
+        <p class="tier__receive-label js-receive-label">You Get</p>
+        <p class="tier__value">20 <span style="font-size:1.2rem;color:rgba(245,200,66,0.7)">Points</span></p>
+        <span class="tier__badge">+5 free points</span>
+        <p class="tier__note">20 daytime sessions<br>or 13 evening sessions</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="wrap" style="padding-bottom:0"><div class="rule"></div></div>
+
+  <!-- STEP 3: GIFT PERSONALISE (only shown in gift mode) -->
+  <div id="gift-section">
+    <div class="wrap">
+      <p class="section-label">Step 3 — Personalise your gift</p>
+      <div class="personalise">
+
+        <div>
+          <div class="form-group">
+            <label class="form-label">Recipient's Name</label>
+            <input type="text" class="form-input" id="recipientName" placeholder="e.g. Sarah" oninput="syncPreview()" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Your Name</label>
+            <input type="text" class="form-input" id="senderName" placeholder="e.g. Mum" oninput="syncPreview()" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Personal Message</label>
+            <textarea class="form-textarea" id="message" placeholder="Happy birthday — go smash it! 💪" oninput="syncPreview()"></textarea>
+            <p class="form-hint">Shown on their reveal screen when they open the gift.</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Recipient's Email</label>
+            <input type="email" class="form-input" id="recipientEmail" placeholder="sarah@example.com" />
+            <p class="form-hint">We'll send the gift link directly to them.</p>
+          </div>
+
+          <input type="checkbox" id="scheduleToggle" onchange="toggleDate()" />
+          <label class="toggle-row" for="scheduleToggle">
+            <div class="toggle-knob"></div>
+            <span class="toggle-text">Schedule delivery for a specific date</span>
+          </label>
+          <div class="form-group date-field" id="dateField">
+            <label class="form-label">Delivery Date</label>
+            <input type="date" class="form-input" id="deliveryDate" />
+            <p class="form-hint">Perfect for birthdays, Christmas, or any occasion.</p>
+          </div>
+        </div>
+
+        <div class="preview-wrap">
+          <p class="preview-label">Live Preview — what they'll see</p>
+          <div class="gift-card-preview">
+            <div class="card-texture"></div>
+            <div class="preview-header">
+              <img src="logo.png" alt="FitnessPod" class="preview-logo" />
+              <span class="preview-never-expire">Points Never Expire</span>
+            </div>
+            <p class="preview-to">For</p>
+            <p class="preview-name" id="previewName">Sarah</p>
+            <img src="Podpoint.png" alt="Pod Point" class="preview-coin" />
+            <p class="preview-value" id="previewValue">9 Points</p>
+            <p class="preview-value-sub">loaded to your account</p>
+            <p class="preview-message" id="previewMessage">Happy birthday — go smash it! 💪</p>
+            <p class="preview-from">From <strong id="previewSender">Mum</strong></p>
+            <div class="preview-footer">
+              <span class="preview-card-num">#FP-2025-0001</span>
+              <span class="preview-valid">Valid · FitnessPod IOM</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="wrap" style="padding-bottom:0"><div class="rule"></div></div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-bar">
+    <div>
+      <p class="cta-total-label">Total</p>
+      <p class="cta-total-amount" id="ctaAmount">£50</p>
+      <p class="cta-total-sub" id="ctaSub">You get 9 points — 2 free</p>
+    </div>
+    <a href="#" id="ctaLink" class="btn-cta">Buy Now →</a>
+  </div>
+
+  <script>
+    let mode = 'me';
+    let selected = { pay: 55, value: 63, bonus: 8 };
+
+    function setMode(m) {
+      mode = m;
+      document.getElementById('btn-me').classList.toggle('active', m === 'me');
+      document.getElementById('btn-gift').classList.toggle('active', m === 'gift');
+
+      const tiers = document.getElementById('tiers');
+      tiers.classList.toggle('tiers--me',   m === 'me');
+      tiers.classList.toggle('tiers--gift', m === 'gift');
+
+      document.getElementById('gift-section').classList.toggle('show', m === 'gift');
+
+      document.querySelectorAll('.js-receive-label').forEach(el => {
+        el.textContent = m === 'gift' ? 'They Receive' : 'You Get';
+      });
+
+      updateCTA();
+    }
+
+    // Set initial mode on load
+    setMode('me');
+
+    function selectTier(el) {
+      document.querySelectorAll('.tier').forEach(t => t.classList.remove('selected'));
+      el.classList.add('selected');
+      selected = {
+        pay:    parseInt(el.dataset.pay),
+        value:  parseInt(el.dataset.value),
+        bonus:  parseInt(el.dataset.bonus),
+        points: parseInt(el.dataset.points)
+      };
+      document.getElementById('previewValue').textContent = selected.points + ' Points';
+      updateCTA();
+    }
+
+    function syncPreview() {
+      const name   = document.getElementById('recipientName').value.trim() || 'Sarah';
+      const sender = document.getElementById('senderName').value.trim()    || 'Mum';
+      const msg    = document.getElementById('message').value.trim()       || 'Happy birthday — go smash it! 💪';
+      document.getElementById('previewName').textContent    = name;
+      document.getElementById('previewSender').textContent  = sender;
+      document.getElementById('previewMessage').textContent = msg;
+      updateCTA();
+    }
+
+    function updateCTA() {
+      document.getElementById('ctaAmount').textContent = '£' + selected.pay;
+
+      if (mode === 'me') {
+        document.getElementById('ctaSub').textContent = 'You get ' + selected.points + ' points — ' + (selected.points - Math.round(selected.pay / 7)) + ' free';
+        document.getElementById('ctaLink').textContent = 'Buy Now →';
+        document.getElementById('ctaLink').href = '#';
+      } else {
+        document.getElementById('ctaSub').textContent = 'They get ' + selected.points + ' points — ' + (selected.points - Math.round(selected.pay / 7)) + ' free';
+        document.getElementById('ctaLink').textContent = 'Send the Gift →';
+        const name   = document.getElementById('recipientName').value.trim() || 'Sarah';
+        const sender = document.getElementById('senderName').value.trim()    || 'Mum';
+        const msg    = document.getElementById('message').value.trim()       || 'Happy birthday — go smash it! 💪';
+        const params = new URLSearchParams({ demo: '1', points: selected.points, to: name, from: sender, msg });
+        document.getElementById('ctaLink').href = 'reveal.html?' + params.toString();
+      }
+    }
+
+    function toggleDate() {
+      document.getElementById('dateField').classList.toggle('show', document.getElementById('scheduleToggle').checked);
+    }
+  </script>
+</body>
+</html>

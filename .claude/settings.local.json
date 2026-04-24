@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__github__search_repositories",
+      "mcp__github__get_me",
+      "mcp__github__push_files",
+      "mcp__github__get_file_contents",
+      "Bash(node serve.mjs)",
+      "Bash(node *)",
+      "Bash(npx serve *)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_resize",
+      "mcp__playwright__browser_evaluate",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3002/pods.html)",
+      "Bash(curl *)",
+      "mcp__playwright__browser_tabs",
+      "Bash(npm --version)",
+      "Bash(npm create *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Skill(update-config)",
+      "Bash(claude doctor *)",
+      "Bash(xargs grep *)"
+    ]
+  }
+}
