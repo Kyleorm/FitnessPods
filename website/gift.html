@@ -623,40 +623,40 @@
     <p class="section-label" id="bundles-label">Step 2 — Choose your bundle</p>
     <div class="tiers" id="tiers">
 
-      <div class="tier" data-pay="30" data-value="35" data-bonus="5" data-points="5" onclick="selectTier(this)">
+      <div class="tier" data-pay="28" data-value="35" data-bonus="7" data-points="5" data-free="1" onclick="selectTier(this)">
         <div class="tier__check"></div>
         <img src="Podpoint.png" alt="Pod Point" class="tier__coin" />
         <p class="tier__you-pay">You Pay</p>
-        <p class="tier__price">£30</p>
+        <p class="tier__price">£28</p>
         <div class="tier__divider"></div>
         <p class="tier__receive-label js-receive-label">You Get</p>
         <p class="tier__value">5 <span style="font-size:1.2rem;color:rgba(245,200,66,0.7)">Points</span></p>
         <span class="tier__badge">+1 free point</span>
-        <p class="tier__note">5 daytime sessions<br>or 3 evening sessions</p>
+        <p class="tier__note">6 daytime sessions<br>or 4 evening sessions</p>
       </div>
 
-      <div class="tier selected" data-pay="55" data-value="63" data-bonus="8" data-points="9" onclick="selectTier(this)">
+      <div class="tier selected" data-pay="49" data-value="63" data-bonus="14" data-points="9" data-free="2" onclick="selectTier(this)">
         <div class="tier__check"></div>
         <img src="Podpoint.png" alt="Pod Point" class="tier__coin" />
         <p class="tier__you-pay">You Pay</p>
-        <p class="tier__price">£55</p>
+        <p class="tier__price">£49</p>
         <div class="tier__divider"></div>
         <p class="tier__receive-label js-receive-label">You Get</p>
         <p class="tier__value">9 <span style="font-size:1.2rem;color:rgba(245,200,66,0.7)">Points</span></p>
         <span class="tier__badge">+2 free points</span>
-        <p class="tier__note">9 daytime sessions<br>or 6 evening sessions</p>
+        <p class="tier__note">11 daytime sessions<br>or 7 evening sessions</p>
       </div>
 
-      <div class="tier" data-pay="100" data-value="140" data-bonus="40" data-points="20" onclick="selectTier(this)">
+      <div class="tier" data-pay="105" data-value="140" data-bonus="35" data-points="20" data-free="5" onclick="selectTier(this)">
         <div class="tier__check"></div>
         <img src="Podpoint.png" alt="Pod Point" class="tier__coin" />
         <p class="tier__you-pay">You Pay</p>
-        <p class="tier__price">£100</p>
+        <p class="tier__price">£105</p>
         <div class="tier__divider"></div>
         <p class="tier__receive-label js-receive-label">You Get</p>
         <p class="tier__value">20 <span style="font-size:1.2rem;color:rgba(245,200,66,0.7)">Points</span></p>
         <span class="tier__badge">+5 free points</span>
-        <p class="tier__note">20 daytime sessions<br>or 13 evening sessions</p>
+        <p class="tier__note">25 daytime sessions<br>or 16 evening sessions</p>
       </div>
 
     </div>
@@ -733,7 +733,7 @@
   <div class="cta-bar">
     <div>
       <p class="cta-total-label">Total</p>
-      <p class="cta-total-amount" id="ctaAmount">£50</p>
+      <p class="cta-total-amount" id="ctaAmount">£49</p>
       <p class="cta-total-sub" id="ctaSub">You get 9 points — 2 free</p>
     </div>
     <a href="#" id="ctaLink" class="btn-cta">Buy Now →</a>
@@ -741,7 +741,7 @@
 
   <script>
     let mode = 'me';
-    let selected = { pay: 55, value: 63, bonus: 8 };
+    let selected = { pay: 49, value: 63, bonus: 14, points: 9, free: 2 };
 
     function setMode(m) {
       mode = m;
@@ -771,7 +771,8 @@
         pay:    parseInt(el.dataset.pay),
         value:  parseInt(el.dataset.value),
         bonus:  parseInt(el.dataset.bonus),
-        points: parseInt(el.dataset.points)
+        points: parseInt(el.dataset.points),
+        free:   parseInt(el.dataset.free)
       };
       document.getElementById('previewValue').textContent = selected.points + ' Points';
       updateCTA();
@@ -791,11 +792,11 @@
       document.getElementById('ctaAmount').textContent = '£' + selected.pay;
 
       if (mode === 'me') {
-        document.getElementById('ctaSub').textContent = 'You get ' + selected.points + ' points — ' + (selected.points - Math.round(selected.pay / 7)) + ' free';
+        document.getElementById('ctaSub').textContent = 'You get ' + selected.points + ' points — ' + selected.free + ' free';
         document.getElementById('ctaLink').textContent = 'Buy Now →';
         document.getElementById('ctaLink').href = '#';
       } else {
-        document.getElementById('ctaSub').textContent = 'They get ' + selected.points + ' points — ' + (selected.points - Math.round(selected.pay / 7)) + ' free';
+        document.getElementById('ctaSub').textContent = 'They get ' + selected.points + ' points — ' + selected.free + ' free';
         document.getElementById('ctaLink').textContent = 'Send the Gift →';
         const name   = document.getElementById('recipientName').value.trim() || 'Sarah';
         const sender = document.getElementById('senderName').value.trim()    || 'Mum';

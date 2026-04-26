@@ -19,7 +19,7 @@ function getTimeSlots(date) {
   for (let h = 6; h < 22; h++) {
     const timeStr = `${h.toString().padStart(2,'0')}:00`;
     const past = isToday && h <= now.getHours();
-    const price = h >= 16 ? '£10' : '£6.50';
+    const price = h >= 16 ? '£10' : '£7';
     slots.push({ time: timeStr, price, past, busy: Math.random() < 0.2 });
   }
   return slots;
@@ -222,7 +222,7 @@ export default function Book() {
               <div style={s.reviewRow}>
                 <span style={{ ...s.reviewLabel, fontWeight: 700, color: 'var(--white)' }}>Total</span>
                 <span style={{ ...s.reviewValue, fontFamily: 'var(--font-head)', fontSize: '1.6rem', color: 'var(--red)' }}>
-                  {isEvening ? '£10.00' : '£6.50'}
+                  {isEvening ? '£10.00' : '£7'}
                 </span>
               </div>
             </div>
@@ -237,7 +237,7 @@ export default function Book() {
 
             <button className="btn btn--primary btn--block" style={{ marginTop: '16px' }}
               onClick={() => navigate('/book/confirm')}>
-              Pay {isEvening ? '£10.00' : '£6.50'} with Pay360
+              Pay {isEvening ? '£10.00' : '£7'} with Pay360
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
             <button className="btn btn--ghost btn--block" style={{ marginTop: '10px' }} onClick={back}>

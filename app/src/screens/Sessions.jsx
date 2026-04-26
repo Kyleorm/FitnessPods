@@ -2,13 +2,13 @@ import { useNavigate } from 'react-router-dom';
 
 const upcoming = [
   { id: 1, pod: 'FitnessPod 1', date: 'Today', time: '18:00 – 19:00', code: '4829', price: '£10.00' },
-  { id: 2, pod: 'PowerPod',     date: 'Thu 24 Apr', time: '07:00 – 08:00', code: null,   price: '£6.50' },
+  { id: 2, pod: 'PowerPod',     date: 'Thu 24 Apr', time: '07:00 – 08:00', code: null,   price: '£7' },
 ];
 
 const past = [
-  { id: 3, pod: 'HIITPod',      date: 'Mon 21 Apr', time: '17:00 – 18:00', price: '£6.50' },
-  { id: 4, pod: 'FitnessPod 2', date: 'Sat 19 Apr', time: '10:00 – 11:00', price: '£6.50' },
-  { id: 5, pod: 'PowerPod',     date: 'Thu 17 Apr', time: '07:00 – 08:00', price: '£6.50' },
+  { id: 3, pod: 'HIITPod',      date: 'Mon 21 Apr', time: '17:00 – 18:00', price: '£7' },
+  { id: 4, pod: 'FitnessPod 2', date: 'Sat 19 Apr', time: '10:00 – 11:00', price: '£7' },
+  { id: 5, pod: 'PowerPod',     date: 'Thu 17 Apr', time: '07:00 – 08:00', price: '£7' },
 ];
 
 export default function Sessions() {

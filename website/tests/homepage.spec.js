@@ -37,7 +37,7 @@ test.describe('Homepage', () => {
   test('pricing section shows two rate cards', async ({ page }) => {
     await page.locator('#pricing').scrollIntoViewIfNeeded();
     await expect(page.locator('.payg-card')).toHaveCount(2);
-    await expect(page.locator('.payg-card').first()).toContainText('£6.50');
+    await expect(page.locator('.payg-card').first()).toContainText('£7');
   });
 
   test('FAQ accordion opens and closes', async ({ page }) => {

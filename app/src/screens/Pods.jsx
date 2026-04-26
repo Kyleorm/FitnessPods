@@ -88,7 +88,7 @@ export default function Pods() {
             <div style={s.podFooter}>
               <div style={s.priceInfo}>
                 <span style={s.priceFrom}>From</span>
-                <span style={s.priceAmt}>£6.50<span style={s.priceUnit}>/hr</span></span>
+                <span style={s.priceAmt}>£7<span style={s.priceUnit}>/hr</span></span>
                 {!pod.free && (
                   <span style={s.availSoon}>· Free in ~3 hrs</span>
                 )}

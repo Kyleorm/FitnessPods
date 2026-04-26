@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 
 const bundles = [
-  { pts: 5,  bonus: 1, price: 30,  saving: '£6.50',  tag: null },
-  { pts: 9,  bonus: 2, price: 55,  saving: '£13',    tag: 'Most Popular' },
-  { pts: 20, bonus: 5, price: 100, saving: '£32.50', tag: 'Best Value' },
+  { pts: 4,  bonus: 1, price: 28,  fullPrice: 35,  saving: '£7',  tag: null },
+  { pts: 7,  bonus: 2, price: 49,  fullPrice: 63,  saving: '£14', tag: 'Most Popular' },
+  { pts: 15, bonus: 5, price: 105, fullPrice: 140, saving: '£35', tag: 'Best Value' },
 ];
 
 export default function Profile() {
@@ -55,16 +55,55 @@ export default function Profile() {
             </div>
           </div>
 
-          <p style={{ ...s.sectionLabel, marginTop: '16px' }}>Top up your points</p>
+          {/* What are Pod Points */}
+          <div id="what-are-pod-points" style={s.explainer} className="card">
+            <p style={s.explainerTitle}>What are Pod Points?</p>
+            <p style={s.explainerBody}>
+              Pod Points are FitnessPod's prepaid credit system. Instead of paying each time you book, you load up points in advance and use them whenever you train.
+            </p>
+            <div style={s.explainerRules}>
+              <div style={s.explainerRule}>
+                <span style={s.explainerIcon}>☀️</span>
+                <span><strong>1 point</strong> = 1 daytime session (before 4:30pm)</span>
+              </div>
+              <div style={s.explainerRule}>
+                <span style={s.explainerIcon}>🌙</span>
+                <span><strong>1.5 points</strong> = 1 evening session (after 4:30pm)</span>
+              </div>
+              <div style={s.explainerRule}>
+                <span style={s.explainerIcon}>♾️</span>
+                <span>Points <strong>never expire</strong> — use them at your own pace</span>
+              </div>
+              <div style={s.explainerRule}>
+                <span style={s.explainerIcon}>🎁</span>
+                <span>Buy in bulk and get <strong>free points</strong> added on top</span>
+              </div>
+            </div>
+            <p style={s.explainerFooter}>
+              The more you buy upfront, the more you save. Simple.
+            </p>
+          </div>
+
+          <p id="top-up" style={{ ...s.sectionLabel, marginTop: '16px' }}>Top up your points</p>
           <div style={s.bundleList}>
             {bundles.map(b => (
-              <div key={b.pts} style={{ ...s.bundle, borderColor: b.tag ? 'var(--red)' : 'var(--w06)' }} className="card">
+              <div key={b.pts} style={s.bundle} className="card">
+                <div style={s.bundleGoldenBg} />
                 {b.tag && <div style={s.bundleTag}>{b.tag}</div>}
                 <div style={s.bundleLeft}>
-                  <p style={s.bundlePts}>{b.pts + b.bonus} <span style={s.bundlePtsUnit}>points</span></p>
-                  <p style={s.bundleBreak}>{b.pts} bought + {b.bonus} free · saving {b.saving}</p>
+                  <div style={s.bundlePtsRow}>
+                    <span style={s.bundlePts}>{b.pts + b.bonus}</span>
+                    <span style={s.bundlePtsUnit}>pts</span>
+                  </div>
+                  <div style={s.bundleOfferRow}>
+                    <span style={s.bundleOfferBought}>{b.pts} bought</span>
+                    <span style={s.bundleOfferPlus}>+</span>
+                    <span style={s.bundleOfferFree}>{b.bonus} FREE</span>
+                  </div>
+                  <p style={s.bundleSaving}>Save {b.saving}</p>
                 </div>
                 <div style={s.bundleRight}>
+                  <p style={s.bundleFullPrice}>£{b.fullPrice}</p>
                   <p style={s.bundlePrice}>£{b.price}</p>
                   <button className="btn btn--primary btn--sm">Buy</button>
                 </div>
@@ -239,6 +278,51 @@ const s = {
     fontSize: '0.75rem',
     color: 'var(--w40)',
   },
+
+  /* Explainer */
+  explainer: {
+    padding: '18px',
+    marginTop: '12px',
+  },
+  explainerTitle: {
+    fontFamily: 'var(--font-head)',
+    fontSize: '1.1rem',
+    color: 'var(--white)',
+    marginBottom: '8px',
+    letterSpacing: '0.02em',
+  },
+  explainerBody: {
+    fontSize: '0.82rem',
+    color: 'var(--w60)',
+    lineHeight: 1.6,
+    marginBottom: '14px',
+  },
+  explainerRules: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+    marginBottom: '14px',
+  },
+  explainerRule: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '10px',
+    fontSize: '0.82rem',
+    color: 'var(--w70)',
+    lineHeight: 1.5,
+  },
+  explainerIcon: {
+    fontSize: '1rem',
+    flexShrink: 0,
+    marginTop: '1px',
+  },
+  explainerFooter: {
+    fontSize: '0.8rem',
+    color: '#f5c842',
+    fontWeight: 600,
+    borderTop: '1px solid var(--w06)',
+    paddingTop: '12px',
+  },
   pointsIcon: {
     position: 'relative',
     opacity: 0.6,
@@ -252,8 +336,16 @@ const s = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '16px',
+    padding: '18px 16px',
     position: 'relative',
+    overflow: 'hidden',
+    border: '1.5px solid var(--red)',
+  },
+  bundleGoldenBg: {
+    position: 'absolute',
+    inset: 0,
+    background: 'linear-gradient(135deg, rgba(212,160,23,0.12) 0%, rgba(212,160,23,0.04) 50%, rgba(212,32,40,0.06) 100%)',
+    pointerEvents: 'none',
   },
   bundleTag: {
     position: 'absolute',
@@ -268,32 +360,69 @@ const s = {
     padding: '2px 8px',
     borderRadius: '0 0 6px 6px',
   },
-  bundleLeft: { flex: 1 },
+  bundleLeft: { flex: 1, position: 'relative' },
+  bundlePtsRow: {
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: '5px',
+    marginBottom: '6px',
+  },
   bundlePts: {
     fontFamily: 'var(--font-head)',
-    fontSize: '1.6rem',
+    fontSize: '2.6rem',
     lineHeight: 1,
-    marginBottom: '3px',
+    color: '#f5c842',
+    textShadow: '0 0 20px rgba(245,200,66,0.4)',
   },
   bundlePtsUnit: {
-    fontSize: '0.9rem',
+    fontSize: '1rem',
     fontFamily: 'var(--font-body)',
-    color: 'var(--w60)',
-    fontWeight: 400,
+    color: 'rgba(245,200,66,0.7)',
+    fontWeight: 600,
   },
-  bundleBreak: {
-    fontSize: '0.72rem',
-    color: 'var(--w40)',
+  bundleOfferRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '5px',
+    marginBottom: '4px',
+  },
+  bundleOfferBought: {
+    fontSize: '0.78rem',
+    color: 'var(--w60)',
+    fontWeight: 500,
+  },
+  bundleOfferPlus: {
+    fontSize: '0.78rem',
+    color: 'var(--w30)',
+  },
+  bundleOfferFree: {
+    fontSize: '0.78rem',
+    fontWeight: 800,
+    color: '#22c55e',
+    letterSpacing: '0.04em',
+  },
+  bundleSaving: {
+    fontSize: '0.7rem',
+    color: 'rgba(245,200,66,0.6)',
+    fontWeight: 600,
+    letterSpacing: '0.04em',
   },
   bundleRight: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
     gap: '8px',
+    position: 'relative',
+  },
+  bundleFullPrice: {
+    fontSize: '0.85rem',
+    color: 'var(--w30)',
+    textDecoration: 'line-through',
+    fontWeight: 500,
   },
   bundlePrice: {
     fontFamily: 'var(--font-head)',
-    fontSize: '1.4rem',
+    fontSize: '1.6rem',
     color: 'var(--white)',
   },
   menuList: {},

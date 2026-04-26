@@ -12,9 +12,21 @@ const pods = [
 
 const freePods = pods.filter(p => p.free).length;
 
-// 30 days of activity — 1 = trained, 0 = rest
-const activity = [0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,0,1,1,0,0,1,0,1];
-const sessionsThisMonth = activity.filter(Boolean).length;
+const now = new Date();
+const calYear  = now.getFullYear();
+const calMonth = now.getMonth();
+const today    = now.getDate();
+const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+// Monday-first offset (Sun=0 → 6, Mon=1 → 0, etc.)
+const startOffset = (new Date(calYear, calMonth, 1).getDay() + 6) % 7;
+// Dummy seeded activity — past days only
+const activity = Array.from({ length: daysInMonth }, (_, i) => {
+  const day = i + 1;
+  if (day > today) return 'future';
+  if (day === today) return 'today';
+  return ((day * 7 + calMonth * 3) % 5 < 2) ? 'trained' : 'rest';
+});
+const sessionsThisMonth = activity.filter(s => s === 'trained' || s === 'today').length;
 
 function AnimatedCoin() {
   return (
@@ -48,20 +60,49 @@ export default function Home() {
   const navigate = useNavigate();
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-  const motivational = hour < 12
-    ? 'Start strong. The pod is waiting.'
-    : hour < 17
-    ? 'Midday grind. You\'ve got this.'
-    : 'Evening session? Let\'s go.';
+  const quotes = [
+    "Own the hour.",
+    "No crowd. No excuses.",
+    "Your pod. Your rules.",
+    "Show up. Every time.",
+    "The work doesn't lie.",
+    "Private gym. Public results.",
+    "One session changes everything.",
+    "Train like it matters.",
+    "Your only competition is yesterday.",
+    "No witnesses. Just results.",
+    "Earn your rest.",
+    "The pod is waiting.",
+    "Discipline beats motivation.",
+    "Start before you're ready.",
+    "Make today count.",
+    "Push past the voice in your head.",
+    "No one's watching. Go harder.",
+    "Small steps. Big results.",
+    "You showed up. That's already winning.",
+    "Built in private. Proven in life.",
+    "Your hour. Your power.",
+    "Consistency is the cheat code.",
+    "Do it for future you.",
+    "The grind is private. The results aren't.",
+    "One more rep. Always.",
+    "Pain is temporary. Progress isn't.",
+    "Lock in.",
+    "Nobody remembers easy workouts.",
+    "Your potential has no postcode.",
+    "The best sessions start with showing up.",
+  ];
+  const weekOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 1)) / (7 * 24 * 60 * 60 * 1000));
+  const motivational = quotes[weekOfYear % quotes.length];
 
+  const hasUpcomingSession = true; // set to false when no bookings exist
   const pointsBalance = 3;
-  const pointsToNext = 6;
-  const pointsProgress = (pointsBalance / pointsToNext) * 100;
-
-  // Animated progress bar
-  const [barWidth, setBarWidth] = useState(0);
+  const daytimeSessions = Math.floor(pointsBalance);
+  const eveningSessions = Math.floor(pointsBalance / 1.5);
+  const pointsValue = pointsBalance * 7;
+  const [valueVisible, setValueVisible] = useState(false);
   useEffect(() => {
-    const t = setTimeout(() => setBarWidth(pointsProgress), 400);
+    const t = setTimeout(() => setValueVisible(true), 400);
     return () => clearTimeout(t);
   }, []);
 
@@ -78,8 +119,11 @@ export default function Home() {
             <p style={s.greetingText} className="fade-up">{greeting},</p>
             <h1 style={s.heroName} className="fade-up fade-up-1">John.</h1>
           </div>
-          <div style={s.logoMark} className="fade-up fade-up-1">
-            <span style={s.logoMarkText}>FP</span>
+          <div style={s.logoMark} className="fade-up fade-up-1" onClick={() => navigate('/profile')}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+            </svg>
           </div>
         </div>
         <div style={s.motivationalBanner} className="fade-up fade-up-2">
@@ -111,20 +155,37 @@ export default function Home() {
         {/* ── NEXT SESSION CARD ── */}
         <div className="fade-up fade-up-2">
           <p style={s.sectionLabel}>Next session</p>
-          <div style={s.nextCard} className="card">
-            <div style={s.nextBg} />
-            <div style={s.shimmer} />
-            <div style={s.nextLeft}>
-              <div style={s.nextBadge}>Today · 18:00</div>
-              <h3 style={s.nextPod}>FitnessPod 1</h3>
-              <p style={s.nextTime}>18:00 – 19:00 · 1 hour</p>
+          {hasUpcomingSession ? (
+            <div style={s.nextCard} className="card">
+              <div style={s.nextBg} />
+              <div style={s.shimmer} />
+              <div style={s.nextLeft}>
+                <div style={s.nextBadge}>Today · 18:00</div>
+                <h3 style={s.nextPod}>FitnessPod 1</h3>
+                <p style={s.nextTime}>18:00 – 19:00 · 1 hour</p>
+              </div>
+              <div style={s.nextRight}>
+                <p style={s.codeLabel}>Door code</p>
+                <p style={s.codeNum}>4829</p>
+                <p style={s.codeSub}>Tap to copy</p>
+              </div>
             </div>
-            <div style={s.nextRight}>
-              <p style={s.codeLabel}>Door code</p>
-              <p style={s.codeNum}>4829</p>
-              <p style={s.codeSub}>Tap to copy</p>
+          ) : (
+            <div style={s.emptyCard} className="card">
+              <div style={s.emptyIcon}>🏋️</div>
+              <div style={s.emptyText}>
+                <p style={s.emptyTitle}>No sessions booked</p>
+                <p style={s.emptySub}>Pick a pod and lock in your next session</p>
+              </div>
+              <button
+                className="btn btn--primary btn--sm"
+                style={{ flexShrink: 0 }}
+                onClick={() => navigate('/book')}
+              >
+                Book Now
+              </button>
             </div>
-          </div>
+          )}
         </div>
 
         {/* ── POD POINTS ── */}
@@ -141,31 +202,52 @@ export default function Home() {
                   <span style={s.pointsBalUnit}> pts</span>
                 </p>
                 <p style={s.pointsNextFree}>
-                  <span style={{ color: 'var(--red)' }}>{pointsToNext - pointsBalance} more</span> points until a free session
+                  Worth <span style={{ color: '#f5c842' }}>£{pointsValue}</span> · {daytimeSessions} daytime or {eveningSessions} evening sessions
                 </p>
               </div>
               <AnimatedCoin />
             </div>
 
-            {/* Progress bar */}
+            {/* Value strip */}
             <div style={s.progressWrap}>
-              <div style={s.progressTrack}>
-                <div style={{ ...s.progressFill, width: `${barWidth}%` }} />
-              </div>
-              <div style={s.progressLabels}>
-                <span style={s.progressLabel}>0</span>
-                <span style={{ ...s.progressLabel, color: 'var(--red)', fontWeight: 700 }}>FREE SESSION</span>
-                <span style={s.progressLabel}>{pointsToNext}</span>
+              <div style={{
+                ...s.valueStrip,
+                opacity: valueVisible ? 1 : 0,
+                transform: valueVisible ? 'translateY(0)' : 'translateY(6px)',
+                transition: 'opacity 0.5s ease, transform 0.5s ease',
+              }}>
+                <div style={s.valueItem}>
+                  <span style={s.valueNum}>£{pointsValue}</span>
+                  <span style={s.valueLabel}>credit value</span>
+                </div>
+                <div style={s.valueDivider} />
+                <div style={s.valueItem}>
+                  <span style={s.valueNum}>{daytimeSessions}</span>
+                  <span style={s.valueLabel}>daytime sessions</span>
+                </div>
+                <div style={s.valueDivider} />
+                <div style={s.valueItem}>
+                  <span style={s.valueNum}>{eveningSessions}</span>
+                  <span style={s.valueLabel}>evening sessions</span>
+                </div>
               </div>
             </div>
 
-            <button
-              className="btn btn--primary btn--sm"
-              style={{ margin: '0 16px 16px', alignSelf: 'flex-start' }}
-              onClick={() => navigate('/profile')}
-            >
-              Top up points →
-            </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '0 16px 16px' }}>
+              <button
+                className="btn btn--primary btn--sm"
+                onClick={() => { navigate('/profile'); setTimeout(() => document.getElementById('top-up')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
+              >
+                Top up points →
+              </button>
+              <button
+                className="btn btn--outline btn--sm"
+                style={{ color: '#f5c842', borderColor: 'rgba(245,200,66,0.4)' }}
+                onClick={() => { navigate('/profile'); setTimeout(() => document.getElementById('what-are-pod-points')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
+              >
+                What are Pod Points?
+              </button>
+            </div>
           </div>
         </div>
 
@@ -175,17 +257,41 @@ export default function Home() {
             <p style={s.sectionLabel}>Activity this month</p>
             <span style={s.sectionSub}>{sessionsThisMonth} sessions</span>
           </div>
-          <div style={s.activityGrid}>
-            {activity.map((active, i) => (
-              <div key={i} style={{
-                ...s.activityDot,
-                background: active ? (i === activity.length - 1 ? 'var(--red)' : 'var(--navy-light)') : 'var(--w06)',
-                boxShadow: active ? (i === activity.length - 1 ? '0 0 8px rgba(212,32,40,0.6)' : '0 0 6px rgba(27,58,140,0.5)') : 'none',
-                transform: i === activity.length - 1 ? 'scale(1.2)' : 'scale(1)',
-                animation: `dotPop 0.3s ease both`,
-                animationDelay: `${i * 0.04}s`,
-              }} />
+          {/* Day headers */}
+          <div style={s.calHeaders}>
+            {['M','T','W','T','F','S','S'].map((d, i) => (
+              <div key={i} style={s.calHeader}>{d}</div>
             ))}
+          </div>
+          {/* Calendar grid */}
+          <div style={s.activityGrid}>
+            {/* Offset empty cells */}
+            {Array.from({ length: startOffset }).map((_, i) => (
+              <div key={`offset-${i}`} style={s.calEmpty} />
+            ))}
+            {/* Day cells */}
+            {activity.map((status, i) => {
+              const dayNum = i + 1;
+              const isToday = status === 'today';
+              const isTrained = status === 'trained';
+              const isFuture = status === 'future';
+              return (
+                <div key={dayNum} style={{
+                  ...s.activityDot,
+                  background: isToday ? 'var(--red)' : isTrained ? 'var(--navy-light)' : isFuture ? 'rgba(255,255,255,0.02)' : 'var(--w06)',
+                  boxShadow: isToday ? '0 0 10px rgba(212,32,40,0.6)' : isTrained ? '0 0 6px rgba(27,58,140,0.4)' : 'none',
+                  border: isToday ? '1.5px solid rgba(212,32,40,0.8)' : 'none',
+                  animation: 'dotPop 0.3s ease both',
+                  animationDelay: `${i * 0.02}s`,
+                }}>
+                  <span style={{
+                    fontSize: '0.58rem',
+                    fontWeight: isToday ? 700 : 500,
+                    color: isToday ? 'var(--white)' : isTrained ? 'rgba(255,255,255,0.9)' : isFuture ? 'var(--w20)' : 'var(--w30)',
+                  }}>{dayNum}</span>
+                </div>
+              );
+            })}
           </div>
           <div style={s.activityLegend}>
             <div style={s.legendItem}><div style={{ ...s.legendDot, background: 'var(--navy-light)' }} /><span>Trained</span></div>
@@ -318,8 +424,10 @@ const s = {
   logoMark: {
     width: '44px',
     height: '44px',
-    background: 'linear-gradient(135deg, var(--navy) 50%, var(--red) 50%)',
+    background: 'rgba(255,255,255,0.08)',
+    border: '1px solid rgba(255,255,255,0.12)',
     borderRadius: '12px',
+    cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -477,15 +585,61 @@ const s = {
     marginTop: '3px',
   },
 
+  /* Empty state */
+  emptyCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '14px',
+    padding: '18px',
+  },
+  emptyIcon: {
+    fontSize: '2rem',
+    flexShrink: 0,
+  },
+  emptyText: {
+    flex: 1,
+  },
+  emptyTitle: {
+    fontWeight: 700,
+    fontSize: '0.95rem',
+    color: 'var(--white)',
+    marginBottom: '3px',
+  },
+  emptySub: {
+    fontSize: '0.75rem',
+    color: 'var(--w40)',
+    lineHeight: 1.4,
+  },
+
   /* Activity */
+  calHeaders: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(7, 1fr)',
+    gap: '4px',
+    marginBottom: '4px',
+  },
+  calHeader: {
+    textAlign: 'center',
+    fontSize: '0.6rem',
+    fontWeight: 700,
+    letterSpacing: '0.08em',
+    color: 'var(--w30)',
+    padding: '2px 0',
+  },
+  calEmpty: {
+    aspectRatio: '1',
+  },
   activityGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(10, 1fr)',
-    gap: '6px',
+    gridTemplateColumns: 'repeat(7, 1fr)',
+    gap: '4px',
   },
   activityDot: {
     aspectRatio: '1',
-    borderRadius: '4px',
+    borderRadius: '6px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     transition: 'all 0.3s',
   },
   activityLegend: {
@@ -590,32 +744,42 @@ const s = {
     color: 'var(--w60)',
   },
   progressWrap: {
-    padding: '0 16px 8px',
+    padding: '0 16px 16px',
     position: 'relative',
   },
-  progressTrack: {
-    height: '6px',
-    background: 'var(--w06)',
-    borderRadius: '3px',
-    overflow: 'hidden',
-    marginBottom: '6px',
-  },
-  progressFill: {
-    height: '100%',
-    background: 'linear-gradient(90deg, var(--navy-light), #f5c842)',
-    borderRadius: '3px',
-    transition: 'width 1s ease',
-  },
-  progressLabels: {
+  valueStrip: {
     display: 'flex',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    background: 'rgba(255,255,255,0.04)',
+    borderRadius: '10px',
+    padding: '12px 16px',
+    gap: '0',
   },
-  progressLabel: {
-    fontSize: '0.62rem',
-    color: 'var(--w30)',
+  valueItem: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '2px',
+  },
+  valueNum: {
+    fontFamily: 'var(--font-head)',
+    fontSize: '1.4rem',
+    color: '#f5c842',
+    lineHeight: 1,
+  },
+  valueLabel: {
+    fontSize: '0.6rem',
+    color: 'var(--w40)',
     fontWeight: 600,
     letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+  },
+  valueDivider: {
+    width: '1px',
+    height: '32px',
+    background: 'var(--w06)',
   },
 };
 
