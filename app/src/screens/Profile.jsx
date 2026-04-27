@@ -1,9 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 
-const bundles = [
-  { pts: 4,  bonus: 1, price: 28,  fullPrice: 35,  saving: '£7',  tag: null },
-  { pts: 7,  bonus: 2, price: 49,  fullPrice: 63,  saving: '£14', tag: 'Most Popular' },
-  { pts: 15, bonus: 5, price: 105, fullPrice: 140, saving: '£35', tag: 'Best Value' },
+const upcoming = [
+  { id: 1, pod: 'FitnessPod 1', date: 'Today', time: '18:00 – 19:00', code: '4829', price: '£10' },
+  { id: 2, pod: 'PowerPod',     date: 'Thu 24 Apr', time: '07:00 – 08:00', code: null, price: '£7' },
+];
+
+const past = [
+  { id: 3, pod: 'HIITPod',      date: 'Mon 21 Apr', time: '17:00 – 18:00', price: '£7' },
+  { id: 4, pod: 'FitnessPod 2', date: 'Sat 19 Apr', time: '10:00 – 11:00', price: '£7' },
 ];
 
 export default function Profile() {
@@ -37,75 +41,71 @@ export default function Profile() {
       </div>
 
       <div style={s.body}>
-        {/* Pod Points */}
+
+        {/* Pod Points balance — quick view, taps through to Shop */}
         <div className="fade-up">
           <p style={s.sectionLabel}>Pod Points</p>
-          <div style={s.pointsBalance} className="card">
+          <div style={s.pointsBalance} className="card" onClick={() => navigate('/shop')}>
             <div style={s.pointsBg} />
             <div style={s.pointsLeft}>
               <p style={s.pointsBalLabel}>Current balance</p>
               <p style={s.pointsBalNum}>3 <span style={s.pointsBalUnit}>points</span></p>
               <p style={s.pointsBalSub}>≈ 3 daytime sessions remaining</p>
             </div>
-            <div style={s.pointsIcon}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="10" stroke="var(--red)" strokeWidth="1.5"/>
-                <path d="M12 6v6l4 2" stroke="var(--red)" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', position: 'relative' }}>
+              <span style={s.topUpLink}>Top up →</span>
             </div>
           </div>
+        </div>
 
-          {/* What are Pod Points */}
-          <div id="what-are-pod-points" style={s.explainer} className="card">
-            <p style={s.explainerTitle}>What are Pod Points?</p>
-            <p style={s.explainerBody}>
-              Pod Points are FitnessPod's prepaid credit system. Instead of paying each time you book, you load up points in advance and use them whenever you train.
-            </p>
-            <div style={s.explainerRules}>
-              <div style={s.explainerRule}>
-                <span style={s.explainerIcon}>☀️</span>
-                <span><strong>1 point</strong> = 1 daytime session (before 4:30pm)</span>
-              </div>
-              <div style={s.explainerRule}>
-                <span style={s.explainerIcon}>🌙</span>
-                <span><strong>1.5 points</strong> = 1 evening session (after 4:30pm)</span>
-              </div>
-              <div style={s.explainerRule}>
-                <span style={s.explainerIcon}>♾️</span>
-                <span>Points <strong>never expire</strong> — use them at your own pace</span>
-              </div>
-              <div style={s.explainerRule}>
-                <span style={s.explainerIcon}>🎁</span>
-                <span>Buy in bulk and get <strong>free points</strong> added on top</span>
-              </div>
+        {/* Sessions */}
+        <div className="fade-up fade-up-1">
+          <p style={s.sectionLabel}>Upcoming Sessions</p>
+          {upcoming.length === 0 ? (
+            <div style={s.empty} className="card">
+              <p style={s.emptyText}>No upcoming sessions</p>
+              <button className="btn btn--primary btn--sm" onClick={() => navigate('/book')}>Book Now</button>
             </div>
-            <p style={s.explainerFooter}>
-              The more you buy upfront, the more you save. Simple.
-            </p>
-          </div>
-
-          <p id="top-up" style={{ ...s.sectionLabel, marginTop: '16px' }}>Top up your points</p>
-          <div style={s.bundleList}>
-            {bundles.map(b => (
-              <div key={b.pts} style={s.bundle} className="card">
-                <div style={s.bundleGoldenBg} />
-                {b.tag && <div style={s.bundleTag}>{b.tag}</div>}
-                <div style={s.bundleLeft}>
-                  <div style={s.bundlePtsRow}>
-                    <span style={s.bundlePts}>{b.pts + b.bonus}</span>
-                    <span style={s.bundlePtsUnit}>pts</span>
+          ) : (
+            <div style={s.sessionList}>
+              {upcoming.map(session => (
+                <div key={session.id} style={s.sessionCard} className="card">
+                  <div style={s.sessionLeft}>
+                    <p style={s.sessionPod}>{session.pod}</p>
+                    <p style={s.sessionTime}>{session.date} · {session.time}</p>
+                    {session.code && (
+                      <div style={s.codeRow}>
+                        <span style={s.codeTag}>Door code</span>
+                        <span style={s.codeVal}>{session.code}</span>
+                      </div>
+                    )}
+                    {!session.code && (
+                      <div style={s.pendingRow}>
+                        <div style={s.pendingDot} />
+                        <span style={s.pendingText}>Code pending</span>
+                      </div>
+                    )}
                   </div>
-                  <div style={s.bundleOfferRow}>
-                    <span style={s.bundleOfferBought}>{b.pts} bought</span>
-                    <span style={s.bundleOfferPlus}>+</span>
-                    <span style={s.bundleOfferFree}>{b.bonus} FREE</span>
+                  <div style={s.sessionRight}>
+                    <span style={s.sessionPrice}>{session.price}</span>
+                    <div style={s.upcomingBadge}>Upcoming</div>
                   </div>
-                  <p style={s.bundleSaving}>Save {b.saving}</p>
                 </div>
-                <div style={s.bundleRight}>
-                  <p style={s.bundleFullPrice}>£{b.fullPrice}</p>
-                  <p style={s.bundlePrice}>£{b.price}</p>
-                  <button className="btn btn--primary btn--sm">Buy</button>
+              ))}
+            </div>
+          )}
+
+          <p style={{ ...s.sectionLabel, marginTop: '16px' }}>Past Sessions</p>
+          <div style={s.sessionList}>
+            {past.map(session => (
+              <div key={session.id} style={{ ...s.sessionCard, opacity: 0.65 }} className="card">
+                <div style={s.sessionLeft}>
+                  <p style={s.sessionPod}>{session.pod}</p>
+                  <p style={s.sessionTime}>{session.date} · {session.time}</p>
+                </div>
+                <div style={s.sessionRight}>
+                  <span style={s.sessionPrice}>{session.price}</span>
+                  <div style={s.pastBadge}>Completed</div>
                 </div>
               </div>
             ))}
@@ -323,108 +323,93 @@ const s = {
     borderTop: '1px solid var(--w06)',
     paddingTop: '12px',
   },
-  pointsIcon: {
+  topUpLink: {
+    fontSize: '0.82rem',
+    fontWeight: 700,
+    color: 'var(--red)',
     position: 'relative',
-    opacity: 0.6,
   },
-  bundleList: {
+  sessionList: {
     display: 'flex',
     flexDirection: 'column',
     gap: '8px',
   },
-  bundle: {
+  sessionCard: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
-    padding: '18px 16px',
-    position: 'relative',
-    overflow: 'hidden',
-    border: '1.5px solid var(--red)',
+    padding: '16px',
+    gap: '12px',
   },
-  bundleGoldenBg: {
-    position: 'absolute',
-    inset: 0,
-    background: 'linear-gradient(135deg, rgba(212,160,23,0.12) 0%, rgba(212,160,23,0.04) 50%, rgba(212,32,40,0.06) 100%)',
-    pointerEvents: 'none',
-  },
-  bundleTag: {
-    position: 'absolute',
-    top: '-1px',
-    right: '12px',
-    fontSize: '0.6rem',
+  sessionLeft: { flex: 1 },
+  sessionPod: { fontSize: '0.92rem', fontWeight: 700, marginBottom: '3px' },
+  sessionTime: { fontSize: '0.78rem', color: 'var(--w60)', marginBottom: '8px' },
+  codeRow: { display: 'flex', alignItems: 'center', gap: '8px' },
+  codeTag: {
+    fontSize: '0.62rem',
     fontWeight: 700,
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
-    background: 'var(--red)',
-    color: '#fff',
-    padding: '2px 8px',
-    borderRadius: '0 0 6px 6px',
+    color: 'var(--red)',
+    background: 'rgba(232,24,26,0.1)',
+    padding: '2px 7px',
+    borderRadius: '4px',
   },
-  bundleLeft: { flex: 1, position: 'relative' },
-  bundlePtsRow: {
-    display: 'flex',
-    alignItems: 'baseline',
-    gap: '5px',
-    marginBottom: '6px',
-  },
-  bundlePts: {
+  codeVal: {
     fontFamily: 'var(--font-head)',
-    fontSize: '2.6rem',
-    lineHeight: 1,
-    color: '#f5c842',
-    textShadow: '0 0 20px rgba(245,200,66,0.4)',
+    fontSize: '1.3rem',
+    color: 'var(--white)',
+    letterSpacing: '0.15em',
   },
-  bundlePtsUnit: {
-    fontSize: '1rem',
-    fontFamily: 'var(--font-body)',
-    color: 'rgba(245,200,66,0.7)',
-    fontWeight: 600,
+  pendingRow: { display: 'flex', alignItems: 'center', gap: '6px' },
+  pendingDot: {
+    width: '6px',
+    height: '6px',
+    borderRadius: '50%',
+    background: '#f59e0b',
   },
-  bundleOfferRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '5px',
-    marginBottom: '4px',
-  },
-  bundleOfferBought: {
-    fontSize: '0.78rem',
-    color: 'var(--w60)',
-    fontWeight: 500,
-  },
-  bundleOfferPlus: {
-    fontSize: '0.78rem',
-    color: 'var(--w30)',
-  },
-  bundleOfferFree: {
-    fontSize: '0.78rem',
-    fontWeight: 800,
-    color: '#22c55e',
-    letterSpacing: '0.04em',
-  },
-  bundleSaving: {
-    fontSize: '0.7rem',
-    color: 'rgba(245,200,66,0.6)',
-    fontWeight: 600,
-    letterSpacing: '0.04em',
-  },
-  bundleRight: {
+  pendingText: { fontSize: '0.75rem', color: '#f59e0b', fontWeight: 600 },
+  sessionRight: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
     gap: '8px',
-    position: 'relative',
+    flexShrink: 0,
   },
-  bundleFullPrice: {
-    fontSize: '0.85rem',
-    color: 'var(--w30)',
-    textDecoration: 'line-through',
-    fontWeight: 500,
-  },
-  bundlePrice: {
+  sessionPrice: {
     fontFamily: 'var(--font-head)',
-    fontSize: '1.6rem',
+    fontSize: '1.2rem',
     color: 'var(--white)',
   },
+  upcomingBadge: {
+    fontSize: '0.62rem',
+    fontWeight: 700,
+    letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    color: '#22c55e',
+    background: 'rgba(34,197,94,0.1)',
+    padding: '3px 8px',
+    borderRadius: '4px',
+    border: '1px solid rgba(34,197,94,0.2)',
+  },
+  pastBadge: {
+    fontSize: '0.62rem',
+    fontWeight: 700,
+    letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    color: 'var(--w40)',
+    background: 'var(--w06)',
+    padding: '3px 8px',
+    borderRadius: '4px',
+  },
+  empty: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '12px',
+    padding: '32px',
+  },
+  emptyText: { fontSize: '0.88rem', color: 'var(--w40)' },
   menuList: {},
   menuItem: {
     display: 'flex',

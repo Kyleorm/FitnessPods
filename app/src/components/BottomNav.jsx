@@ -24,10 +24,10 @@ const BookIcon = () => (
   </svg>
 );
 
-const SessionsIcon = () => (
+const ShopIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8"/>
-    <path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="9" cy="9" r="3" stroke="currentColor" strokeWidth="1.8"/>
+    <path d="M9 12v8M9 12H5l-1-7h16l-1 7h-4M9 20h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -42,7 +42,7 @@ const tabs = [
   { to: '/',        icon: HomeIcon,     label: 'Home'     },
   { to: '/pods',    icon: PodsIcon,     label: 'Pods'     },
   { to: '/book',    icon: BookIcon,     label: 'Book',    primary: true },
-  { to: '/sessions',icon: SessionsIcon, label: 'Sessions' },
+  { to: '/shop',    icon: ShopIcon,     label: 'Shop'     },
   { to: '/profile', icon: ProfileIcon,  label: 'Profile'  },
 ];
 
