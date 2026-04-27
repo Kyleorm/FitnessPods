@@ -574,6 +574,271 @@
     }
     .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 44px rgba(232,24,26,0.52); background: #ff1f21; }
     .btn-cta:active { transform: translateY(0); }
+
+    /* ── HERO APP NOTE ── */
+    .hero__app-note {
+      margin-top: 40px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 22px 24px 24px;
+    }
+    .hero__app-note-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #CC1F2D;
+      margin-bottom: 8px;
+    }
+    .hero__app-note-text {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+    .hero__app-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* ── APP STORE BADGES ── */
+    .app-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 9px 16px;
+      color: #fff;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .app-badge:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); }
+    .app-badge svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.8; }
+    .app-badge__store { font-size: 0.55rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); line-height: 1; }
+    .app-badge__name { font-size: 0.78rem; font-weight: 700; line-height: 1.3; }
+    .app-badge--sm { padding: 6px 11px; }
+    .app-badge--sm svg { width: 14px; height: 14px; }
+    .app-badge--sm .app-badge__name { font-size: 0.72rem; }
+    .app-badge--sm .app-badge__store { font-size: 0.5rem; }
+
+    /* ── ME APP REMINDER ── */
+    .me-reminder {
+      display: none;
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px 32px;
+    }
+    .me-reminder.show { display: block; }
+    .me-reminder__inner {
+      background: rgba(204,31,45,0.09);
+      border: 1.5px solid rgba(204,31,45,0.3);
+      border-radius: 14px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .me-reminder__icon { font-size: 1.6rem; flex-shrink: 0; line-height: 1; }
+    .me-reminder__content { flex: 1; min-width: 180px; }
+    .me-reminder__title {
+      font-family: var(--font-head);
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 3px;
+      color: #e8424a;
+    }
+    .me-reminder__text { font-size: 0.82rem; color: rgba(255,255,255,0.6); line-height: 1.5; }
+    .me-reminder__badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    @media (max-width: 720px) { .me-reminder { padding: 0 24px 28px; } }
+
+    /* ── AUTH OVERLAY ── */
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .auth-overlay.show { opacity: 1; pointer-events: all; }
+    .auth-modal {
+      background: #111;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 460px;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    }
+    @media (max-width: 560px) { .auth-modal { padding: 32px 24px; } }
+    .auth-modal__close {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: rgba(255,255,255,0.06);
+      border: none;
+      border-radius: 50%;
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.45);
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    .auth-modal__close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .auth-modal__logo { height: 48px; width: auto; margin-bottom: 18px; }
+    .auth-modal__title {
+      font-family: var(--font-head);
+      font-size: 1.9rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .auth-modal__sub { font-size: 0.83rem; color: rgba(255,255,255,0.42); margin-bottom: 22px; line-height: 1.55; }
+    .auth-tabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 22px;
+    }
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 9px 0;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.42);
+      transition: all 0.2s;
+      border: none;
+      background: none;
+      font-family: var(--font-body);
+    }
+    .auth-tab.active { background: #CC1F2D; color: #fff; }
+    .auth-form { display: none; }
+    .auth-form.show { display: block; }
+    .auth-field { margin-bottom: 15px; }
+    .auth-label {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 7px;
+    }
+    .auth-input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 9px;
+      padding: 12px 14px;
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .auth-input:focus { border-color: #CC1F2D; background: rgba(204,31,45,0.04); }
+    .auth-submit {
+      width: 100%;
+      background: #CC1F2D;
+      color: #fff;
+      font-family: var(--font-head);
+      font-size: 1.15rem;
+      letter-spacing: 0.1em;
+      padding: 15px;
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 6px 24px rgba(204,31,45,0.35);
+    }
+    .auth-submit:hover { background: #e0222f; transform: translateY(-1px); }
+    .auth-submit:active { transform: translateY(0); }
+    .auth-switch {
+      text-align: center;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.35);
+      margin-top: 14px;
+    }
+    .auth-switch button {
+      background: none; border: none; color: var(--gold-light);
+      cursor: pointer; font-size: 0.78rem; font-family: var(--font-body);
+      text-decoration: underline; padding: 0;
+    }
+
+    /* ── SUCCESS OVERLAY ── */
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .success-overlay.show { opacity: 1; pointer-events: all; }
+    .success-modal {
+      background: #111;
+      border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+    }
+    @media (max-width: 560px) { .success-modal { padding: 36px 24px; } }
+    .success-icon { font-size: 3.5rem; margin-bottom: 16px; line-height: 1; }
+    .success-title {
+      font-family: var(--font-head);
+      font-size: 2.4rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+    .success-title .acc { color: #CC1F2D; }
+    .success-text {
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.7;
+      margin-bottom: 28px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .success-badges {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .success-back {
+      display: inline-block;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.3);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .success-back:hover { color: rgba(255,255,255,0.65); }
   </style>
 </head>
 <body>
@@ -591,6 +856,26 @@
       <p class="hero__eyebrow">Pod Points</p>
       <h1 class="hero__title">Load Up.<br><span class="accent">Save More.</span></h1>
       <p class="hero__sub">Buy Pod Points upfront and get more sessions for your money. Use them on any pod, any time. Points never expire.</p>
+      <div class="hero__app-note">
+        <p class="hero__app-note-label">App Required to Redeem</p>
+        <p class="hero__app-note-text">Pod Points are redeemed exclusively in the FitnessPod app. Purchase here and they'll be waiting when you log in.</p>
+        <div class="hero__app-badges">
+          <a href="#" class="app-badge">
+            <svg viewBox="0 0 24 24" fill="#fff"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            <div class="app-badge__text">
+              <div class="app-badge__store">Download on the</div>
+              <div class="app-badge__name">App Store</div>
+            </div>
+          </a>
+          <a href="#" class="app-badge">
+            <svg viewBox="0 0 24 24" fill="#fff"><path d="M3.18 23.76c.3.17.64.22.99.14l13.12-7.49-2.87-2.87-11.24 10.22zm16.44-9.42L16.4 12l3.22-2.34L5.14.42C4.78.23 4.4.2 4.08.38L15.5 12 4.08 23.62c.32.18.7.15 1.06-.04l14.48-9.24zM.14 1.5C.05 1.77 0 2.06 0 2.38v19.24c0 .32.05.61.14.88L12 12 .14 1.5z"/></svg>
+            <div class="app-badge__text">
+              <div class="app-badge__store">Get it on</div>
+              <div class="app-badge__name">Google Play</div>
+            </div>
+          </a>
+        </div>
+      </div>
     </div>
     <img src="Podpoint.png" alt="Pod Point coin" class="hero__coin" />
   </div>
@@ -623,46 +908,73 @@
     <p class="section-label" id="bundles-label">Step 2 — Choose your bundle</p>
     <div class="tiers" id="tiers">
 
-      <div class="tier" data-pay="30" data-value="35" data-bonus="5" data-points="5" onclick="selectTier(this)">
+      <div class="tier" data-pay="28" data-value="35" data-bonus="7" data-points="5" data-free="1" onclick="selectTier(this)">
         <div class="tier__check"></div>
         <img src="Podpoint.png" alt="Pod Point" class="tier__coin" />
         <p class="tier__you-pay">You Pay</p>
-        <p class="tier__price">£30</p>
+        <p class="tier__price">£28</p>
         <div class="tier__divider"></div>
         <p class="tier__receive-label js-receive-label">You Get</p>
         <p class="tier__value">5 <span style="font-size:1.2rem;color:rgba(245,200,66,0.7)">Points</span></p>
         <span class="tier__badge">+1 free point</span>
-        <p class="tier__note">5 daytime sessions<br>or 3 evening sessions</p>
+        <p class="tier__note">6 daytime sessions<br>or 4 evening sessions</p>
       </div>
 
-      <div class="tier selected" data-pay="55" data-value="63" data-bonus="8" data-points="9" onclick="selectTier(this)">
+      <div class="tier selected" data-pay="49" data-value="63" data-bonus="14" data-points="9" data-free="2" onclick="selectTier(this)">
         <div class="tier__check"></div>
         <img src="Podpoint.png" alt="Pod Point" class="tier__coin" />
         <p class="tier__you-pay">You Pay</p>
-        <p class="tier__price">£55</p>
+        <p class="tier__price">£49</p>
         <div class="tier__divider"></div>
         <p class="tier__receive-label js-receive-label">You Get</p>
         <p class="tier__value">9 <span style="font-size:1.2rem;color:rgba(245,200,66,0.7)">Points</span></p>
         <span class="tier__badge">+2 free points</span>
-        <p class="tier__note">9 daytime sessions<br>or 6 evening sessions</p>
+        <p class="tier__note">11 daytime sessions<br>or 7 evening sessions</p>
       </div>
 
-      <div class="tier" data-pay="100" data-value="140" data-bonus="40" data-points="20" onclick="selectTier(this)">
+      <div class="tier" data-pay="105" data-value="140" data-bonus="35" data-points="20" data-free="5" onclick="selectTier(this)">
         <div class="tier__check"></div>
         <img src="Podpoint.png" alt="Pod Point" class="tier__coin" />
         <p class="tier__you-pay">You Pay</p>
-        <p class="tier__price">£100</p>
+        <p class="tier__price">£105</p>
         <div class="tier__divider"></div>
         <p class="tier__receive-label js-receive-label">You Get</p>
         <p class="tier__value">20 <span style="font-size:1.2rem;color:rgba(245,200,66,0.7)">Points</span></p>
         <span class="tier__badge">+5 free points</span>
-        <p class="tier__note">20 daytime sessions<br>or 13 evening sessions</p>
+        <p class="tier__note">25 daytime sessions<br>or 16 evening sessions</p>
       </div>
 
     </div>
   </div>
 
   <div class="wrap" style="padding-bottom:0"><div class="rule"></div></div>
+
+  <!-- ME APP REMINDER (shown in "For Me" mode after bundle selection) -->
+  <div class="me-reminder" id="me-reminder">
+    <div class="me-reminder__inner">
+      <span class="me-reminder__icon">📲</span>
+      <div class="me-reminder__content">
+        <p class="me-reminder__title">You'll Need the FitnessPod App</p>
+        <p class="me-reminder__text">You'll need the FitnessPod app to use your Pod Points. Download it free on iPhone and Android.</p>
+      </div>
+      <div class="me-reminder__badges">
+        <a href="#" class="app-badge app-badge--sm">
+          <svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          <div class="app-badge__text">
+            <div class="app-badge__store">Download on the</div>
+            <div class="app-badge__name">App Store</div>
+          </div>
+        </a>
+        <a href="#" class="app-badge app-badge--sm">
+          <svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M3.18 23.76c.3.17.64.22.99.14l13.12-7.49-2.87-2.87-11.24 10.22zm16.44-9.42L16.4 12l3.22-2.34L5.14.42C4.78.23 4.4.2 4.08.38L15.5 12 4.08 23.62c.32.18.7.15 1.06-.04l14.48-9.24zM.14 1.5C.05 1.77 0 2.06 0 2.38v19.24c0 .32.05.61.14.88L12 12 .14 1.5z"/></svg>
+          <div class="app-badge__text">
+            <div class="app-badge__store">Get it on</div>
+            <div class="app-badge__name">Google Play</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
 
   <!-- STEP 3: GIFT PERSONALISE (only shown in gift mode) -->
   <div id="gift-section">
@@ -733,15 +1045,89 @@
   <div class="cta-bar">
     <div>
       <p class="cta-total-label">Total</p>
-      <p class="cta-total-amount" id="ctaAmount">£50</p>
+      <p class="cta-total-amount" id="ctaAmount">£49</p>
       <p class="cta-total-sub" id="ctaSub">You get 9 points — 2 free</p>
     </div>
-    <a href="#" id="ctaLink" class="btn-cta">Buy Now →</a>
+    <a href="#" id="ctaLink" class="btn-cta" onclick="handleCTAClick(event)">Buy Now →</a>
+  </div>
+
+  <!-- AUTH OVERLAY -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-modal">
+      <button class="auth-modal__close" onclick="closeAuth()">✕</button>
+      <img src="logo.png" alt="FitnessPod" class="auth-modal__logo" />
+      <h2 class="auth-modal__title">Almost There</h2>
+      <p class="auth-modal__sub">Log in or create a free account to complete your purchase. Your Pod Points will be added to your account automatically.</p>
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Log In</button>
+        <button class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">Create Account</button>
+      </div>
+      <!-- Login -->
+      <div class="auth-form show" id="authLoginForm">
+        <div class="auth-field">
+          <label class="auth-label">Email Address</label>
+          <input type="email" class="auth-input" placeholder="your@email.com" />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Password</label>
+          <input type="password" class="auth-input" placeholder="Your password" />
+        </div>
+        <button class="auth-submit" onclick="completeAuth()">Log In &amp; Continue →</button>
+        <p class="auth-switch">Don't have an account? <button onclick="switchAuthTab('signup')">Create one free</button></p>
+      </div>
+      <!-- Sign Up -->
+      <div class="auth-form" id="authSignupForm">
+        <div class="auth-field">
+          <label class="auth-label">Full Name</label>
+          <input type="text" class="auth-input" placeholder="Your full name" />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Email Address</label>
+          <input type="email" class="auth-input" placeholder="your@email.com" />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Phone Number</label>
+          <input type="tel" class="auth-input" placeholder="+44 7700 000000" />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Password</label>
+          <input type="password" class="auth-input" placeholder="Choose a strong password" />
+        </div>
+        <button class="auth-submit" onclick="completeAuth()">Create Account &amp; Continue →</button>
+        <p class="auth-switch">Already have an account? <button onclick="switchAuthTab('login')">Log in</button></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS OVERLAY -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-modal">
+      <div class="success-icon" id="successIcon">✅</div>
+      <h2 class="success-title" id="successTitle">Points <span class="acc">Added!</span></h2>
+      <p class="success-text" id="successText">Your Pod Points have been added to your account. Open the FitnessPod app to start booking your sessions.</p>
+      <div class="success-badges">
+        <a href="#" class="app-badge">
+          <svg viewBox="0 0 24 24" fill="#fff" width="18" height="18"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          <div class="app-badge__text">
+            <div class="app-badge__store">Download on the</div>
+            <div class="app-badge__name">App Store</div>
+          </div>
+        </a>
+        <a href="#" class="app-badge">
+          <svg viewBox="0 0 24 24" fill="#fff" width="18" height="18"><path d="M3.18 23.76c.3.17.64.22.99.14l13.12-7.49-2.87-2.87-11.24 10.22zm16.44-9.42L16.4 12l3.22-2.34L5.14.42C4.78.23 4.4.2 4.08.38L15.5 12 4.08 23.62c.32.18.7.15 1.06-.04l14.48-9.24zM.14 1.5C.05 1.77 0 2.06 0 2.38v19.24c0 .32.05.61.14.88L12 12 .14 1.5z"/></svg>
+          <div class="app-badge__text">
+            <div class="app-badge__store">Get it on</div>
+            <div class="app-badge__name">Google Play</div>
+          </div>
+        </a>
+      </div>
+      <a href="index.html" class="success-back">← Back to FitnessPod</a>
+    </div>
   </div>
 
   <script>
     let mode = 'me';
-    let selected = { pay: 55, value: 63, bonus: 8 };
+    let selected = { pay: 49, value: 63, bonus: 14, points: 9, free: 2 };
 
     function setMode(m) {
       mode = m;
@@ -753,6 +1139,7 @@
       tiers.classList.toggle('tiers--gift', m === 'gift');
 
       document.getElementById('gift-section').classList.toggle('show', m === 'gift');
+      document.getElementById('me-reminder').classList.toggle('show', m === 'me');
 
       document.querySelectorAll('.js-receive-label').forEach(el => {
         el.textContent = m === 'gift' ? 'They Receive' : 'You Get';
@@ -771,7 +1158,8 @@
         pay:    parseInt(el.dataset.pay),
         value:  parseInt(el.dataset.value),
         bonus:  parseInt(el.dataset.bonus),
-        points: parseInt(el.dataset.points)
+        points: parseInt(el.dataset.points),
+        free:   parseInt(el.dataset.free)
       };
       document.getElementById('previewValue').textContent = selected.points + ' Points';
       updateCTA();
@@ -791,11 +1179,11 @@
       document.getElementById('ctaAmount').textContent = '£' + selected.pay;
 
       if (mode === 'me') {
-        document.getElementById('ctaSub').textContent = 'You get ' + selected.points + ' points — ' + (selected.points - Math.round(selected.pay / 7)) + ' free';
+        document.getElementById('ctaSub').textContent = 'You get ' + selected.points + ' points — ' + selected.free + ' free';
         document.getElementById('ctaLink').textContent = 'Buy Now →';
         document.getElementById('ctaLink').href = '#';
       } else {
-        document.getElementById('ctaSub').textContent = 'They get ' + selected.points + ' points — ' + (selected.points - Math.round(selected.pay / 7)) + ' free';
+        document.getElementById('ctaSub').textContent = 'They get ' + selected.points + ' points — ' + selected.free + ' free';
         document.getElementById('ctaLink').textContent = 'Send the Gift →';
         const name   = document.getElementById('recipientName').value.trim() || 'Sarah';
         const sender = document.getElementById('senderName').value.trim()    || 'Mum';
@@ -808,6 +1196,57 @@
     function toggleDate() {
       document.getElementById('dateField').classList.toggle('show', document.getElementById('scheduleToggle').checked);
     }
+
+    /* ── AUTH FLOW ── */
+    function handleCTAClick(e) {
+      e.preventDefault();
+      openAuth();
+    }
+
+    function openAuth() {
+      document.getElementById('authOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAuth() {
+      document.getElementById('authOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    function switchAuthTab(tab) {
+      document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+      document.getElementById('tabSignup').classList.toggle('active', tab === 'signup');
+      document.getElementById('authLoginForm').classList.toggle('show', tab === 'login');
+      document.getElementById('authSignupForm').classList.toggle('show', tab === 'signup');
+    }
+
+    function completeAuth() {
+      closeAuth();
+      showSuccess();
+    }
+
+    /* ── SUCCESS STATE ── */
+    function showSuccess() {
+      const overlay = document.getElementById('successOverlay');
+      if (mode === 'gift') {
+        document.getElementById('successIcon').textContent = '🎁';
+        document.getElementById('successTitle').innerHTML = 'Gift <span class="acc">Sent!</span>';
+        document.getElementById('successText').textContent =
+          'Your gift has been sent. Let them know to download the FitnessPod app for free — their Pod Points will be waiting when they sign up.';
+      } else {
+        document.getElementById('successIcon').textContent = '✅';
+        document.getElementById('successTitle').innerHTML = 'Points <span class="acc">Added!</span>';
+        document.getElementById('successText').textContent =
+          'Your ' + selected.points + ' Pod Points have been added to your account. Open the FitnessPod app to start booking your sessions.';
+      }
+      overlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    /* Close auth overlay when clicking outside modal */
+    document.getElementById('authOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeAuth();
+    });
   </script>
 </body>
 </html>

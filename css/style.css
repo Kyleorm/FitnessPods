@@ -999,6 +999,7 @@ h1, h2, h3, h4 {
   box-shadow: 0 0 48px var(--red-glow), 0 12px 48px rgba(0,0,0,0.5);
   transform: scale(1.04);
   background: linear-gradient(160deg, #18100f 0%, #110c0c 60%, #130f10 100%);
+  overflow: visible;
 }
 .pp-bundle--featured::before {
   background: radial-gradient(circle, rgba(232,24,26,0.1) 0%, transparent 70%);
