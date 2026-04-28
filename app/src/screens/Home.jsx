@@ -236,14 +236,14 @@ export default function Home() {
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '0 16px 16px' }}>
               <button
                 className="btn btn--primary btn--sm"
-                onClick={() => { navigate('/profile'); setTimeout(() => document.getElementById('top-up')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
+                onClick={() => { navigate('/shop'); setTimeout(() => document.getElementById('top-up')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
               >
                 Top up points →
               </button>
               <button
                 className="btn btn--outline btn--sm"
                 style={{ color: '#f5c842', borderColor: 'rgba(245,200,66,0.4)' }}
-                onClick={() => { navigate('/profile'); setTimeout(() => document.getElementById('what-are-pod-points')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
+                onClick={() => { navigate('/shop'); setTimeout(() => document.getElementById('what-are-pod-points')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
               >
                 What are Pod Points?
               </button>

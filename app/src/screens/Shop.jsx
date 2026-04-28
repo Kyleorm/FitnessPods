@@ -57,7 +57,7 @@ export default function Shop() {
         )}
 
         {/* Bundles */}
-        <div className="fade-up fade-up-1">
+        <div id="top-up" className="fade-up fade-up-1">
           <p style={s.sectionLabel}>
             {mode === 'me' ? 'Choose your bundle' : 'Choose a bundle to gift'}
           </p>
@@ -152,7 +152,11 @@ export default function Shop() {
         )}
 
         {/* What are Pod Points */}
-        <div style={s.explainer} className="card fade-up fade-up-2">
+        <div id="what-are-pod-points" style={s.explainer} className="card fade-up fade-up-2">
+          <p style={s.explainerTitle}>What are Pod Points?</p>
+          <p style={s.explainerBody}>
+            Instead of paying each time you book, you buy points upfront in bundles — and use them whenever you want. The more you buy at once, the more you save. Simple as that.
+          </p>
           <p style={s.explainerTitle}>How points work</p>
           <div style={s.explainerRules}>
             <div style={s.explainerRule}>
@@ -168,6 +172,7 @@ export default function Shop() {
               <span>Points <strong>never expire</strong></span>
             </div>
           </div>
+          <p style={s.explainerFooter}>Your points are always there when you are.</p>
         </div>
 
         {/* CTA */}
@@ -451,7 +456,21 @@ const s = {
     fontFamily: 'var(--font-head)',
     fontSize: '1rem',
     letterSpacing: '0.02em',
-    marginBottom: '12px',
+    marginBottom: '8px',
+  },
+  explainerBody: {
+    fontSize: '0.82rem',
+    color: 'var(--w60)',
+    lineHeight: 1.6,
+    marginBottom: '16px',
+  },
+  explainerFooter: {
+    fontSize: '0.8rem',
+    color: '#f5c842',
+    fontWeight: 600,
+    borderTop: '1px solid var(--w06)',
+    paddingTop: '12px',
+    marginTop: '14px',
   },
   explainerRules: {
     display: 'flex',
