@@ -547,6 +547,111 @@
     /* Opacity flash when grid rebuilds on day switch */
     .schedule-wrap.rebuilding { animation: fpFadeIn 0.4s ease both; }
 
+    /* ── AUTH MODAL ── */
+    .auth-modal {
+      position: fixed; inset: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px;
+      animation: fpFadeIn 0.2s ease both;
+    }
+    .auth-modal.hidden { display: none; }
+    .auth-modal__backdrop {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(8px);
+    }
+    .auth-modal__card {
+      position: relative;
+      background: var(--bg-2);
+      border: 1px solid var(--w12);
+      border-radius: var(--r-lg);
+      width: 100%; max-width: 460px;
+      max-height: 90vh; overflow-y: auto;
+      padding: 28px 28px 24px;
+      animation: fpSlideUp 0.3s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .auth-modal__top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .auth-logo-mark {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--navy) 50%, var(--red) 50%);
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .auth-logo-mark span {
+      font-family: var(--font-head); font-size: 1.15rem; color: #fff;
+    }
+    .auth-close {
+      width: 36px; height: 36px;
+      background: var(--bg-3); border: 1px solid var(--w12);
+      border-radius: 8px; color: var(--w60);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem; font-family: var(--font-body);
+      transition: background 0.15s;
+    }
+    .auth-close:hover { background: var(--w06); color: var(--white); }
+    .auth-slot-reminder {
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-radius: var(--r-sm);
+      padding: 10px 14px;
+      font-size: 0.82rem; color: #93c5fd; font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .auth-tabs {
+      display: flex; gap: 4px;
+      background: var(--bg-3); border-radius: var(--r);
+      padding: 4px; margin-bottom: 24px;
+    }
+    .auth-tab {
+      flex: 1; padding: 9px 12px;
+      border-radius: calc(var(--r) - 2px);
+      border: none; background: transparent;
+      font-family: var(--font-body); font-size: 0.88rem; font-weight: 700;
+      color: var(--w40); cursor: pointer; transition: all 0.2s;
+    }
+    .auth-tab.active { background: var(--red); color: var(--white); }
+    .auth-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .auth-field label {
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--w40);
+    }
+    .auth-field input {
+      background: var(--bg-3); border: 1px solid var(--w12);
+      border-radius: var(--r-sm); padding: 13px 14px;
+      font-family: var(--font-body); font-size: 0.9rem;
+      color: var(--white); outline: none; width: 100%;
+      transition: border-color 0.18s; box-sizing: border-box;
+    }
+    .auth-field input:focus { border-color: var(--red); }
+    .auth-error {
+      font-size: 0.82rem; color: var(--red);
+      background: rgba(212,32,40,0.1);
+      border: 1px solid rgba(212,32,40,0.3);
+      border-radius: 8px; padding: 10px 14px;
+      margin-bottom: 12px; line-height: 1.4;
+    }
+    .auth-error.hidden { display: none; }
+    .auth-success {
+      font-size: 0.82rem; color: #22c55e;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 8px; padding: 10px 14px;
+      margin-bottom: 12px; line-height: 1.4;
+    }
+    .auth-success.hidden { display: none; }
+    .auth-divider { height: 1px; background: var(--w06); margin: 16px 0; }
+    .auth-forgot {
+      display: block; margin-top: 12px; text-align: center;
+      font-size: 0.8rem; color: var(--w30);
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font-body); font-weight: 600;
+      text-decoration: underline;
+    }
+    .auth-forgot:hover { color: var(--w60); }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 640px) {
       .stepper .step__label { display: none; }
@@ -597,7 +702,7 @@
       <div class="stepper">
         <div class="step step--active" data-step="1"><div class="step__num">1</div><span class="step__label">Choose Time</span></div>
         <div class="step__connector"></div>
-        <div class="step" data-step="2"><div class="step__num">2</div><span class="step__label">Your Details</span></div>
+        <div class="step" data-step="2"><div class="step__num">2</div><span class="step__label">Account</span></div>
         <div class="step__connector"></div>
         <div class="step" data-step="3"><div class="step__num">3</div><span class="step__label">Payment</span></div>
         <div class="step__connector"></div>
@@ -782,6 +887,78 @@
     </button>
   </div>
 
+  <!-- AUTH MODAL -->
+  <div id="auth-modal" class="auth-modal hidden" role="dialog" aria-modal="true" aria-label="Sign in to FitnessPod">
+    <div class="auth-modal__backdrop"></div>
+    <div class="auth-modal__card">
+
+      <div class="auth-modal__top">
+        <div class="auth-logo-mark"><span>FP</span></div>
+        <button id="auth-close" class="auth-close" aria-label="Close">✕</button>
+      </div>
+
+      <div id="auth-slot-reminder" class="auth-slot-reminder">
+        Slot reserved: <strong id="auth-slot-text">—</strong> — sign in to complete your booking
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login">Log In</button>
+        <button class="auth-tab" id="tab-signup">Create Account</button>
+      </div>
+
+      <!-- ── LOGIN FORM ── -->
+      <div id="auth-login-form">
+        <div class="auth-field">
+          <label>Email Address</label>
+          <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <p id="auth-error" class="auth-error hidden"></p>
+        <button id="auth-login-btn" class="btn btn--primary" style="width:100%;margin-top:4px;">Log In</button>
+        <button id="auth-forgot-btn" class="auth-forgot">Forgot password?</button>
+      </div>
+
+      <!-- ── SIGNUP FORM ── -->
+      <div id="auth-signup-form" style="display:none;">
+        <div class="auth-field">
+          <label>Full Name</label>
+          <input type="text" id="auth-fullname" placeholder="John Smith" autocomplete="name" />
+        </div>
+        <div class="auth-field">
+          <label>Email Address</label>
+          <input type="email" id="auth-signup-email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <div class="auth-field">
+          <label>Phone Number</label>
+          <input type="tel" id="auth-phone" placeholder="+44 7700 000000" autocomplete="tel" />
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" id="auth-signup-password" placeholder="Min. 8 characters" autocomplete="new-password" />
+        </div>
+        <p id="auth-signup-error" class="auth-error hidden"></p>
+        <button id="auth-signup-btn" class="btn btn--primary" style="width:100%;margin-top:4px;">Create Account</button>
+      </div>
+
+      <!-- ── FORGOT PASSWORD FORM ── -->
+      <div id="auth-reset-form" style="display:none;">
+        <div class="auth-field">
+          <label>Email Address</label>
+          <input type="email" id="auth-reset-email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <p id="auth-reset-error" class="auth-error hidden"></p>
+        <p id="auth-reset-success" class="auth-success hidden"></p>
+        <button id="auth-reset-btn" class="btn btn--primary" style="width:100%;margin-top:4px;">Send Reset Link</button>
+        <button id="auth-back-to-login" class="auth-forgot">← Back to Login</button>
+      </div>
+
+    </div>
+  </div>
+
   <script src="js/main.js"></script>
   <script>
   (function () {
@@ -818,7 +995,26 @@
       timeLabel: null, timeRate: null, date: null,
       sessionId: getSessionId(),
       lockExpiresAt: null, lockTimer: null,
+      currentUser: null, currentProfile: null,
     };
+
+    // ── AUTH INIT ────────────────────────────────────────────────
+    (async () => {
+      const { data: { session } } = await db.auth.getSession();
+      if (session?.user) {
+        state.currentUser = session.user;
+        await loadUserProfile(session.user.id);
+      }
+    })();
+
+    db.auth.onAuthStateChange((_event, session) => {
+      state.currentUser = session?.user ?? null;
+    });
+
+    async function loadUserProfile(userId) {
+      const { data } = await db.from('profiles').select('*').eq('id', userId).single();
+      state.currentProfile = data;
+    }
 
     // ── HELPERS ──────────────────────────────────────────────────
     function fmtTime(h, offset) {
@@ -1145,9 +1341,21 @@
     }
 
     // ── WIRE UP BUTTONS ──────────────────────────────────────────
-    document.getElementById('btn-continue').addEventListener('click', () => {
+    document.getElementById('btn-continue').addEventListener('click', async () => {
       if (!state.pod) { showGridError('Please select a time slot before continuing.'); return; }
-      goToStep(2);
+      if (state.currentUser && state.currentProfile) {
+        await prefillAndGoToPayment();
+      } else {
+        // Re-check session in case it changed
+        const { data: { session } } = await db.auth.getSession();
+        if (session?.user) {
+          state.currentUser = session.user;
+          await loadUserProfile(session.user.id);
+          await prefillAndGoToPayment();
+        } else {
+          showAuthModal();
+        }
+      }
     });
     document.getElementById('btn-next-2').addEventListener('click', () => {
       const fn = document.getElementById('first-name').value.trim();
@@ -1180,7 +1388,7 @@
       }, { once: true });
     }
     document.getElementById('btn-back-2').addEventListener('click', () => goToStep(1));
-    document.getElementById('btn-back-3').addEventListener('click', () => goToStep(2));
+    document.getElementById('btn-back-3').addEventListener('click', () => goToStep(1));
 
     document.querySelectorAll('.payment-method').forEach(m => {
       m.addEventListener('click', () => {
@@ -1231,6 +1439,174 @@
       document.getElementById('conf-total').textContent    = getTotal() || '—';
       goToStep(4);
     });
+
+    // ── AUTH MODAL FUNCTIONS ─────────────────────────────────────
+    function showAuthModal() {
+      document.getElementById('auth-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('auth-slot-text').textContent = `${state.pod} — ${state.timeLabel}`;
+      document.getElementById('auth-email').focus();
+    }
+
+    function closeAuthModal() {
+      document.getElementById('auth-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function showAuthError(formId, msg) {
+      const el = document.getElementById(formId);
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+
+    function clearAuthErrors() {
+      document.querySelectorAll('.auth-error, .auth-success').forEach(el => {
+        el.textContent = '';
+        el.classList.add('hidden');
+      });
+    }
+
+    document.getElementById('auth-close').addEventListener('click', closeAuthModal);
+    document.getElementById('auth-modal').addEventListener('click', e => {
+      if (e.target.id === 'auth-modal') closeAuthModal();
+    });
+
+    document.getElementById('tab-login').addEventListener('click', () => {
+      document.getElementById('tab-login').classList.add('active');
+      document.getElementById('tab-signup').classList.remove('active');
+      document.getElementById('auth-login-form').style.display = '';
+      document.getElementById('auth-signup-form').style.display = 'none';
+      document.getElementById('auth-reset-form').style.display = 'none';
+      clearAuthErrors();
+    });
+
+    document.getElementById('tab-signup').addEventListener('click', () => {
+      document.getElementById('tab-signup').classList.add('active');
+      document.getElementById('tab-login').classList.remove('active');
+      document.getElementById('auth-signup-form').style.display = '';
+      document.getElementById('auth-login-form').style.display = 'none';
+      document.getElementById('auth-reset-form').style.display = 'none';
+      clearAuthErrors();
+    });
+
+    document.getElementById('auth-login-btn').addEventListener('click', async () => {
+      clearAuthErrors();
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      if (!email || !password) { showAuthError('auth-error', 'Please enter your email and password.'); return; }
+
+      const btn = document.getElementById('auth-login-btn');
+      btn.textContent = 'Logging in…'; btn.disabled = true;
+
+      const { data, error } = await db.auth.signInWithPassword({ email, password });
+
+      btn.textContent = 'Log In'; btn.disabled = false;
+
+      if (error) { showAuthError('auth-error', 'Incorrect email or password. Please try again.'); return; }
+
+      state.currentUser = data.user;
+      await loadUserProfile(data.user.id);
+      await onAuthSuccess();
+    });
+
+    document.getElementById('auth-signup-btn').addEventListener('click', async () => {
+      clearAuthErrors();
+      const fullName = document.getElementById('auth-fullname').value.trim();
+      const email = document.getElementById('auth-signup-email').value.trim();
+      const phone = document.getElementById('auth-phone').value.trim();
+      const password = document.getElementById('auth-signup-password').value;
+
+      if (!fullName || fullName.split(' ').filter(Boolean).length < 2) {
+        showAuthError('auth-signup-error', 'Please enter your full name (first and last).'); return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showAuthError('auth-signup-error', 'Please enter a valid email address.'); return;
+      }
+      if (!/^[\+\d][\d\s\-\(\)]{6,19}$/.test(phone)) {
+        showAuthError('auth-signup-error', 'Please enter a valid phone number (e.g. +44 7700 000000).'); return;
+      }
+      if (password.length < 8) {
+        showAuthError('auth-signup-error', 'Password must be at least 8 characters.'); return;
+      }
+
+      const btn = document.getElementById('auth-signup-btn');
+      btn.textContent = 'Creating account…'; btn.disabled = true;
+
+      const { data, error } = await db.auth.signUp({ email, password });
+
+      btn.textContent = 'Create Account'; btn.disabled = false;
+
+      if (error) {
+        const msg = (error.message || '').toLowerCase().includes('already')
+          ? 'An account with this email already exists. Please log in instead.'
+          : (error.message || 'Could not create account. Please try again.');
+        showAuthError('auth-signup-error', msg);
+        return;
+      }
+
+      if (data.user) {
+        await db.from('profiles').insert({
+          id: data.user.id,
+          full_name: fullName,
+          phone,
+          signup_source: 'website',
+          pod_points: 0,
+        });
+        state.currentUser = data.user;
+        state.currentProfile = { full_name: fullName, phone, signup_source: 'website', pod_points: 0 };
+      }
+
+      await onAuthSuccess();
+    });
+
+    document.getElementById('auth-forgot-btn').addEventListener('click', () => {
+      document.getElementById('auth-login-form').style.display = 'none';
+      document.getElementById('auth-reset-form').style.display = '';
+      document.getElementById('auth-reset-email').value = document.getElementById('auth-email').value;
+      clearAuthErrors();
+    });
+
+    document.getElementById('auth-back-to-login').addEventListener('click', () => {
+      document.getElementById('auth-reset-form').style.display = 'none';
+      document.getElementById('auth-login-form').style.display = '';
+      clearAuthErrors();
+    });
+
+    document.getElementById('auth-reset-btn').addEventListener('click', async () => {
+      clearAuthErrors();
+      const email = document.getElementById('auth-reset-email').value.trim();
+      if (!email) { showAuthError('auth-reset-error', 'Please enter your email address.'); return; }
+
+      const btn = document.getElementById('auth-reset-btn');
+      btn.textContent = 'Sending…'; btn.disabled = true;
+
+      const { error } = await db.auth.resetPasswordForEmail(email);
+
+      btn.textContent = 'Send Reset Link'; btn.disabled = false;
+
+      if (error) { showAuthError('auth-reset-error', error.message || 'Could not send reset email.'); return; }
+
+      const successEl = document.getElementById('auth-reset-success');
+      successEl.textContent = `Reset link sent to ${email}. Check your inbox.`;
+      successEl.classList.remove('hidden');
+    });
+
+    async function onAuthSuccess() {
+      closeAuthModal();
+      await prefillAndGoToPayment();
+    }
+
+    async function prefillAndGoToPayment() {
+      const profile = state.currentProfile;
+      if (!profile) return;
+      const nameParts = (profile.full_name || '').split(' ');
+      document.getElementById('first-name').value = nameParts[0] || '';
+      document.getElementById('last-name').value = nameParts.slice(1).join(' ') || '';
+      document.getElementById('email').value = state.currentUser?.email || '';
+      document.getElementById('phone').value = profile.phone || '';
+      document.getElementById('people').value = '1';
+      goToStep(3);
+    }
 
     // ── INIT — runs immediately on page load ────────────────────
     const todayISO = new Date().toISOString().split('T')[0];

@@ -1,13 +1,21 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Splash() {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
+  const [waited, setWaited] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => navigate('/home', { replace: true }), 2400);
+    const t = setTimeout(() => setWaited(true), 2400);
     return () => clearTimeout(t);
-  }, [navigate]);
+  }, []);
+
+  useEffect(() => {
+    if (!waited || loading) return;
+    navigate(user ? '/home' : '/welcome', { replace: true });
+  }, [waited, loading, user, navigate]);
 
   return (
     <div style={styles.wrap}>

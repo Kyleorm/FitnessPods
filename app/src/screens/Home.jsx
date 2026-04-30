@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 const pods = [
   { id: 1, name: 'FitnessPod 1', free: true  },
@@ -58,8 +59,10 @@ function CountUp({ target, duration = 1200 }) {
 
 export default function Home() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const firstName = profile?.full_name?.split(' ')[0] || 'there';
   const quotes = [
     "Own the hour.",
     "No crowd. No excuses.",
@@ -95,8 +98,8 @@ export default function Home() {
   const weekOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 1)) / (7 * 24 * 60 * 60 * 1000));
   const motivational = quotes[weekOfYear % quotes.length];
 
-  const hasUpcomingSession = true; // set to false when no bookings exist
-  const pointsBalance = 3;
+  const hasUpcomingSession = false; // will be populated from Supabase bookings in a future update
+  const pointsBalance = profile?.pod_points ?? 0;
   const daytimeSessions = Math.floor(pointsBalance);
   const eveningSessions = Math.floor(pointsBalance / 1.5);
   const pointsValue = pointsBalance * 7;
@@ -117,7 +120,7 @@ export default function Home() {
         <div style={s.heroTop}>
           <div style={s.heroTopLeft}>
             <p style={s.greetingText} className="fade-up">{greeting},</p>
-            <h1 style={s.heroName} className="fade-up fade-up-1">John.</h1>
+            <h1 style={s.heroName} className="fade-up fade-up-1">{firstName}.</h1>
           </div>
           <div style={s.logoMark} className="fade-up fade-up-1" onClick={() => navigate('/profile')}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

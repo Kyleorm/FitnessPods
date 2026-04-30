@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const upcoming = [
   { id: 1, pod: 'FitnessPod 1', date: 'Today', time: '18:00 – 19:00', code: '4829', price: '£10' },
@@ -12,29 +13,47 @@ const past = [
 
 export default function Profile() {
   const navigate = useNavigate();
+  const { user, profile, signOut } = useAuth();
+
+  const fullName = profile?.full_name || 'FitnessPod User';
+  const initials = fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+  const email = user?.email || '';
+  const podPoints = profile?.pod_points ?? 0;
+  const memberSince = profile?.created_at
+    ? new Date(profile.created_at).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
+    : '—';
+
+  async function handleSignOut() {
+    try {
+      await signOut();
+      navigate('/welcome', { replace: true });
+    } catch {
+      // sign out failed silently
+    }
+  }
 
   return (
     <div className="screen">
       <div style={s.header}>
         <div style={s.headerBg} />
         <div style={s.avatar}>
-          <span style={s.avatarText}>JD</span>
+          <span style={s.avatarText}>{initials}</span>
         </div>
-        <h1 style={s.name}>John Doe</h1>
-        <p style={s.email}>john@example.com</p>
+        <h1 style={s.name}>{fullName}</h1>
+        <p style={s.email}>{email}</p>
         <div style={s.statRow}>
           <div style={s.stat}>
-            <span style={s.statNum}>12</span>
+            <span style={s.statNum}>—</span>
             <span style={s.statLabel}>Sessions</span>
           </div>
           <div style={s.statDivider} />
           <div style={s.stat}>
-            <span style={s.statNum}>3</span>
+            <span style={s.statNum}>{podPoints}</span>
             <span style={s.statLabel}>Pod Points</span>
           </div>
           <div style={s.statDivider} />
           <div style={s.stat}>
-            <span style={s.statNum}>Apr '25</span>
+            <span style={s.statNum}>{memberSince}</span>
             <span style={s.statLabel}>Member since</span>
           </div>
         </div>
@@ -49,8 +68,8 @@ export default function Profile() {
             <div style={s.pointsBg} />
             <div style={s.pointsLeft}>
               <p style={s.pointsBalLabel}>Current balance</p>
-              <p style={s.pointsBalNum}>3 <span style={s.pointsBalUnit}>points</span></p>
-              <p style={s.pointsBalSub}>≈ 3 daytime sessions remaining</p>
+              <p style={s.pointsBalNum}>{podPoints} <span style={s.pointsBalUnit}>points</span></p>
+              <p style={s.pointsBalSub}>≈ {podPoints} daytime session{podPoints !== 1 ? 's' : ''} remaining</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', position: 'relative' }}>
               <span style={s.topUpLink}>Top up →</span>
@@ -136,7 +155,7 @@ export default function Profile() {
           </div>
         </div>
 
-        <button className="btn btn--ghost btn--block fade-up fade-up-3" style={{ borderColor: 'rgba(232,24,26,0.3)', color: 'var(--red)' }}>
+        <button className="btn btn--ghost btn--block fade-up fade-up-3" style={{ borderColor: 'rgba(232,24,26,0.3)', color: 'var(--red)' }} onClick={handleSignOut}>
           Sign Out
         </button>
       </div>
