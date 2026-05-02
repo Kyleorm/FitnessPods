@@ -4,12 +4,13 @@
 
 -- 1. Profiles table (linked 1:1 to auth.users)
 CREATE TABLE IF NOT EXISTS profiles (
-  id              UUID        PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  full_name       TEXT        NOT NULL,
-  phone           TEXT,
-  signup_source   TEXT        NOT NULL DEFAULT 'website' CHECK (signup_source IN ('app', 'website')),
-  pod_points      INTEGER     NOT NULL DEFAULT 0,
-  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id                      UUID        PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name               TEXT        NOT NULL,
+  phone                   TEXT,
+  signup_source           TEXT        NOT NULL DEFAULT 'website' CHECK (signup_source IN ('app', 'website')),
+  pod_points              INTEGER     NOT NULL DEFAULT 0,
+  app_free_session_used   BOOLEAN     DEFAULT NULL, -- false = eligible, true = used, null = website signup (not applicable)
+  created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- 2. Row Level Security
@@ -38,7 +39,13 @@ SECURITY DEFINER
 AS $$
 BEGIN
   UPDATE profiles
-  SET pod_points = pod_points - p_amount
+  SET
+    pod_points = pod_points - p_amount,
+    -- Mark free session as used on first deduction for app signups
+    app_free_session_used = CASE
+      WHEN app_free_session_used = false THEN true
+      ELSE app_free_session_used
+    END
   WHERE id = p_user_id AND pod_points >= p_amount;
 
   IF NOT FOUND THEN

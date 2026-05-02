@@ -977,7 +977,7 @@
       { name: 'HIITPod',  offset: 0  },
       { name: 'PowerPod', offset: 30 },
     ];
-    const RATES = { daytime: 7.00, evening: 10.00 };
+    const RATES = { daytime: 7.00, evening: 10.50 };
 
     // ── SESSION ID (identifies this browser tab for slot locking) ─
     function getSessionId() {
@@ -1186,7 +1186,7 @@
         PODS.forEach((pod, pi) => {
           const isBooked = booked.has(`${pi}-${h}`);
           const rate     = getRate(h, pod.offset);
-          const price    = rate === 'daytime' ? '£7' : '£10.00';
+          const price    = rate === 'daytime' ? '£7' : '£10.50';
           const timeStr  = fmtTime(h, pod.offset);
 
           const td = document.createElement('td');

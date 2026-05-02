@@ -314,7 +314,8 @@ h1, h2, h3, h4 {
   flex-direction: column;
   gap: 5px;
   padding: 6px;
-  z-index: 201;
+  position: relative;
+  z-index: 220;
 }
 .nav__toggle span {
   display: block;
@@ -1054,7 +1055,7 @@ h1, h2, h3, h4 {
   font-size: 5rem;
   line-height: 1;
   letter-spacing: 0.02em;
-  color: var(--white);
+  color: #f5c518;
 }
 .pp-bundle__pts span {
   font-size: 2.2rem;
@@ -1067,13 +1068,9 @@ h1, h2, h3, h4 {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--red-dim);
-  border: 1px solid rgba(212,32,40,0.25);
-  border-radius: 100px;
-  padding: 5px 14px;
   font-size: 0.8rem;
-  font-weight: 700;
-  color: #f87171;
+  font-weight: 600;
+  color: var(--w60);
   width: fit-content;
 }
 
@@ -1081,9 +1078,28 @@ h1, h2, h3, h4 {
   font-family: var(--font-head);
   font-size: 3.2rem;
   line-height: 1;
-  color: var(--red);
+  color: var(--white);
   letter-spacing: 0.02em;
   margin: 2px 0 2px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.pp-bundle__was {
+  font-size: 2rem;
+  color: rgba(255,255,255,0.3);
+  text-decoration: line-through;
+  letter-spacing: 0.01em;
+}
+
+.pp-bundle__saving {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #22c55e;
+  margin-bottom: 4px;
+}
+.pp-bundle__saving span {
+  color: #22c55e;
 }
 
 .pp-bundle__note {
@@ -2127,26 +2143,40 @@ h1, h2, h3, h4 {
   /* Nav */
   .nav__toggle { display: flex; }
   .nav__links {
-    display: none;
+    display: flex;
     position: fixed;
-    inset: 0;
-    background: rgba(8,8,8,0.97);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(8, 12, 24, 0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    gap: 36px;
-    z-index: 199;
+    gap: 28px;
+    /* top padding pushes links below the nav bar */
+    padding: 148px 24px 40px;
+    z-index: 210;
+    transform: translateY(-100%);
+    visibility: hidden;
+    transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0s linear 0.38s;
   }
-  .nav__links.open { display: flex; }
-  .nav__links > a:not(.btn) { font-size: 1.5rem; color: var(--white); }
+  .nav__links.open {
+    transform: translateY(0);
+    visibility: visible;
+    transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0s linear 0s;
+  }
+  .nav__links > a:not(.btn) { font-size: 1.3rem; color: var(--white); }
 
-  /* When menu is open, match nav bar background to the overlay so there's no seam */
+  /* When menu is open, remove backdrop-filter from the header — a parent's
+     backdrop-filter creates a containing block that traps fixed children.
+     Match background so the nav bar blends seamlessly into the dropdown. */
   .nav.menu-open {
-    background: rgba(8,8,8,0.97) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
+    background: rgba(8, 12, 24, 0.97) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
     border-bottom-color: transparent !important;
   }
 
