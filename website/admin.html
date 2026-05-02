@@ -852,7 +852,80 @@ body {
 .toast.show { transform: translateY(0); opacity: 1; }
 .toast.success { border-color: rgba(34,197,94,0.4); }
 .toast.error { border-color: rgba(212,32,40,0.4); }
+
+/* ── ANALYTICS PREMIUM SIDEBAR ── */
+.sidebar-section-label--premium {
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #f5c518; padding: 0 8px; margin: 16px 0 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.nav-item--premium {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  border-radius: 8px; cursor: pointer; transition: background 0.15s, color 0.15s;
+  font-size: 0.88rem; font-weight: 500; color: rgba(245,197,24,0.7);
+  border: none; background: none; width: 100%; text-align: left; margin-bottom: 2px;
+}
+.nav-item--premium:hover { background: rgba(245,197,24,0.08); color: #f5c518; }
+.nav-item--premium.active { background: rgba(245,197,24,0.12); color: #f5c518; }
+.nav-item--premium .nav-lock { margin-left: auto; font-size: 0.7rem; opacity: 0.6; }
+
+/* ── ANALYTICS STYLES ── */
+.stats-row-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stats-row-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-card { background: var(--bg2); border: 1px solid var(--w06); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.stat-card.stat-red::before { background: var(--red); }
+.stat-card.stat-green::before { background: var(--green); }
+.stat-card.stat-blue::before { background: var(--blue); }
+.stat-card.stat-amber::before { background: var(--amber); }
+.stat-card.stat-purple::before { background: #a855f7; }
+.stat-eyebrow { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--w40); margin-bottom: 8px; }
+.stat-num { font-family: var(--font-h); font-size: 2.8rem; line-height: 1; margin-bottom: 4px; }
+.stat-sub { font-size: 0.75rem; color: var(--w40); }
+.stat-change { display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; font-weight: 700; margin-top: 6px; }
+.stat-change.up { color: var(--green); }
+.stat-change.down { color: var(--red); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+.mb-24 { margin-bottom: 24px; }
+.chart-wrap { padding: 20px; position: relative; }
+.chart-wrap canvas { max-height: 260px; }
+.chart-wrap-tall canvas { max-height: 400px; }
+.table-wrap { border-radius: 14px; border: 1px solid var(--w06); overflow: hidden; overflow-x: auto; margin-bottom: 24px; }
+.badge { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.badge-green { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+.badge-amber { background: rgba(245,158,11,0.12); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+.badge-red { background: rgba(212,32,40,0.12); color: var(--red); border: 1px solid rgba(212,32,40,0.2); }
+.badge-blue { background: rgba(59,130,246,0.12); color: var(--blue); border: 1px solid rgba(59,130,246,0.2); }
+.badge-purple { background: rgba(168,85,247,0.12); color: #a855f7; border: 1px solid rgba(168,85,247,0.2); }
+.insight-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.insight-card { background: var(--bg3); border: 1px solid var(--w06); border-radius: 12px; padding: 16px; }
+.insight-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--w40); margin-bottom: 6px; }
+.insight-val { font-family: var(--font-h); font-size: 1.6rem; line-height: 1; margin-bottom: 4px; }
+.insight-sub { font-size: 0.72rem; color: var(--w40); }
+.re-engage-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--w03); }
+.re-engage-item:last-child { border-bottom: none; }
+.re-engage-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--navy), var(--navy-l)); display: flex; align-items: center; justify-content: center; font-family: var(--font-h); font-size: 0.8rem; flex-shrink: 0; }
+.re-engage-name { font-size: 0.88rem; font-weight: 600; margin-bottom: 2px; }
+.re-engage-sub { font-size: 0.72rem; color: var(--w40); }
+.re-engage-days { margin-left: auto; font-family: var(--font-h); font-size: 1.2rem; color: var(--amber); }
+.period-btn { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--w10); background: none; color: var(--w60); font-family: var(--font-b); font-size: 0.72rem; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.period-btn:hover { border-color: var(--w20); color: var(--white); }
+.period-btn.active { background: var(--amber); border-color: var(--amber); color: #000; }
+.card-header { padding: 16px 20px 0; }
+.card-title { font-family: var(--font-h); font-size: 1rem; letter-spacing: 0.04em; margin-bottom: 2px; }
+.card-sub { font-size: 0.72rem; color: var(--w40); }
+@media (max-width: 768px) {
+  .stats-row-4 { grid-template-columns: 1fr 1fr; }
+  .stats-row-2 { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .insight-row { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .stats-row-4 { grid-template-columns: 1fr; }
+  .insight-row { grid-template-columns: 1fr; }
+}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -922,6 +995,23 @@ body {
       </button>
       <button class="nav-item" onclick="showSection('codes', this)">
         <span class="nav-icon">🔑</span> Door Codes
+      </button>
+
+      <div class="sidebar-section-label--premium">🔒 Analytics Premium</div>
+      <button class="nav-item--premium" onclick="showSection('rev-analytics', this)">
+        <span class="nav-icon">💰</span> Revenue Analytics <span class="nav-lock">🔒</span>
+      </button>
+      <button class="nav-item--premium" onclick="showSection('booking-analytics', this)">
+        <span class="nav-icon">📈</span> Booking Analytics <span class="nav-lock">🔒</span>
+      </button>
+      <button class="nav-item--premium" onclick="showSection('customer-analytics', this)">
+        <span class="nav-icon">🎯</span> Customer Analytics <span class="nav-lock">🔒</span>
+      </button>
+      <button class="nav-item--premium" onclick="showSection('points-analytics', this)">
+        <span class="nav-icon">🏆</span> Points Analytics <span class="nav-lock">🔒</span>
+      </button>
+      <button class="nav-item--premium" onclick="showSection('app-analytics', this)">
+        <span class="nav-icon">📱</span> App Analytics <span class="nav-lock">🔒</span>
       </button>
     </nav>
 
@@ -1176,6 +1266,244 @@ body {
       </div>
     </div>
 
+    <!-- ══ REVENUE ANALYTICS ══ -->
+    <div class="section" id="section-rev-analytics">
+      <div class="page-header">
+        <h1 class="page-title">Revenue Analytics</h1>
+        <p class="page-sub">Detailed breakdown of all revenue streams — April 2026</p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card stat-green">
+          <div class="stat-eyebrow">Monthly Revenue</div>
+          <div class="stat-num">£7,200</div>
+          <div class="stat-sub">April 2026</div>
+          <div class="stat-change up">▲ +5.9% vs last month</div>
+        </div>
+        <div class="stat-card stat-blue">
+          <div class="stat-eyebrow">Last Month</div>
+          <div class="stat-num">£6,800</div>
+          <div class="stat-sub">March 2026</div>
+        </div>
+        <div class="stat-card stat-amber">
+          <div class="stat-eyebrow">YTD Revenue</div>
+          <div class="stat-num">£52,800</div>
+          <div class="stat-sub">Jan – Apr 2026</div>
+          <div class="stat-change up">▲ +18.4% vs same period last year</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Revenue by Pod</div><div class="card-sub">GymPod 1 leads at £1,840</div></div>
+          <div class="chart-wrap"><canvas id="chart-rev-pod"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Revenue Split</div><div class="card-sub">PAYG vs Pod Points vs Gift Cards</div></div>
+          <div class="chart-wrap"><canvas id="chart-rev-split"></canvas></div>
+        </div>
+      </div>
+      <div class="card mb-24">
+        <div class="card-header"><div class="card-title">Revenue by Time of Day</div><div class="card-sub">Peak window is 5pm–8pm, generating 44% of daily revenue</div></div>
+        <div class="chart-wrap"><canvas id="chart-rev-time"></canvas></div>
+      </div>
+      <div class="card mb-24">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:16px 20px 0;">
+          <div><div class="card-title">Revenue Trend</div><div class="card-sub" id="rev-trend-sub">Showing last 6 months</div></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;" id="rev-period-btns">
+            <button onclick="setRevPeriod('week',this)" class="period-btn">This Week</button>
+            <button onclick="setRevPeriod('1m',this)" class="period-btn">1 Month</button>
+            <button onclick="setRevPeriod('3m',this)" class="period-btn">3 Months</button>
+            <button onclick="setRevPeriod('6m',this)" class="period-btn active">6 Months</button>
+            <button onclick="setRevPeriod('9m',this)" class="period-btn">9 Months</button>
+            <button onclick="setRevPeriod('year',this)" class="period-btn">1 Year</button>
+          </div>
+        </div>
+        <div class="chart-wrap chart-wrap-tall"><canvas id="chart-rev-trend"></canvas></div>
+      </div>
+      <div class="insight-row">
+        <div class="insight-card"><div class="insight-label">Best Performing Pod</div><div class="insight-val" style="color:var(--green)">GymPod 1</div><div class="insight-sub">£1,840 revenue this month</div></div>
+        <div class="insight-card"><div class="insight-label">Peak Revenue Hour</div><div class="insight-val" style="color:var(--amber)">6pm–7pm</div><div class="insight-sub">Avg £188/day in this slot</div></div>
+        <div class="insight-card"><div class="insight-label">Unredeemed Points Value</div><div class="insight-val" style="color:var(--blue)">£1,240</div><div class="insight-sub">Pure deferred revenue / profit</div></div>
+      </div>
+    </div>
+
+    <!-- ══ BOOKING ANALYTICS ══ -->
+    <div class="section" id="section-booking-analytics">
+      <div class="page-header">
+        <h1 class="page-title">Booking Analytics</h1>
+        <p class="page-sub">Patterns, trends, and gaps across all pods — April 2026</p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card stat-green"><div class="stat-eyebrow">Bookings This Month</div><div class="stat-num">280</div><div class="stat-sub">April 2026</div><div class="stat-change up">▲ +16.2% vs last month</div></div>
+        <div class="stat-card stat-blue"><div class="stat-eyebrow">Last Month</div><div class="stat-num">241</div><div class="stat-sub">March 2026</div></div>
+        <div class="stat-card stat-amber"><div class="stat-eyebrow">Cancellation Rate</div><div class="stat-num">4.3%</div><div class="stat-sub">12 cancelled this month</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Busiest Days of the Week</div><div class="card-sub">Tuesday and Thursday are peak days</div></div>
+          <div class="chart-wrap"><canvas id="chart-book-days"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Busiest Time Slots</div><div class="card-sub">Evening 5pm–8pm dominates</div></div>
+          <div class="chart-wrap"><canvas id="chart-book-slots"></canvas></div>
+        </div>
+      </div>
+      <div class="section-label">Quietest Slots — Push Notification Opportunities</div>
+      <div class="card mb-24">
+        <table class="data-table">
+          <thead><tr><th>Time Slot</th><th>Day</th><th>Avg Bookings</th><th>Occupancy</th><th>Opportunity</th></tr></thead>
+          <tbody>
+            <tr><td>9am–10am</td><td>Monday</td><td>1.2</td><td><span class="badge badge-red">18%</span></td><td>🔔 Send morning deal</td></tr>
+            <tr><td>2pm–3pm</td><td>Wednesday</td><td>1.5</td><td><span class="badge badge-red">22%</span></td><td>🔔 Midweek push</td></tr>
+            <tr><td>10am–11am</td><td>Friday</td><td>1.8</td><td><span class="badge badge-amber">27%</span></td><td>🔔 Pre-weekend offer</td></tr>
+            <tr><td>11am–12pm</td><td>Tuesday</td><td>2.1</td><td><span class="badge badge-amber">31%</span></td><td>🔔 Lunch slot deal</td></tr>
+            <tr><td>3pm–4pm</td><td>Sunday</td><td>2.3</td><td><span class="badge badge-amber">34%</span></td><td>🔔 Weekend afternoon</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="insight-row">
+        <div class="insight-card"><div class="insight-label">Busiest Day</div><div class="insight-val" style="color:var(--green)">Tuesday</div><div class="insight-sub">Avg 14.2 bookings per day</div></div>
+        <div class="insight-card"><div class="insight-label">Most Popular Time</div><div class="insight-val" style="color:var(--amber)">6pm–7pm</div><div class="insight-sub">88% occupancy across all pods</div></div>
+        <div class="insight-card"><div class="insight-label">Quietest Slot</div><div class="insight-val" style="color:var(--red)">Mon 9am</div><div class="insight-sub">18% occupancy — push a deal</div></div>
+      </div>
+    </div>
+
+    <!-- ══ CUSTOMER ANALYTICS ══ -->
+    <div class="section" id="section-customer-analytics">
+      <div class="page-header">
+        <h1 class="page-title">Customer Analytics</h1>
+        <p class="page-sub">Retention, loyalty, lifetime value — April 2026</p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card stat-green"><div class="stat-eyebrow">Total Customers</div><div class="stat-num">340</div><div class="stat-sub">Registered accounts</div><div class="stat-change up">▲ +28 this month</div></div>
+        <div class="stat-card stat-blue"><div class="stat-eyebrow">Returning Customer Rate</div><div class="stat-num">68%</div><div class="stat-sub">Booked more than once</div></div>
+        <div class="stat-card stat-amber"><div class="stat-eyebrow">Avg Sessions / Month</div><div class="stat-num">3.2</div><div class="stat-sub">Per active customer</div></div>
+      </div>
+      <div class="stats-row-2">
+        <div class="stat-card stat-purple"><div class="stat-eyebrow">Lifetime Value (LTV)</div><div class="stat-num">£185</div><div class="stat-sub">Average total spend per customer</div></div>
+        <div class="stat-card stat-green"><div class="stat-eyebrow">New Customers This Month</div><div class="stat-num">28</div><div class="stat-sub">vs 22 last month <span style="color:var(--green)">▲ +27%</span></div></div>
+      </div>
+      <div class="section-label">Top 10 Most Loyal Customers</div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Rank</th><th>Customer</th><th>Total Bookings</th><th>Total Spent</th><th>Last Session</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>#1</strong></td><td>Sarah Kinnish</td><td>48</td><td>£892</td><td>Today</td><td><span class="badge badge-green">Active</span></td></tr>
+            <tr><td><strong>#2</strong></td><td>James Corlett</td><td>44</td><td>£814</td><td>Yesterday</td><td><span class="badge badge-green">Active</span></td></tr>
+            <tr><td><strong>#3</strong></td><td>Emma Quayle</td><td>41</td><td>£763</td><td>2 days ago</td><td><span class="badge badge-green">Active</span></td></tr>
+            <tr><td><strong>#4</strong></td><td>Tom Cregeen</td><td>39</td><td>£741</td><td>3 days ago</td><td><span class="badge badge-green">Active</span></td></tr>
+            <tr><td><strong>#5</strong></td><td>Rachel Moore</td><td>36</td><td>£680</td><td>4 days ago</td><td><span class="badge badge-green">Active</span></td></tr>
+            <tr><td><strong>#6</strong></td><td>Daniel Gawne</td><td>33</td><td>£624</td><td>1 week ago</td><td><span class="badge badge-amber">Regular</span></td></tr>
+            <tr><td><strong>#7</strong></td><td>Amy Christian</td><td>31</td><td>£589</td><td>1 week ago</td><td><span class="badge badge-amber">Regular</span></td></tr>
+            <tr><td><strong>#8</strong></td><td>Mark Faragher</td><td>28</td><td>£524</td><td>10 days ago</td><td><span class="badge badge-amber">Regular</span></td></tr>
+            <tr><td><strong>#9</strong></td><td>Lisa Callow</td><td>26</td><td>£487</td><td>12 days ago</td><td><span class="badge badge-amber">Regular</span></td></tr>
+            <tr><td><strong>#10</strong></td><td>Pete Shimmin</td><td>24</td><td>£451</td><td>2 weeks ago</td><td><span class="badge badge-amber">Regular</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="section-label">Re-Engagement List — Customers Inactive 30+ Days</div>
+      <div class="card mb-24">
+        <div class="re-engage-item"><div class="re-engage-avatar">CJ</div><div><div class="re-engage-name">Claire Joughin</div><div class="re-engage-sub">Last booked 52 days ago · 14 sessions · £263 spent</div></div><div class="re-engage-days">52d</div></div>
+        <div class="re-engage-item"><div class="re-engage-avatar">MT</div><div><div class="re-engage-name">Mike Teare</div><div class="re-engage-sub">Last booked 47 days ago · 9 sessions · £168 spent</div></div><div class="re-engage-days">47d</div></div>
+        <div class="re-engage-item"><div class="re-engage-avatar">NS</div><div><div class="re-engage-name">Natalie Skelly</div><div class="re-engage-sub">Last booked 43 days ago · 7 sessions · £131 spent</div></div><div class="re-engage-days">43d</div></div>
+        <div class="re-engage-item"><div class="re-engage-avatar">BO</div><div><div class="re-engage-name">Ben Oates</div><div class="re-engage-sub">Last booked 38 days ago · 6 sessions · £112 spent</div></div><div class="re-engage-days">38d</div></div>
+        <div class="re-engage-item"><div class="re-engage-avatar">HK</div><div><div class="re-engage-name">Hannah Kelly</div><div class="re-engage-sub">Last booked 34 days ago · 11 sessions · £206 spent</div></div><div class="re-engage-days">34d</div></div>
+      </div>
+    </div>
+
+    <!-- ══ POINTS ANALYTICS ══ -->
+    <div class="section" id="section-points-analytics">
+      <div class="page-header">
+        <h1 class="page-title">Points & Gift Card Analytics</h1>
+        <p class="page-sub">Pod Points sold vs redeemed, gift card performance — April 2026</p>
+      </div>
+      <div class="stats-row-4">
+        <div class="stat-card stat-green"><div class="stat-eyebrow">Points Sold</div><div class="stat-num">8,420</div><div class="stat-sub">This month</div><div class="stat-change up">▲ +12% vs last month</div></div>
+        <div class="stat-card stat-blue"><div class="stat-eyebrow">Points Redeemed</div><div class="stat-num">6,180</div><div class="stat-sub">This month</div></div>
+        <div class="stat-card stat-amber"><div class="stat-eyebrow">Unredeemed Points</div><div class="stat-num">2,240</div><div class="stat-sub">≈ £1,240 deferred revenue</div></div>
+        <div class="stat-card stat-red"><div class="stat-eyebrow">Gift Cards Sold</div><div class="stat-num">£680</div><div class="stat-sub">14 cards this month</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Points Sold vs Redeemed</div><div class="card-sub">Unredeemed balance is pure deferred profit</div></div>
+          <div class="chart-wrap"><canvas id="chart-points-bar"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Most Popular Bundle Sizes</div><div class="card-sub">The 20-point bundle is your best seller</div></div>
+          <div class="chart-wrap"><canvas id="chart-bundles"></canvas></div>
+        </div>
+      </div>
+      <div class="card mb-24">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:16px 20px 0;">
+          <div><div class="card-title">Pod Points Revenue</div><div class="card-sub" id="points-trend-sub">Showing last 6 months</div></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;" id="points-period-btns">
+            <button onclick="setPointsPeriod('week',this)" class="period-btn">This Week</button>
+            <button onclick="setPointsPeriod('1m',this)" class="period-btn">1 Month</button>
+            <button onclick="setPointsPeriod('3m',this)" class="period-btn">3 Months</button>
+            <button onclick="setPointsPeriod('6m',this)" class="period-btn active">6 Months</button>
+            <button onclick="setPointsPeriod('9m',this)" class="period-btn">9 Months</button>
+            <button onclick="setPointsPeriod('year',this)" class="period-btn">1 Year</button>
+          </div>
+        </div>
+        <div class="chart-wrap chart-wrap-tall"><canvas id="chart-points-trend"></canvas></div>
+      </div>
+      <div class="section-label">Gift Card Performance</div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Month</th><th>Cards Sold</th><th>Value Sold</th><th>Cards Redeemed</th><th>Unredeemed Value</th></tr></thead>
+          <tbody>
+            <tr><td>April 2026</td><td>14</td><td>£680</td><td>8</td><td>£290</td></tr>
+            <tr><td>March 2026</td><td>11</td><td>£540</td><td>9</td><td>£105</td></tr>
+            <tr><td>February 2026</td><td>18</td><td>£882</td><td>14</td><td>£192</td></tr>
+            <tr><td>January 2026</td><td>22</td><td>£1,080</td><td>19</td><td>£148</td></tr>
+            <tr><td>December 2025</td><td>31</td><td>£1,520</td><td>24</td><td>£344</td></tr>
+            <tr><td>November 2025</td><td>9</td><td>£440</td><td>8</td><td>£48</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ APP ANALYTICS ══ -->
+    <div class="section" id="section-app-analytics">
+      <div class="page-header">
+        <h1 class="page-title">App Analytics</h1>
+        <p class="page-sub">Downloads, engagement, and feature usage — April 2026</p>
+      </div>
+      <div class="stats-row-4">
+        <div class="stat-card stat-green"><div class="stat-eyebrow">Total Downloads</div><div class="stat-num">420</div><div class="stat-sub">All time</div><div class="stat-change up">▲ +38 this month</div></div>
+        <div class="stat-card stat-blue"><div class="stat-eyebrow">Active Users (April)</div><div class="stat-num">284</div><div class="stat-sub">Used app this month</div></div>
+        <div class="stat-card stat-amber"><div class="stat-eyebrow">Push Open Rate</div><div class="stat-num">41%</div><div class="stat-sub">Industry avg is 20%</div></div>
+        <div class="stat-card stat-purple"><div class="stat-eyebrow">Avg Session Length</div><div class="stat-num">2.4m</div><div class="stat-sub">Per app open</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Monthly App Downloads</div><div class="card-sub">Steady growth since launch</div></div>
+          <div class="chart-wrap"><canvas id="chart-app-downloads"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Most Used Features</div><div class="card-sub">Booking is the primary driver</div></div>
+          <div class="chart-wrap"><canvas id="chart-app-features"></canvas></div>
+        </div>
+      </div>
+      <div class="section-label">Push Notification Performance</div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Notification</th><th>Sent To</th><th>Opened</th><th>Open Rate</th><th>Bookings Generated</th><th>Date</th></tr></thead>
+          <tbody>
+            <tr><td>🔥 £5 Monday morning slots — this week only!</td><td>284</td><td>128</td><td><span class="badge badge-green">45%</span></td><td>18</td><td>22 Apr</td></tr>
+            <tr><td>⚡ New HIITPod slots just opened for next week</td><td>284</td><td>114</td><td><span class="badge badge-green">40%</span></td><td>22</td><td>18 Apr</td></tr>
+            <tr><td>🎁 Buy 500 points this week and get 50 free</td><td>284</td><td>98</td><td><span class="badge badge-amber">34%</span></td><td>14</td><td>14 Apr</td></tr>
+            <tr><td>💪 We miss you — come back and get 10% off</td><td>58</td><td>21</td><td><span class="badge badge-amber">36%</span></td><td>6</td><td>10 Apr</td></tr>
+            <tr><td>📅 Book your weekend sessions now before they fill</td><td>284</td><td>102</td><td><span class="badge badge-green">36%</span></td><td>31</td><td>4 Apr</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="insight-row">
+        <div class="insight-card"><div class="insight-label">Best Performing Push</div><div class="insight-val" style="color:var(--green)">45%</div><div class="insight-sub">Monday morning deal — 18 bookings generated</div></div>
+        <div class="insight-card"><div class="insight-label">App Conversion Rate</div><div class="insight-val" style="color:var(--amber)">67.6%</div><div class="insight-sub">284 of 420 downloads are active users</div></div>
+        <div class="insight-card"><div class="insight-label">New Downloads This Month</div><div class="insight-val" style="color:var(--blue)">+38</div><div class="insight-sub">vs 29 last month — ▲ +31%</div></div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -1425,6 +1753,7 @@ function initDashboard() {
   renderGifts();
   renderNotifHistory();
   renderCodes();
+  renderCharts();
 }
 
 // ══ POD STATUS ══
@@ -2025,6 +2354,121 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// ══ ANALYTICS CHARTS ══
+function renderCharts() {
+  if (typeof Chart === 'undefined') return;
+
+  Chart.defaults.color = 'rgba(255,255,255,0.5)';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+  Chart.defaults.font.family = "'Barlow', sans-serif";
+
+  const chartOpts = {
+    responsive: true, maintainAspectRatio: true,
+    plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0d1226', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, padding: 12 } }
+  };
+
+  function mkChart(id, type, labels, datasets, extra = {}) {
+    const ctx = document.getElementById(id);
+    if (!ctx) return null;
+    return new Chart(ctx, { type, data: { labels, datasets }, options: { ...chartOpts, ...extra } });
+  }
+
+  const red = '#d42028', navy = '#1B3A8C', green = '#22c55e', amber = '#f59e0b', blue = '#3b82f6', purple = '#a855f7';
+
+  mkChart('chart-rev-pod', 'bar',
+    ['GymPod 1','HIITPod','GymPod 2','PowerPod','GymPod 3','GymPod 4'],
+    [{ data:[1840,1620,1180,1050,840,670], backgroundColor:[red,navy+'cc',blue+'99',amber+'99',green+'99',purple+'99'], borderRadius:6, borderSkipped:false }],
+    { scales: { x:{ grid:{display:false} }, y:{ beginAtZero:true, ticks:{ callback:v=>'£'+v } } } }
+  );
+
+  mkChart('chart-rev-split', 'doughnut',
+    ['Pay-As-You-Go','Pod Points','Gift Cards'],
+    [{ data:[3960,2628,612], backgroundColor:[red,blue,amber], borderWidth:0, hoverOffset:8 }],
+    { cutout:'65%', plugins: { legend:{ display:true, position:'bottom', labels:{ padding:16, font:{size:12} } }, tooltip:{ callbacks:{ label:ctx=>' £'+ctx.parsed.toLocaleString() } } } }
+  );
+
+  mkChart('chart-rev-time', 'bar',
+    ['6am','7am','8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm','7pm','8pm','9pm'],
+    [{ data:[120,145,132,88,72,64,90,78,68,74,96,210,310,298,220,140], backgroundColor:(ctx) => { const v = ctx.dataset.data[ctx.dataIndex]; return v>=210?red:v>=130?amber:navy+'99'; }, borderRadius:4, borderSkipped:false }],
+    { scales: { x:{ grid:{display:false} }, y:{ beginAtZero:true, ticks:{ callback:v=>'£'+v } } } }
+  );
+
+  const revLabels = ['Apr 25','May 25','Jun 25','Jul 25','Aug 25','Sep 25','Oct 25','Nov 25','Dec 25','Jan 26','Feb 26','Mar 26','Apr 26'];
+  const revData   = [3800,4100,4600,4900,5100,5300,4900,5100,5800,6200,6500,6800,7200];
+  const revWeekL  = ['Mon 28 Apr','Tue 29 Apr','Wed 30 Apr','Thu 1 May','Fri 2 May','Sat 3 May','Sun 4 May'];
+  const revWeekD  = [210,340,290,420,380,510,240];
+  const revPeriods = {
+    week:{ labels:revWeekL, data:revWeekD, sub:'Showing this week (daily)' },
+    '1m':{ labels:revLabels.slice(-1), data:revData.slice(-1), sub:'Showing last 1 month' },
+    '3m':{ labels:revLabels.slice(-3), data:revData.slice(-3), sub:'Showing last 3 months' },
+    '6m':{ labels:revLabels.slice(-6), data:revData.slice(-6), sub:'Showing last 6 months' },
+    '9m':{ labels:revLabels.slice(-9), data:revData.slice(-9), sub:'Showing last 9 months' },
+    year:{ labels:revLabels, data:revData, sub:'Showing last 12 months' },
+  };
+  const revEl = document.getElementById('chart-rev-trend');
+  if (revEl) {
+    const revChart = new Chart(revEl, { type:'line', data:{ labels:revPeriods['6m'].labels, datasets:[{ data:revPeriods['6m'].data, borderColor:green, backgroundColor:'rgba(34,197,94,0.08)', tension:0.4, pointBackgroundColor:green, pointRadius:5, fill:true }] }, options:{ ...chartOpts, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true, ticks:{callback:v=>'£'+v.toLocaleString()}} } } });
+    window.setRevPeriod = (period, btn) => { const p=revPeriods[period]; revChart.data.labels=p.labels; revChart.data.datasets[0].data=p.data; revChart.update(); document.getElementById('rev-trend-sub').textContent=p.sub; document.querySelectorAll('#rev-period-btns .period-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); };
+  }
+
+  mkChart('chart-book-days', 'bar',
+    ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    [{ data:[32,52,41,49,44,38,24], backgroundColor:[navy+'99',red,navy+'99',red+'cc',navy+'99',amber+'99',navy+'66'], borderRadius:6, borderSkipped:false }],
+    { scales: { x:{ grid:{display:false} }, y:{ beginAtZero:true } } }
+  );
+
+  mkChart('chart-book-slots', 'bar',
+    ['6am','7am','8am','9am','10am','12pm','5pm','6pm','7pm','8pm'],
+    [{ data:[18,22,19,12,9,11,38,58,54,34], backgroundColor:(ctx) => { const v=ctx.dataset.data[ctx.dataIndex]; return v>=38?red:v>=18?amber:navy+'99'; }, borderRadius:4, borderSkipped:false }],
+    { scales: { x:{ grid:{display:false} }, y:{ beginAtZero:true } } }
+  );
+
+  mkChart('chart-points-bar', 'bar',
+    ['Nov 25','Dec 25','Jan 26','Feb 26','Mar 26','Apr 26'],
+    [
+      { label:'Sold', data:[5200,6100,6800,7100,7500,8420], backgroundColor:green+'cc', borderRadius:4, borderSkipped:false },
+      { label:'Redeemed', data:[4100,4900,5200,5600,6200,6180], backgroundColor:navy+'cc', borderRadius:4, borderSkipped:false }
+    ],
+    { plugins:{ legend:{ display:true, position:'top', labels:{ padding:16, font:{size:12} } } }, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true} } }
+  );
+
+  mkChart('chart-bundles', 'doughnut',
+    ['20+5 Bundle (£105)','9+2 Bundle (£49)','5+1 Bundle (£28)'],
+    [{ data:[44,34,22], backgroundColor:[red,blue,amber], borderWidth:0, hoverOffset:8 }],
+    { cutout:'60%', plugins:{ legend:{ display:true, position:'bottom', labels:{ padding:14, font:{size:11} } }, tooltip:{ callbacks:{ label:ctx=>' '+ctx.parsed+'% of sales' } } } }
+  );
+
+  const ptLabels = ['Apr 25','May 25','Jun 25','Jul 25','Aug 25','Sep 25','Oct 25','Nov 25','Dec 25','Jan 26','Feb 26','Mar 26','Apr 26'];
+  const ptData   = [980,1120,1310,1450,1580,1690,1740,1820,2140,2380,2590,2820,3100];
+  const ptWeekL  = ['Mon 28 Apr','Tue 29 Apr','Wed 30 Apr','Thu 1 May','Fri 2 May','Sat 3 May','Sun 4 May'];
+  const ptWeekD  = [68,112,94,138,156,210,88];
+  const ptPeriods = {
+    week:{ labels:ptWeekL, data:ptWeekD, sub:'Showing this week (daily)' },
+    '1m':{ labels:ptLabels.slice(-1), data:ptData.slice(-1), sub:'Showing last 1 month' },
+    '3m':{ labels:ptLabels.slice(-3), data:ptData.slice(-3), sub:'Showing last 3 months' },
+    '6m':{ labels:ptLabels.slice(-6), data:ptData.slice(-6), sub:'Showing last 6 months' },
+    '9m':{ labels:ptLabels.slice(-9), data:ptData.slice(-9), sub:'Showing last 9 months' },
+    year:{ labels:ptLabels, data:ptData, sub:'Showing last 12 months' },
+  };
+  const ptEl = document.getElementById('chart-points-trend');
+  if (ptEl) {
+    const ptChart = new Chart(ptEl, { type:'line', data:{ labels:ptPeriods['6m'].labels, datasets:[{ data:ptPeriods['6m'].data, borderColor:amber, backgroundColor:'rgba(245,158,11,0.08)', tension:0.4, pointBackgroundColor:amber, pointRadius:5, fill:true }] }, options:{ ...chartOpts, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true, ticks:{callback:v=>'£'+v}} } } });
+    window.setPointsPeriod = (period, btn) => { const p=ptPeriods[period]; ptChart.data.labels=p.labels; ptChart.data.datasets[0].data=p.data; ptChart.update(); document.getElementById('points-trend-sub').textContent=p.sub; document.querySelectorAll('#points-period-btns .period-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); };
+  }
+
+  mkChart('chart-app-downloads', 'bar',
+    ['Nov 25','Dec 25','Jan 26','Feb 26','Mar 26','Apr 26'],
+    [{ data:[18,24,31,42,35,38], backgroundColor:blue+'cc', borderRadius:6, borderSkipped:false }],
+    { scales: { x:{ grid:{display:false} }, y:{ beginAtZero:true } } }
+  );
+
+  mkChart('chart-app-features', 'bar',
+    ['Book Session','View Schedule','Pod Points','Profile','Notifications','Gift Cards'],
+    [{ data:[88,74,61,44,38,22], backgroundColor:[red,navy+'cc',amber+'cc',blue+'99',green+'99',purple+'99'], borderRadius:6, borderSkipped:false }],
+    { indexAxis:'y', scales: { x:{ grid:{color:'rgba(255,255,255,0.04)'}, ticks:{callback:v=>v+'%'} }, y:{ grid:{display:false} } } }
+  );
+}
 </script>
 </body>
 </html>
