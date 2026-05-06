@@ -52,7 +52,7 @@ function fmtCountdown(secs) {
 export default function Book() {
   const location  = useLocation();
   const navigate  = useNavigate();
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const sessionId = useRef(crypto.randomUUID());
 
   const initPodIndex = location.state?.podIndex ?? 0;
@@ -64,6 +64,8 @@ export default function Book() {
   const [loadingSlots,  setLoadingSlots]  = useState(false);
   const [locking,       setLocking]       = useState(false);
   const [lockError,     setLockError]     = useState('');
+  const [confirming,    setConfirming]    = useState(false);
+  const [confirmError,  setConfirmError]  = useState('');
   const [countdown,     setCountdown]     = useState(LOCK_DURATION_SECS);
   const countdownRef    = useRef(null);
   const tabsRef         = useRef(null);
@@ -151,6 +153,66 @@ export default function Book() {
     clearInterval(countdownRef.current);
     releaseLock();
     setStep(0);
+  }
+
+  async function handlePayWithPoints() {
+    const pointsNeeded = isEvening ? 1.5 : 1;
+    setConfirming(true);
+    setConfirmError('');
+
+    try {
+      const doorCode = String(Math.floor(100000 + Math.random() * 900000));
+
+      const { error: bookingError } = await supabase
+        .from('bookings')
+        .insert({
+          user_id: user.id,
+          pod_index: selectedPod,
+          booking_date: selectedDate,
+          booking_hour: selectedHour,
+          status: 'confirmed',
+          payment_method: 'pod_points',
+          points_used: pointsNeeded,
+          door_code: doorCode,
+        });
+
+      if (bookingError) throw bookingError;
+
+      await supabase.from('slot_locks')
+        .delete()
+        .eq('pod_index', selectedPod)
+        .eq('booking_date', selectedDate)
+        .eq('booking_hour', selectedHour)
+        .eq('session_id', sessionId.current);
+
+      const newBalance = Math.max(0, (profile.pod_points ?? 0) - pointsNeeded);
+      await supabase.from('profiles').update({ pod_points: newBalance }).eq('id', user.id);
+
+      await supabase.from('pod_points_transactions').insert({
+        user_id: user.id,
+        type: 'spend',
+        points: -pointsNeeded,
+        description: `${chosenPod.name} · ${new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} ${chosenSlot?.start}`,
+      });
+
+      clearInterval(countdownRef.current);
+      navigate('/book/confirm', {
+        state: {
+          podName: chosenPod.name,
+          podType: chosenPod.type,
+          date: selectedDate,
+          start: chosenSlot?.start,
+          end: chosenSlot?.end,
+          doorCode,
+          paymentMethod: 'pod_points',
+          pointsUsed: pointsNeeded,
+        }
+      });
+    } catch {
+      setConfirmError('Could not complete booking. Please try again.');
+    } finally {
+      setConfirming(false);
+    }
   }
 
   function scrollTabIntoView(idx) {
@@ -347,6 +409,38 @@ export default function Book() {
             <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
+
+        <div style={s.orDivider}>
+          <div style={s.orLine} />
+          <span style={s.orText}>or</span>
+          <div style={s.orLine} />
+        </div>
+
+        {(() => {
+          const pointsNeeded = isEvening ? 1.5 : 1;
+          const balance = profile?.pod_points ?? 0;
+          const hasPoints = balance >= pointsNeeded;
+          return (
+            <>
+              <button
+                className="btn btn--ghost btn--block"
+                style={{ borderColor: hasPoints ? 'rgba(245,200,66,0.4)' : 'var(--w10)', color: hasPoints ? '#f5c842' : 'var(--w40)', opacity: confirming ? 0.6 : 1 }}
+                disabled={!hasPoints || confirming}
+                onClick={handlePayWithPoints}
+              >
+                {confirming ? 'Confirming…' : `Pay with Pod Points · ${pointsNeeded}pt${pointsNeeded !== 1 ? 's' : ''} (${balance} available)`}
+              </button>
+              {!hasPoints && (
+                <p style={s.notEnoughPts}>
+                  Not enough Pod Points ·{' '}
+                  <button style={s.topUpInline} onClick={() => navigate('/shop')}>Top up →</button>
+                </p>
+              )}
+            </>
+          );
+        })()}
+
+        {confirmError && <p style={s.errorMsg}>{confirmError}</p>}
       </div>
     </div>
   );
@@ -394,4 +488,9 @@ const s = {
   reviewDivider: { height: '1px', background: 'var(--w06)', margin: '0 16px' },
   notice: { display: 'flex', gap: '10px', padding: '12px 14px', background: 'var(--w06)', borderRadius: '10px', marginTop: '4px' },
   noticeText: { fontSize: '0.78rem', color: 'var(--w60)', lineHeight: 1.5 },
+  orDivider: { display: 'flex', alignItems: 'center', gap: '10px', margin: '12px 0' },
+  orLine: { flex: 1, height: '1px', background: 'var(--w10)' },
+  orText: { fontSize: '0.72rem', fontWeight: 600, color: 'var(--w30)', textTransform: 'uppercase', letterSpacing: '0.1em' },
+  notEnoughPts: { fontSize: '0.75rem', color: 'var(--w40)', textAlign: 'center', marginTop: '8px' },
+  topUpInline: { background: 'none', border: 'none', color: 'var(--red)', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem', fontFamily: 'var(--font-body)', padding: 0 },
 };

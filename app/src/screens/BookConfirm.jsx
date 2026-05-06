@@ -1,9 +1,24 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 export default function BookConfirm() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [visible, setVisible] = useState(false);
+
+  const state = location.state ?? {};
+  const podName      = state.podName  ?? 'FitnessPod';
+  const podType      = state.podType  ?? '';
+  const date         = state.date     ?? null;
+  const start        = state.start    ?? '—';
+  const end          = state.end      ?? '—';
+  const doorCode     = state.doorCode ?? null;
+  const paidWithPts  = state.paymentMethod === 'pod_points';
+  const pointsUsed   = state.pointsUsed ?? 0;
+
+  const dateLabel = date
+    ? new Date(date + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })
+    : '—';
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 100);
@@ -26,27 +41,45 @@ export default function BookConfirm() {
 
         <p style={s.eyebrow}>Booking confirmed</p>
         <h1 style={s.title}>You're all<br /><span style={{ color: 'var(--red)' }}>booked in.</span></h1>
-        <p style={s.sub}>Your door code has been sent to your email and phone number. You're good to go.</p>
 
-        <div style={s.codeCard} className="card">
-          <p style={s.codeLabel}>Your door code</p>
-          <p style={s.code}>4829</p>
-          <p style={s.codeSub}>Valid for your session only · Do not share</p>
-        </div>
+        {paidWithPts ? (
+          <p style={s.sub}>{pointsUsed} Pod Point{pointsUsed !== 1 ? 's' : ''} deducted. Your door code is below — valid for your session only.</p>
+        ) : (
+          <p style={s.sub}>Your door code has been sent to your email. You're good to go.</p>
+        )}
+
+        {doorCode ? (
+          <div style={s.codeCard} className="card">
+            <p style={s.codeLabel}>Your door code</p>
+            <p style={s.code}>{doorCode}</p>
+            <p style={s.codeSub}>Valid for your session only · Do not share</p>
+          </div>
+        ) : (
+          <div style={{ ...s.codeCard, ...s.codeCardPending }} className="card">
+            <p style={s.codeLabel}>Door code</p>
+            <p style={s.codePending}>Sending to your email…</p>
+          </div>
+        )}
 
         <div style={s.details}>
           <div style={s.detailRow}>
             <span style={s.detailLabel}>Pod</span>
-            <span style={s.detailValue}>FitnessPod 1</span>
+            <span style={s.detailValue}>{podName}</span>
           </div>
           <div style={s.detailRow}>
             <span style={s.detailLabel}>Date</span>
-            <span style={s.detailValue}>Today</span>
+            <span style={s.detailValue}>{dateLabel}</span>
           </div>
           <div style={s.detailRow}>
             <span style={s.detailLabel}>Time</span>
-            <span style={s.detailValue}>18:00 – 19:00</span>
+            <span style={s.detailValue}>{start} – {end}</span>
           </div>
+          {paidWithPts && (
+            <div style={{ ...s.detailRow, borderBottom: 'none' }}>
+              <span style={s.detailLabel}>Paid with</span>
+              <span style={{ ...s.detailValue, color: '#f5c842' }}>{pointsUsed} Pod Point{pointsUsed !== 1 ? 's' : ''}</span>
+            </div>
+          )}
         </div>
 
         <button className="btn btn--primary btn--block" onClick={() => navigate('/')}>
@@ -56,6 +89,7 @@ export default function BookConfirm() {
           View My Sessions
         </button>
       </div>
+      <style>{`@keyframes ping { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.6); opacity: 0; } }`}</style>
     </div>
   );
 }
@@ -142,6 +176,10 @@ const s = {
     background: 'rgba(232,24,26,0.06)',
     border: '1px solid rgba(232,24,26,0.2)',
   },
+  codeCardPending: {
+    background: 'rgba(245,158,11,0.06)',
+    border: '1px solid rgba(245,158,11,0.2)',
+  },
   codeLabel: {
     fontSize: '0.65rem',
     fontWeight: 700,
@@ -157,6 +195,11 @@ const s = {
     letterSpacing: '0.3em',
     color: 'var(--white)',
     marginBottom: '6px',
+  },
+  codePending: {
+    fontSize: '0.85rem',
+    color: '#f59e0b',
+    fontWeight: 600,
   },
   codeSub: {
     fontSize: '0.7rem',

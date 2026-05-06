@@ -1,27 +1,50 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
-const upcoming = [
-  { id: 1, pod: 'FitnessPod 1', date: 'Today', time: '18:00 – 19:00', code: '4829', price: '£10' },
-  { id: 2, pod: 'PowerPod',     date: 'Thu 24 Apr', time: '07:00 – 08:00', code: null, price: '£7' },
-];
-
-const past = [
-  { id: 3, pod: 'HIITPod',      date: 'Mon 21 Apr', time: '17:00 – 18:00', price: '£7' },
-  { id: 4, pod: 'FitnessPod 2', date: 'Sat 19 Apr', time: '10:00 – 11:00', price: '£7' },
-];
+import { supabase } from '../lib/supabase';
 
 export default function Profile() {
   const navigate = useNavigate();
   const { user, profile, signOut } = useAuth();
 
-  const fullName = profile?.full_name || 'FitnessPod User';
-  const initials = fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-  const email = user?.email || '';
-  const podPoints = profile?.pod_points ?? 0;
+  const [sessionCount, setSessionCount]   = useState(null);
+  const [transactions, setTransactions]   = useState([]);
+  const [txLoading, setTxLoading]         = useState(true);
+
+  const fullName    = profile?.full_name || 'FitnessPod User';
+  const initials    = fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+  const email       = user?.email || '';
+  const podPoints   = profile?.pod_points ?? 0;
   const memberSince = profile?.created_at
     ? new Date(profile.created_at).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
     : '—';
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    async function fetchData() {
+      const [countRes, txRes] = await Promise.all([
+        supabase
+          .from('bookings')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('status', 'confirmed')
+          .is('deleted_at', null),
+        supabase
+          .from('pod_points_transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(20),
+      ]);
+
+      setSessionCount(countRes.count ?? 0);
+      setTransactions(txRes.data ?? []);
+      setTxLoading(false);
+    }
+
+    fetchData();
+  }, [user?.id]);
 
   async function handleSignOut() {
     try {
@@ -43,7 +66,7 @@ export default function Profile() {
         <p style={s.email}>{email}</p>
         <div style={s.statRow}>
           <div style={s.stat}>
-            <span style={s.statNum}>—</span>
+            <span style={s.statNum}>{sessionCount ?? '—'}</span>
             <span style={s.statLabel}>Sessions</span>
           </div>
           <div style={s.statDivider} />
@@ -61,7 +84,7 @@ export default function Profile() {
 
       <div style={s.body}>
 
-        {/* Pod Points balance — quick view, taps through to Shop */}
+        {/* Pod Points balance */}
         <div className="fade-up">
           <p style={s.sectionLabel}>Pod Points</p>
           <div style={s.pointsBalance} className="card" onClick={() => navigate('/shop')}>
@@ -71,64 +94,47 @@ export default function Profile() {
               <p style={s.pointsBalNum}>{podPoints} <span style={s.pointsBalUnit}>points</span></p>
               <p style={s.pointsBalSub}>≈ {podPoints} daytime session{podPoints !== 1 ? 's' : ''} remaining</p>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', position: 'relative' }}>
-              <span style={s.topUpLink}>Top up →</span>
-            </div>
+            <span style={s.topUpLink}>Top up →</span>
           </div>
         </div>
 
-        {/* Sessions */}
+        {/* Points transaction history */}
         <div className="fade-up fade-up-1">
-          <p style={s.sectionLabel}>Upcoming Sessions</p>
-          {upcoming.length === 0 ? (
+          <p style={s.sectionLabel}>Points History</p>
+          {txLoading ? (
+            <div style={s.txLoading} className="card">
+              <div style={s.spinner} />
+            </div>
+          ) : transactions.length === 0 ? (
             <div style={s.empty} className="card">
-              <p style={s.emptyText}>No upcoming sessions</p>
-              <button className="btn btn--primary btn--sm" onClick={() => navigate('/book')}>Book Now</button>
+              <p style={s.emptyText}>No transactions yet</p>
             </div>
           ) : (
-            <div style={s.sessionList}>
-              {upcoming.map(session => (
-                <div key={session.id} style={s.sessionCard} className="card">
-                  <div style={s.sessionLeft}>
-                    <p style={s.sessionPod}>{session.pod}</p>
-                    <p style={s.sessionTime}>{session.date} · {session.time}</p>
-                    {session.code && (
-                      <div style={s.codeRow}>
-                        <span style={s.codeTag}>Door code</span>
-                        <span style={s.codeVal}>{session.code}</span>
+            <div style={s.txList} className="card">
+              {transactions.map((tx, i) => {
+                const isSpend  = tx.points < 0;
+                const pts      = Math.abs(tx.points);
+                const date     = new Date(tx.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                return (
+                  <div key={tx.id}>
+                    <div style={s.txRow}>
+                      <div style={{ ...s.txDot, background: isSpend ? 'rgba(212,32,40,0.15)' : 'rgba(34,197,94,0.15)', border: `1px solid ${isSpend ? 'rgba(212,32,40,0.3)' : 'rgba(34,197,94,0.3)'}` }}>
+                        <span style={{ fontSize: '0.7rem' }}>{isSpend ? '−' : '+'}</span>
                       </div>
-                    )}
-                    {!session.code && (
-                      <div style={s.pendingRow}>
-                        <div style={s.pendingDot} />
-                        <span style={s.pendingText}>Code pending</span>
+                      <div style={s.txInfo}>
+                        <p style={s.txDesc}>{tx.description || (isSpend ? 'Session booked' : 'Points purchased')}</p>
+                        <p style={s.txDate}>{date}</p>
                       </div>
-                    )}
+                      <span style={{ ...s.txPts, color: isSpend ? 'var(--red)' : '#22c55e' }}>
+                        {isSpend ? '−' : '+'}{pts} pt{pts !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+                    {i < transactions.length - 1 && <div style={s.txDivider} />}
                   </div>
-                  <div style={s.sessionRight}>
-                    <span style={s.sessionPrice}>{session.price}</span>
-                    <div style={s.upcomingBadge}>Upcoming</div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
-
-          <p style={{ ...s.sectionLabel, marginTop: '16px' }}>Past Sessions</p>
-          <div style={s.sessionList}>
-            {past.map(session => (
-              <div key={session.id} style={{ ...s.sessionCard, opacity: 0.65 }} className="card">
-                <div style={s.sessionLeft}>
-                  <p style={s.sessionPod}>{session.pod}</p>
-                  <p style={s.sessionTime}>{session.date} · {session.time}</p>
-                </div>
-                <div style={s.sessionRight}>
-                  <span style={s.sessionPrice}>{session.price}</span>
-                  <div style={s.pastBadge}>Completed</div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Account settings */}
@@ -212,7 +218,6 @@ const s = {
   statRow: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0',
     width: '100%',
     background: 'var(--bg2)',
     borderRadius: '12px',
@@ -267,6 +272,7 @@ const s = {
     padding: '18px',
     position: 'relative',
     overflow: 'hidden',
+    cursor: 'pointer',
   },
   pointsBg: {
     position: 'absolute',
@@ -297,138 +303,24 @@ const s = {
     fontSize: '0.75rem',
     color: 'var(--w40)',
   },
-
-  /* Explainer */
-  explainer: {
-    padding: '18px',
-    marginTop: '12px',
-  },
-  explainerTitle: {
-    fontFamily: 'var(--font-head)',
-    fontSize: '1.1rem',
-    color: 'var(--white)',
-    marginBottom: '8px',
-    letterSpacing: '0.02em',
-  },
-  explainerBody: {
-    fontSize: '0.82rem',
-    color: 'var(--w60)',
-    lineHeight: 1.6,
-    marginBottom: '14px',
-  },
-  explainerRules: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px',
-    marginBottom: '14px',
-  },
-  explainerRule: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '10px',
-    fontSize: '0.82rem',
-    color: 'var(--w70)',
-    lineHeight: 1.5,
-  },
-  explainerIcon: {
-    fontSize: '1rem',
-    flexShrink: 0,
-    marginTop: '1px',
-  },
-  explainerFooter: {
-    fontSize: '0.8rem',
-    color: '#f5c842',
-    fontWeight: 600,
-    borderTop: '1px solid var(--w06)',
-    paddingTop: '12px',
-  },
   topUpLink: {
     fontSize: '0.82rem',
     fontWeight: 700,
     color: 'var(--red)',
     position: 'relative',
   },
-  sessionList: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-  },
-  sessionCard: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    padding: '16px',
-    gap: '12px',
-  },
-  sessionLeft: { flex: 1 },
-  sessionPod: { fontSize: '0.92rem', fontWeight: 700, marginBottom: '3px' },
-  sessionTime: { fontSize: '0.78rem', color: 'var(--w60)', marginBottom: '8px' },
-  codeRow: { display: 'flex', alignItems: 'center', gap: '8px' },
-  codeTag: {
-    fontSize: '0.62rem',
-    fontWeight: 700,
-    letterSpacing: '0.08em',
-    textTransform: 'uppercase',
-    color: 'var(--red)',
-    background: 'rgba(232,24,26,0.1)',
-    padding: '2px 7px',
-    borderRadius: '4px',
-  },
-  codeVal: {
-    fontFamily: 'var(--font-head)',
-    fontSize: '1.3rem',
-    color: 'var(--white)',
-    letterSpacing: '0.15em',
-  },
-  pendingRow: { display: 'flex', alignItems: 'center', gap: '6px' },
-  pendingDot: {
-    width: '6px',
-    height: '6px',
-    borderRadius: '50%',
-    background: '#f59e0b',
-  },
-  pendingText: { fontSize: '0.75rem', color: '#f59e0b', fontWeight: 600 },
-  sessionRight: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-    gap: '8px',
-    flexShrink: 0,
-  },
-  sessionPrice: {
-    fontFamily: 'var(--font-head)',
-    fontSize: '1.2rem',
-    color: 'var(--white)',
-  },
-  upcomingBadge: {
-    fontSize: '0.62rem',
-    fontWeight: 700,
-    letterSpacing: '0.06em',
-    textTransform: 'uppercase',
-    color: '#22c55e',
-    background: 'rgba(34,197,94,0.1)',
-    padding: '3px 8px',
-    borderRadius: '4px',
-    border: '1px solid rgba(34,197,94,0.2)',
-  },
-  pastBadge: {
-    fontSize: '0.62rem',
-    fontWeight: 700,
-    letterSpacing: '0.06em',
-    textTransform: 'uppercase',
-    color: 'var(--w40)',
-    background: 'var(--w06)',
-    padding: '3px 8px',
-    borderRadius: '4px',
-  },
-  empty: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '12px',
-    padding: '32px',
-  },
-  emptyText: { fontSize: '0.88rem', color: 'var(--w40)' },
+  txList: { overflow: 'hidden', padding: 0 },
+  txLoading: { display: 'flex', justifyContent: 'center', padding: '24px' },
+  spinner: { width: '24px', height: '24px', borderRadius: '50%', border: '2px solid var(--w10)', borderTopColor: 'var(--red)', animation: 'spin 0.8s linear infinite' },
+  txRow: { display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px' },
+  txDot: { width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontWeight: 700 },
+  txInfo: { flex: 1, minWidth: 0 },
+  txDesc: { fontSize: '0.85rem', fontWeight: 600, color: 'var(--white)', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+  txDate: { fontSize: '0.72rem', color: 'var(--w40)' },
+  txPts: { fontSize: '0.88rem', fontWeight: 700, flexShrink: 0 },
+  txDivider: { height: '1px', background: 'var(--w06)', margin: '0 16px' },
+  empty: { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' },
+  emptyText: { fontSize: '0.85rem', color: 'var(--w40)' },
   menuList: {},
   menuItem: {
     display: 'flex',
