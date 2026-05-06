@@ -2,9 +2,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-const ADMIN_EMAIL = 'admin@fitnesspod.im'
-const ADMIN_PASS = 'FitnessPod2025!'
-
 export default function Login() {
   const navigate = useNavigate()
   const { signIn, resetPassword } = useAuth()
@@ -22,11 +19,7 @@ export default function Login() {
   function handleLogoPress() {
     setLogoPresses(n => {
       const next = n + 1
-      if (next >= 5) {
-        setEmail(ADMIN_EMAIL)
-        setPassword(ADMIN_PASS)
-        return 0
-      }
+      if (next >= 5) return 0
       clearTimeout(logoPressTimer.current)
       logoPressTimer.current = setTimeout(() => setLogoPresses(0), 2000)
       return next
@@ -41,7 +34,7 @@ export default function Login() {
       await signIn({ email: email.trim(), password })
       navigate('/home', { replace: true })
     } catch (err) {
-      setError(err.message || 'Invalid email or password. Please try again.')
+      setError('Invalid email or password. Please try again.')
     } finally {
       setLoading(false)
     }

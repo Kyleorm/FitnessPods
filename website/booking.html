@@ -1586,7 +1586,7 @@
 
       btn.textContent = 'Send Reset Link'; btn.disabled = false;
 
-      if (error) { showAuthError('auth-reset-error', error.message || 'Could not send reset email.'); return; }
+      if (error) { showAuthError('auth-reset-error', 'Could not send reset email. Please check the address and try again.'); return; }
 
       const successEl = document.getElementById('auth-reset-success');
       successEl.textContent = `Reset link sent to ${email}. Check your inbox.`;
