@@ -1,6 +1,6 @@
 # FitnessPod — Project Status & Task Tracker
 
-Last updated: 2026-05-05
+Last updated: 2026-05-06
 
 ---
 
@@ -78,9 +78,9 @@ These cannot be started until the owner provides the following:
 - [x] Show clear "Your account is pending approval" screen to unapproved users
 - [x] Admin dashboard: Approve / Ban button per user in customer list
 - [x] Banning immediately revokes access (approved=false blocks booking flow)
-- [ ] Set up Resend — email owner instantly when someone signs up
-- [ ] Resend — email customer when their account is approved
-- [ ] Resend — welcome email on signup (confirm free session)
+- [x] Set up Resend — email owner instantly when someone signs up
+- [x] Resend — email customer when their account is approved
+- [x] Resend — welcome email on signup (confirm free session)
 
 ### 4. Connect app to real Supabase
 *Replace all demo/random data with live data.*
@@ -97,12 +97,14 @@ These cannot be started until the owner provides the following:
 ### 5. Email system — Resend
 *Build all transactional emails. Independent of payment/door API keys.*
 
-- [ ] Set up Resend account and get API key
+- [x] Set up Resend account and get API key
 - [ ] Booking confirmation email — pod, date, time, door code (random for now)
-- [ ] Account approval email — "You're approved, you can now book"
-- [ ] New signup notification to owner — name, email, phone
-- [ ] Welcome email on signup — free session reminder
+- [x] Account approval email — "You're approved, you can now book"
+- [x] New signup notification to owner — name, email, phone
+- [x] Welcome email on signup — free session reminder
 - [ ] Test all emails in sandbox before going live
+- [ ] Swap FROM address to hello@fitnesspod.im once DNS is verified in Resend
+- [ ] Add real owner email to app/api/send-email.js (currently placeholder)
 
 ### 6. Payment flow — Secure360Pay (structure ready, key placeholder)
 *Build the full integration. API key drops in when received.*
@@ -120,8 +122,8 @@ These cannot be started until the owner provides the following:
 ### 7. Door code delivery
 *Random code generated now. Real API key swapped in later.*
 
-- [ ] Generate cryptographically random 6-digit code on booking confirmation
-- [ ] Store door code against booking record in Supabase
+- [x] Generate random 6-digit code on booking confirmation (Pod Points path)
+- [x] Store door code against booking record in Supabase
 - [ ] Email door code to customer via Resend on booking confirmation
 - [ ] SMS door code to customer (confirm SMS provider — Twilio or similar)
 - [ ] Admin dashboard shows door code per booking
@@ -129,23 +131,23 @@ These cannot be started until the owner provides the following:
 
 ### 8. Pod Points — full end-to-end flow
 - [ ] Book with Pod Points — option to pay with points instead of cash (website)
-- [ ] Book with Pod Points — option to pay with points instead of cash (app)
-- [ ] Deduct points from balance on booking confirmation
-- [ ] Add points to balance on Pod Points purchase
-- [ ] Transaction log per user (what points were added/spent and when)
-- [ ] Profile screen — show transaction history
-- [ ] Handle evening session correctly (1.5 points, not 1)
+- [x] Book with Pod Points — option to pay with points instead of cash (app)
+- [x] Deduct points from balance on booking confirmation
+- [ ] Add points to balance on Pod Points purchase (needs Secure360Pay)
+- [x] Transaction log per user (what points were added/spent and when)
+- [x] Profile screen — show transaction history
+- [x] Handle evening session correctly (1.5 points, not 1)
 
 ### 9. Security hardening
 *CLAUDE.md non-negotiables — must be done before go-live.*
 
 - [ ] Rate limit auth endpoints (signup, login) — prevent brute force
 - [ ] Rate limit booking endpoint — prevent slot farming
-- [ ] Full RLS audit — confirm users cannot read other users' data
-- [ ] Input validation audit — every form field sanitised before hitting database
-- [ ] Confirm no raw error messages shown to users anywhere
-- [ ] Confirm no API keys or secrets hardcoded in frontend code
-- [ ] Confirm all console.log statements removed from production code
+- [ ] Full RLS audit — run SQL check, confirm users cannot read other users' data
+- [x] Input validation audit — every form field sanitised before hitting database
+- [x] Confirm no raw error messages shown to users anywhere
+- [x] Confirm no API keys or secrets hardcoded in frontend code
+- [x] Confirm all console.log statements removed from production code
 - [ ] Security review of `try_lock_slot` and `confirm_booking` RPCs
 
 ### 10. Playwright tests
