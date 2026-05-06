@@ -7,8 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <!-- Supabase loaded only when keys are configured -->
-  <script>window._supabaseReady = false;</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ── TOKENS ── */
 :root {
@@ -1073,18 +1072,18 @@ body {
       <div class="stats-row">
         <div class="stat-card stat-red">
           <div class="stat-eyebrow">Today's Bookings</div>
-          <div class="stat-num">14</div>
+          <div class="stat-num" id="stat-bookings-today">—</div>
           <div class="stat-sub">Across all 6 pods</div>
         </div>
         <div class="stat-card stat-green">
           <div class="stat-eyebrow">Pods In Use Now</div>
-          <div class="stat-num">3</div>
+          <div class="stat-num" id="stat-pods-occupied">—</div>
           <div class="stat-sub">of 6 pods occupied</div>
         </div>
         <div class="stat-card stat-blue">
-          <div class="stat-eyebrow">Revenue Today</div>
-          <div class="stat-num">£98</div>
-          <div class="stat-sub">From sessions booked</div>
+          <div class="stat-eyebrow">Total Customers</div>
+          <div class="stat-num" id="stat-total-customers">—</div>
+          <div class="stat-sub">Registered accounts</div>
         </div>
       </div>
 
@@ -1522,19 +1521,11 @@ body {
 
 <script>
 // ══ SUPABASE CONFIG ══
-// Replace these with your actual Supabase project URL and anon key
-const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL  = 'https://hrehdtpewfdtjfyhkzws.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhyZWhkdHBld2ZkdGpmeWhrendzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Njg0MjIsImV4cCI6MjA5MjU0NDQyMn0.w1Iu0GzCMlaomtjjE7u_0GJOYuFfE_NSVjlSeJV7dg8';
 
-let supabaseClient = null;
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 let currentUser = null;
-
-// Initialise Supabase if configured
-try {
-  if (SUPABASE_URL !== 'YOUR_SUPABASE_URL' && window.supabase) {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-  }
-} catch(e) {}
 
 // ══ AUTH ══
 async function handleLogin() {
@@ -1549,20 +1540,6 @@ async function handleLogin() {
   btn.textContent = 'Signing in…';
   errEl.style.display = 'none';
 
-  // Demo mode — remove this block once Supabase is configured
-  if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
-    if (email === 'admin@fitnesspod.im' && password === 'admin123') {
-      currentUser = { email, initials: 'AD', name: 'Admin' };
-      showDashboard();
-    } else {
-      showError('Invalid email or password.');
-      btn.disabled = false;
-      btn.textContent = 'Sign In';
-    }
-    return;
-  }
-
-  // Real Supabase auth
   const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if (error) {
     showError('Invalid email or password.');
@@ -1633,8 +1610,8 @@ function showSection(id, btn, isMobile = false) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ══ MOCK DATA ══
-const pods = [
+// ══ CONFIG ══
+const PODS = [
   { name: 'GymPod 1',  offset: 0  },
   { name: 'GymPod 2',  offset: 15 },
   { name: 'GymPod 3',  offset: 30 },
@@ -1642,151 +1619,102 @@ const pods = [
   { name: 'HIITPod',   offset: 0  },
   { name: 'PowerPod',  offset: 30 },
 ];
+const pods = PODS;
 const hours = [6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+const times = hours.map(h => h < 12 ? `${h}:00 AM` : h === 12 ? '12:00 PM' : `${h-12}:00 PM`);
+
+function getToday() { return new Date().toISOString().split('T')[0]; }
 
 function fmtSlot(h, offset) {
-  const startH = h, startM = offset;
   const endTotalM = h * 60 + offset + 60;
   const endH = Math.floor(endTotalM / 60), endM = endTotalM % 60;
   const pad = n => n.toString().padStart(2,'0');
-  return `${pad(startH)}:${pad(startM)}–${pad(endH)}:${pad(endM)}`;
+  return `${pad(h)}:${pad(offset)}–${pad(endH)}:${pad(endM)}`;
 }
 
-// pod = pod index (0-5), hour = base hour (6-21)
-const mockBookings = [
-  { pod:0, hour:7,  customer:'Sarah Mitchell', type:'customer', code:'7421' },
-  { pod:0, hour:9,  customer:'James O\'Brien', type:'customer', code:'3847' },
-  { pod:1, hour:8,  customer:'Emma Quayle',    type:'customer', code:'9123' },
-  { pod:1, hour:18, customer:'Tom Corlett',    type:'customer', code:'5530' },
-  { pod:2, hour:10, customer:'',               type:'blocked',  code:null   },
-  { pod:2, hour:11, customer:'',               type:'blocked',  code:null   },
-  { pod:3, hour:12, customer:'Kat Kermode',    type:'customer', code:'2281' },
-  { pod:3, hour:19, customer:'Dan Caine',      type:'admin',    code:'6642' },
-  { pod:4, hour:7,  customer:'Liz Gawne',      type:'customer', code:'8891' },
-  { pod:5, hour:17, customer:'Mike Fargher',   type:'customer', code:'4473' },
-  { pod:5, hour:20, customer:'Rachel Clucas',  type:'customer', code:'1195' },
-];
-
-const podStatus = [
-  { name:'GymPod 1',  occupied:false },
-  { name:'GymPod 2',  occupied:true,  customer:'Tom Corlett',  until:'19:15' },
-  { name:'GymPod 3',  occupied:false },
-  { name:'GymPod 4',  occupied:true,  customer:'Kat Kermode',  until:'13:45' },
-  { name:'HIITPod',   occupied:true,  customer:'Liz Gawne',    until:'08:00' },
-  { name:'PowerPod',  occupied:false },
-];
-
-const mockCustomers = [
-  { name:'Sarah Mitchell', email:'sarah@example.com', phone:'07624 123456', points:5, sessions:34, status:'active' },
-  { name:'James O\'Brien', email:'james@example.com', phone:'07624 234567', points:2, sessions:18, status:'active' },
-  { name:'Emma Quayle',   email:'emma@example.com',  phone:'07624 345678', points:9, sessions:52, status:'active' },
-  { name:'Tom Corlett',   email:'tom@example.com',   phone:'07624 456789', points:0, sessions:7,  status:'active' },
-  { name:'Kat Kermode',   email:'kat@example.com',   phone:'07624 567890', points:3, sessions:21, status:'active' },
-  { name:'Dan Caine',     email:'dan@example.com',   phone:'07624 678901', points:11, sessions:67, status:'active' },
-  { name:'Liz Gawne',     email:'liz@example.com',   phone:'07624 789012', points:1, sessions:9,  status:'active' },
-  { name:'Mike Fargher',  email:'mike@example.com',  phone:'07624 890123', points:0, sessions:3,  status:'inactive' },
-  { name:'Rachel Clucas', email:'rachel@example.com',phone:'07624 901234', points:7, sessions:29, status:'active' },
-  { name:'Ben Corkish',   email:'ben@example.com',   phone:'07624 012345', points:4, sessions:14, status:'active' },
-];
-
-const mockBundles = [
-  { customer:'Dan Caine',     bundle:'Best Value (20+5)', points:25, amount:'£105', date:'28 Apr' },
-  { customer:'Emma Quayle',   bundle:'Most Popular (9+2)', points:11, amount:'£49', date:'27 Apr' },
-  { customer:'Rachel Clucas', bundle:'Most Popular (9+2)', points:11, amount:'£49', date:'26 Apr' },
-  { customer:'Sarah Mitchell',bundle:'Starter (3)',         points:3,  amount:'£21', date:'25 Apr' },
-  { customer:'Ben Corkish',   bundle:'5+1 Bundle',          points:6,  amount:'£28', date:'24 Apr' },
-];
-
-const mockGifts = [
-  { code:'FPGIFT-A7K2', recipient:'Claire Moore', value:'£21', status:'redeemed', issued:'20 Apr' },
-  { code:'FPGIFT-B3X9', recipient:'David Kermeen', value:'£49', status:'unredeemed', issued:'25 Apr' },
-  { code:'FPGIFT-C5L1', recipient:'Amy Teare', value:'£21', status:'unredeemed', issued:'27 Apr' },
-  { code:'FPGIFT-D8N4', recipient:'Paul Radcliffe', value:'£105', status:'redeemed', issued:'15 Apr' },
-  { code:'FPGIFT-E2M7', recipient:'Jess Cowley', value:'£21', status:'unredeemed', issued:'28 Apr' },
-];
-
-const mockCodes = [
-  { code:'7421', customer:'Sarah Mitchell', pod:'GymPod 1', slot:'07:00–08:00', expires:'Today 08:00', active:true },
-  { code:'3847', customer:'James O\'Brien', pod:'GymPod 1', slot:'09:00–10:00', expires:'Today 10:00', active:true },
-  { code:'9123', customer:'Emma Quayle',   pod:'GymPod 2', slot:'08:15–09:15', expires:'Today 09:15', active:true },
-  { code:'5530', customer:'Tom Corlett',   pod:'GymPod 2', slot:'18:15–19:15', expires:'Today 19:15', active:true },
-  { code:'2281', customer:'Kat Kermode',   pod:'GymPod 4', slot:'12:45–13:45', expires:'Today 13:45', active:false },
-  { code:'8891', customer:'Liz Gawne',     pod:'HIITPod',  slot:'07:00–08:00', expires:'Today 08:00', active:false },
-];
-
-const mockNotifHistory = [
-  { msg:'🔥 Last-minute slots available this evening — book now and save!', sent:'28 Apr, 14:22', recipients:89 },
-  { msg:'🏋️ New evening slots now available every Thursday. Book in the app!', sent:'25 Apr, 10:05', recipients:89 },
-  { msg:'🎉 Weekend special — daytime sessions just £5 Saturday & Sunday!', sent:'19 Apr, 09:00', recipients:82 },
-  { msg:'📱 App update available — new look and faster booking. Update now!', sent:'12 Apr, 11:30', recipients:76 },
-];
-
-const todaysBookings = [
-  { time:'07:00–08:00', pod:'GymPod 1',  customer:'Sarah Mitchell',  type:'customer', status:'completed' },
-  { time:'07:00–08:00', pod:'HIITPod',   customer:'Liz Gawne',       type:'customer', status:'completed' },
-  { time:'08:15–09:15', pod:'GymPod 2',  customer:'Emma Quayle',     type:'customer', status:'completed' },
-  { time:'09:00–10:00', pod:'GymPod 1',  customer:'James O\'Brien',  type:'customer', status:'upcoming' },
-  { time:'10:30–11:30', pod:'GymPod 3',  customer:'—',               type:'blocked',  status:'blocked'   },
-  { time:'12:45–13:45', pod:'GymPod 4',  customer:'Kat Kermode',     type:'customer', status:'upcoming' },
-  { time:'17:30–18:30', pod:'PowerPod',  customer:'Mike Fargher',    type:'customer', status:'upcoming' },
-  { time:'18:15–19:15', pod:'GymPod 2',  customer:'Tom Corlett',     type:'customer', status:'upcoming' },
-  { time:'19:45–20:45', pod:'GymPod 4',  customer:'Dan Caine',       type:'admin',    status:'upcoming' },
-  { time:'20:30–21:30', pod:'PowerPod',  customer:'Rachel Clucas',   type:'customer', status:'upcoming' },
-];
+let _gridBookings = [];
+let _customers = [];
 
 // ══ INIT ══
-function initDashboard() {
-  // Date
+async function initDashboard() {
   const now = new Date();
   document.getElementById('today-date').textContent =
     now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  document.getElementById('booking-date').value = getToday();
 
-  // Booking date default = today
-  const dateInput = document.getElementById('booking-date');
-  dateInput.value = now.toISOString().split('T')[0];
-
-  renderPodStatus();
-  renderTodaysBookings();
+  await Promise.all([renderPodStatus(), renderTodaysBookings(), renderCustomers(), renderCodes(), loadOverviewStats()]);
   renderBookingGrid();
-  renderCustomers();
   renderBundles();
   renderGifts();
   renderNotifHistory();
-  renderCodes();
   renderCharts();
 }
 
+async function loadOverviewStats() {
+  const currentHour = new Date().getHours();
+  const [todayRes, occupiedRes, customersRes] = await Promise.all([
+    supabaseClient.from('bookings').select('id', { count: 'exact', head: true }).eq('booking_date', getToday()).eq('status', 'confirmed').is('deleted_at', null),
+    supabaseClient.from('bookings').select('id', { count: 'exact', head: true }).eq('booking_date', getToday()).eq('booking_hour', currentHour).eq('status', 'confirmed').is('deleted_at', null),
+    supabaseClient.from('profiles').select('id', { count: 'exact', head: true }),
+  ]);
+  const el = id => document.getElementById(id);
+  if (el('stat-bookings-today')) el('stat-bookings-today').textContent = todayRes.count ?? '—';
+  if (el('stat-pods-occupied'))  el('stat-pods-occupied').textContent  = occupiedRes.count ?? '—';
+  if (el('stat-total-customers')) el('stat-total-customers').textContent = customersRes.count ?? '—';
+}
+
 // ══ POD STATUS ══
-function renderPodStatus() {
+async function renderPodStatus() {
   const el = document.getElementById('pod-status-list');
-  el.innerHTML = podStatus.map(p => `
+  el.innerHTML = '<div style="padding:20px;color:var(--w40);font-size:0.85rem;">Loading…</div>';
+  const currentHour = new Date().getHours();
+  const { data } = await supabaseClient
+    .from('bookings')
+    .select('pod_index, first_name, last_name')
+    .eq('booking_date', getToday())
+    .eq('booking_hour', currentHour)
+    .eq('status', 'confirmed')
+    .is('deleted_at', null);
+  const occupied = {};
+  (data || []).forEach(b => { occupied[b.pod_index] = `${b.first_name} ${b.last_name}`; });
+  el.innerHTML = PODS.map((p, i) => `
     <div class="detail-row" style="padding:14px 20px;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <div style="width:10px;height:10px;border-radius:50%;background:${p.occupied ? 'var(--red)' : 'var(--green)'};
-          box-shadow:0 0 8px ${p.occupied ? 'var(--red)' : 'var(--green)'};flex-shrink:0;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:${occupied[i] ? 'var(--red)' : 'var(--green)'};
+          box-shadow:0 0 8px ${occupied[i] ? 'var(--red)' : 'var(--green)'};flex-shrink:0;"></div>
         <span style="font-weight:600;font-size:0.9rem;">${p.name}</span>
       </div>
       <div style="text-align:right;">
-        ${p.occupied
-          ? `<span style="color:var(--w60);font-size:0.82rem;">${p.customer} · until ${p.until}</span>`
+        ${occupied[i]
+          ? `<span style="color:var(--w60);font-size:0.82rem;">${occupied[i]}</span>`
           : `<span class="badge badge-green">Available</span>`}
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 // ══ TODAY'S BOOKINGS ══
-function renderTodaysBookings() {
+async function renderTodaysBookings() {
   const tbody = document.getElementById('todays-bookings');
-  tbody.innerHTML = todaysBookings.map(b => `
-    <tr>
-      <td><strong>${b.time}</strong></td>
-      <td>${b.pod}</td>
-      <td>${b.customer}</td>
-      <td>${typeLabel(b.type)}</td>
-      <td>${statusLabel(b.status)}</td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--w40);padding:20px;">Loading…</td></tr>';
+  const { data } = await supabaseClient
+    .from('bookings').select('*').eq('booking_date', getToday())
+    .eq('status', 'confirmed').is('deleted_at', null).order('booking_hour', { ascending: true });
+  if (!data?.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--w40);padding:32px;">No bookings today</td></tr>';
+    return;
+  }
+  const currentHour = new Date().getHours();
+  tbody.innerHTML = data.map(b => {
+    const pod = PODS[b.pod_index] || { name:`Pod ${b.pod_index}`, offset:0 };
+    const status = b.booking_hour < currentHour ? 'completed' : 'upcoming';
+    return `<tr>
+      <td><strong>${fmtSlot(b.booking_hour, pod.offset)}</strong></td>
+      <td>${pod.name}</td>
+      <td>${b.first_name} ${b.last_name}</td>
+      <td><span class="badge badge-navy">Customer</span></td>
+      <td>${statusLabel(status)}</td>
+    </tr>`;
+  }).join('');
 }
 
 function typeLabel(t) {
@@ -1803,175 +1731,208 @@ function statusLabel(s) {
 }
 
 // ══ BOOKING GRID ══
-function renderBookingGrid() {
+async function renderBookingGrid() {
   const table = document.getElementById('booking-grid-table');
   const pad = n => n.toString().padStart(2,'0');
-
-  const dateInput = document.getElementById('booking-date');
-  const selectedDate = dateInput.value; // yyyy-mm-dd
-  const todayStr = new Date().toISOString().split('T')[0];
-  const isPast   = selectedDate < todayStr;
-  const isToday  = selectedDate === todayStr;
-
-  // Update date label
+  const selectedDate = document.getElementById('booking-date').value;
+  const todayStr = getToday();
+  const isPast = selectedDate < todayStr;
+  const isToday = selectedDate === todayStr;
   const labelEl = document.getElementById('grid-date-label');
   if (labelEl) {
-    const d = new Date(selectedDate + 'T12:00:00');
-    const formatted = d.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-    labelEl.textContent = formatted;
+    labelEl.textContent = new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
     labelEl.style.color = isToday ? 'var(--red)' : isPast ? 'var(--w40)' : 'var(--white)';
   }
-
-  // Header
+  const { data } = await supabaseClient
+    .from('bookings').select('*').eq('booking_date', selectedDate)
+    .eq('status', 'confirmed').is('deleted_at', null);
+  _gridBookings = data || [];
   let html = '<thead><tr><th>Hour</th>';
-  pods.forEach(p => {
+  PODS.forEach(p => {
     const offsetLabel = p.offset === 0 ? 'on the hour' : `:${pad(p.offset)} past`;
-    html += `<th><span style="display:block;font-size:0.75rem;">${p.name}</span><span style="font-size:0.6rem;color:var(--w40);font-weight:500;letter-spacing:0.04em;">${offsetLabel}</span></th>`;
+    html += `<th><span style="display:block;font-size:0.75rem;">${p.name}</span><span style="font-size:0.6rem;color:var(--w40);font-weight:500;">${offsetLabel}</span></th>`;
   });
   html += '</tr></thead><tbody>';
-
   hours.forEach(h => {
     const hourLabel = h < 12 ? `${h}am` : h === 12 ? '12pm' : `${h-12}pm`;
     html += `<tr><td>${hourLabel}</td>`;
-
-    pods.forEach((pod, pi) => {
+    PODS.forEach((pod, pi) => {
       const slotTime = fmtSlot(h, pod.offset);
-
-      // Only show mock bookings for today; past = all completed; future = all available
-      const booking = isToday ? mockBookings.find(b => b.pod === pi && b.hour === h) : null;
-
-      let cls, label, clickable = true;
-
+      const booking = _gridBookings.find(b => b.pod_index === pi && b.booking_hour === h);
       if (isPast) {
-        // Seed some realistic past data using a deterministic pattern
-        const hasSess = ((pi * 3 + h * 7) % 5) < 2;
-        cls = hasSess ? 'slot-booked' : 'slot-available';
-        label = hasSess ? 'Completed' : '';
-        // Past slots — view only, no actions
-        html += `<td><button class="slot ${cls}" style="flex-direction:column;gap:1px;cursor:default;opacity:0.6;" title="${slotTime}${hasSess ? ' · Completed' : ' · Was available'}">
+        const has = !!booking;
+        html += `<td><button class="slot ${has ? 'slot-booked' : 'slot-available'}" style="flex-direction:column;gap:1px;cursor:default;opacity:0.6;">
           <span style="font-size:0.6rem;opacity:0.7;">${slotTime}</span>
-          ${hasSess ? `<span style="font-size:0.6rem;font-weight:700;">DONE</span>` : '<span style="font-size:0.9rem;opacity:0.3;">–</span>'}
+          ${has ? `<span style="font-size:0.6rem;font-weight:700;">DONE</span>` : '<span style="font-size:0.9rem;opacity:0.3;">–</span>'}
         </button></td>`;
         return;
       }
-
-      if (booking) {
-        if (booking.type === 'blocked')    { cls = 'slot-blocked'; label = 'BLOCKED'; }
-        else if (booking.type === 'admin') { cls = 'slot-admin';   label = booking.customer.split(' ')[0]; }
-        else                               { cls = 'slot-booked';  label = booking.customer.split(' ')[0]; }
-      } else {
-        cls = 'slot-available'; label = '';
-      }
-
-      const title = booking ? (booking.customer || 'Blocked') + ' · ' + slotTime : slotTime;
-      html += `<td><button class="slot ${cls}" style="flex-direction:column;gap:1px;" onclick="openSlotModal(${pi},${h})" title="${title}">
+      const cls = booking ? 'slot-booked' : 'slot-available';
+      const label = booking ? booking.first_name : '';
+      html += `<td><button class="slot ${cls}" style="flex-direction:column;gap:1px;" onclick="openSlotModal(${pi},${h})">
         <span style="font-size:0.6rem;opacity:0.7;">${slotTime}</span>
         ${label ? `<span style="font-size:0.65rem;font-weight:700;">${label}</span>` : '<span style="font-size:1rem;opacity:0.4;">+</span>'}
       </button></td>`;
     });
     html += '</tr>';
   });
-
-  html += '</tbody>';
-  table.innerHTML = html;
+  table.innerHTML = html + '</tbody>';
 }
 
 // ══ CUSTOMERS ══
-function renderCustomers(filter = '') {
+async function renderCustomers(filter = '') {
   const tbody = document.getElementById('customer-table');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--w40);padding:20px;">Loading…</td></tr>';
+  if (!_customers.length) {
+    const { data } = await supabaseClient.from('profiles').select('*').order('created_at', { ascending: false });
+    _customers = data || [];
+  }
   const list = filter
-    ? mockCustomers.filter(c =>
-        c.name.toLowerCase().includes(filter) ||
-        c.email.toLowerCase().includes(filter) ||
-        c.phone.includes(filter))
-    : mockCustomers;
-
-  tbody.innerHTML = list.map(c => `
-    <tr onclick="openCustomerModal(${JSON.stringify(c).replace(/"/g,'&quot;')})">
-      <td>
-        <div class="customer-name-cell">
-          <div class="customer-avatar">${c.name.split(' ').map(n=>n[0]).join('')}</div>
-          <span style="font-weight:600;">${c.name}</span>
-        </div>
-      </td>
-      <td style="color:var(--w60);">${c.email}</td>
-      <td><span class="pts-num">${c.points}</span> <span style="font-size:0.72rem;color:var(--w40);">pts</span></td>
-      <td>${c.sessions}</td>
-      <td>${c.status === 'active' ? '<span class="badge badge-green">Active</span>' : '<span class="badge" style="background:var(--w06);color:var(--w40);border:1px solid var(--w10);">Inactive</span>'}</td>
-    </tr>
-  `).join('');
-
+    ? _customers.filter(c => (c.full_name||'').toLowerCase().includes(filter) || (c.phone||'').includes(filter))
+    : _customers;
   if (!list.length) {
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--w40);padding:32px;">No customers found</td></tr>';
+    return;
   }
+  tbody.innerHTML = list.map(c => {
+    const initials = (c.full_name||'?').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+    const badge = c.banned
+      ? `<span class="badge" style="background:rgba(212,32,40,0.15);color:var(--red);border:1px solid rgba(212,32,40,0.3);">Banned</span>`
+      : c.approved ? `<span class="badge badge-green">Approved</span>` : `<span class="badge badge-amber">Pending</span>`;
+    return `<tr style="cursor:pointer;" onclick='openCustomerModal(${JSON.stringify(c).replace(/'/g,"&#39;")})'>
+      <td><div class="customer-name-cell"><div class="customer-avatar">${initials}</div><span style="font-weight:600;">${c.full_name||'—'}</span></div></td>
+      <td style="color:var(--w60);">${c.phone||'—'}</td>
+      <td><span class="pts-num">${c.pod_points??0}</span> <span style="font-size:0.72rem;color:var(--w40);">pts</span></td>
+      <td style="color:var(--w40);font-size:0.8rem;">${c.created_at ? new Date(c.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</td>
+      <td>${badge}</td>
+    </tr>`;
+  }).join('');
 }
 
-function filterCustomers() {
-  renderCustomers(document.getElementById('customer-search').value.trim().toLowerCase());
+async function filterCustomers() {
+  _customers = [];
+  await renderCustomers(document.getElementById('customer-search').value.trim().toLowerCase());
 }
 
-// ══ BUNDLES & GIFTS ══
-function renderBundles() {
-  document.getElementById('bundles-table').innerHTML = mockBundles.map(b => `
-    <tr>
-      <td style="font-weight:600;">${b.customer}</td>
-      <td>${b.bundle}</td>
-      <td><span class="pts-num">${b.points}</span> pts</td>
-      <td style="color:var(--green);font-weight:700;">${b.amount}</td>
-      <td style="color:var(--w40);">${b.date}</td>
-    </tr>
-  `).join('');
+// ══ CUSTOMER ACTIONS ══
+async function approveCustomer(userId) {
+  const customer = _customers.find(c => c.id === userId);
+  const { error } = await supabaseClient.from('profiles').update({ approved: true, banned: false }).eq('id', userId);
+  if (error) { showToast('Could not approve customer', 'error'); return; }
+  showToast('Customer approved', 'success');
+
+  // Send approval email — fire and forget
+  if (customer?.email) {
+    fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'approved',
+        customerEmail: customer.email,
+        customerName: customer.full_name || 'there',
+      }),
+    }).catch(() => {});
+  }
+
+  _customers = []; closeModalBtn(); await renderCustomers();
 }
 
-function renderGifts() {
-  document.getElementById('gifts-table').innerHTML = mockGifts.map(g => `
-    <tr>
-      <td style="font-family:monospace;font-size:0.82rem;color:var(--w80);">${g.code}</td>
-      <td style="font-weight:600;">${g.recipient}</td>
-      <td style="color:var(--green);font-weight:700;">${g.value}</td>
-      <td>${g.status === 'redeemed'
-        ? '<span class="badge badge-green">Redeemed</span>'
-        : '<span class="badge badge-amber">Unredeemed</span>'}</td>
-      <td style="color:var(--w40);">${g.issued}</td>
-      <td><button class="btn-action" style="padding:6px 12px;font-size:0.72rem;" onclick="openGiftModal('${g.code}')">View</button></td>
-    </tr>
-  `).join('');
+async function banCustomer(userId) {
+  const { error } = await supabaseClient.from('profiles').update({ banned: true, approved: false }).eq('id', userId);
+  if (error) { showToast('Could not ban customer', 'error'); return; }
+  showToast('Customer banned', 'success');
+  _customers = []; closeModalBtn(); await renderCustomers();
+}
+
+async function unbanCustomer(userId) {
+  const { error } = await supabaseClient.from('profiles').update({ banned: false, approved: true }).eq('id', userId);
+  if (error) { showToast('Could not unban customer', 'error'); return; }
+  showToast('Customer unbanned', 'success');
+  _customers = []; closeModalBtn(); await renderCustomers();
+}
+
+// ══ BUNDLES ══
+async function renderBundles() {
+  const el = document.getElementById('bundles-table');
+  el.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--w40);padding:20px;">Loading…</td></tr>';
+  const { data } = await supabaseClient
+    .from('pod_points_transactions').select('*, profiles(full_name)')
+    .eq('type', 'purchase').order('created_at', { ascending: false }).limit(20);
+  if (!data?.length) {
+    el.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--w40);padding:32px;">No purchases yet</td></tr>';
+    return;
+  }
+  el.innerHTML = data.map(t => `<tr>
+    <td style="font-weight:600;">${t.profiles?.full_name||'—'}</td>
+    <td>${t.description||'—'}</td>
+    <td><span class="pts-num">${t.points}</span> pts</td>
+    <td style="color:var(--green);font-weight:700;">—</td>
+    <td style="color:var(--w40);">${t.created_at ? new Date(t.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—'}</td>
+  </tr>`).join('');
+}
+
+// ══ GIFT CARDS ══
+async function renderGifts() {
+  const el = document.getElementById('gifts-table');
+  el.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--w40);padding:20px;">Loading…</td></tr>';
+  const { data } = await supabaseClient.from('gift_cards').select('*').is('deleted_at', null).order('created_at', { ascending: false });
+  if (!data?.length) {
+    el.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--w40);padding:32px;">No gift cards yet</td></tr>';
+    return;
+  }
+  el.innerHTML = data.map(g => `<tr>
+    <td style="font-family:monospace;font-size:0.82rem;color:var(--w80);">${g.code}</td>
+    <td style="font-weight:600;">${g.recipient_name||'—'}</td>
+    <td style="color:var(--green);font-weight:700;">£${Number(g.amount_paid).toFixed(0)}</td>
+    <td>${g.redeemed_at ? '<span class="badge badge-green">Redeemed</span>' : '<span class="badge badge-amber">Unredeemed</span>'}</td>
+    <td style="color:var(--w40);">${g.created_at ? new Date(g.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—'}</td>
+    <td><button class="btn-action" style="padding:6px 12px;font-size:0.72rem;" onclick="openGiftModal('${g.id}')">View</button></td>
+  </tr>`).join('');
 }
 
 // ══ NOTIFICATIONS ══
 function renderNotifHistory() {
-  document.getElementById('notif-history').innerHTML = mockNotifHistory.map(n => `
+  document.getElementById('notif-history').innerHTML = `
     <div class="notif-history-item">
       <div class="notif-dot"></div>
       <div>
-        <div class="notif-msg">${n.msg}</div>
-        <div class="notif-meta">Sent ${n.sent} · ${n.recipients} recipients</div>
+        <div class="notif-msg">Push notifications will appear here once connected.</div>
+        <div class="notif-meta">No notifications sent yet</div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
 }
 
 function updateCharCount() {
-  const len = document.getElementById('notif-message').value.length;
-  document.getElementById('char-count').textContent = len;
+  document.getElementById('char-count').textContent = document.getElementById('notif-message').value.length;
 }
 
 // ══ DOOR CODES ══
-function renderCodes() {
-  document.getElementById('codes-table').innerHTML = mockCodes.map(c => `
-    <tr>
-      <td><span class="code-display" style="font-size:1.4rem;">${c.code}</span></td>
-      <td style="font-weight:600;">${c.customer}</td>
-      <td>${c.pod}</td>
-      <td>${c.slot}</td>
-      <td style="color:${c.active ? 'var(--green)' : 'var(--w40)'};">${c.expires}</td>
-      <td>
-        ${c.active
-          ? `<button class="btn-action btn-red" style="padding:6px 12px;font-size:0.72rem;" onclick="confirmRevokeCode('${c.code}','${c.customer}')">Revoke</button>`
-          : `<span style="font-size:0.75rem;color:var(--w30);">Expired</span>`}
+async function renderCodes() {
+  const el = document.getElementById('codes-table');
+  el.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--w40);padding:20px;">Loading…</td></tr>';
+  const currentHour = new Date().getHours();
+  const { data } = await supabaseClient
+    .from('bookings').select('*').eq('booking_date', getToday())
+    .eq('status', 'confirmed').is('deleted_at', null).order('booking_hour', { ascending: true });
+  if (!data?.length) {
+    el.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--w40);padding:32px;">No door codes for today</td></tr>';
+    return;
+  }
+  el.innerHTML = data.map(b => {
+    const pod = PODS[b.pod_index] || { name:`Pod ${b.pod_index}`, offset:0 };
+    const active = b.booking_hour >= currentHour;
+    return `<tr>
+      <td><span class="code-display" style="font-size:1.4rem;">${b.door_code||'——'}</span></td>
+      <td style="font-weight:600;">${b.first_name} ${b.last_name}</td>
+      <td>${pod.name}</td>
+      <td>${fmtSlot(b.booking_hour, pod.offset)}</td>
+      <td style="color:${active ? 'var(--green)' : 'var(--w40)'};">${active ? 'Active' : 'Expired'}</td>
+      <td>${active
+        ? `<button class="btn-action btn-red" style="padding:6px 12px;font-size:0.72rem;" onclick="confirmRevokeCode('${b.door_code}','${b.first_name} ${b.last_name}','${b.id}')">Revoke</button>`
+        : `<span style="font-size:0.75rem;color:var(--w30);">Expired</span>`}
       </td>
-    </tr>
-  `).join('');
+    </tr>`;
+  }).join('');
 }
 
 // ══ MODALS ══
@@ -1992,8 +1953,8 @@ function closeModalBtn() {
 
 // Slot modal
 function openSlotModal(podIndex, hour) {
-  const pod = pods[podIndex];
-  const booking = mockBookings.find(b => b.pod === podIndex && b.hour === hour);
+  const pod = PODS[podIndex];
+  const booking = _gridBookings.find(b => b.pod_index === podIndex && b.booking_hour === hour);
   const slotTime = fmtSlot(hour, pod.offset);
   let content = '';
 
@@ -2003,33 +1964,26 @@ function openSlotModal(podIndex, hour) {
       <div class="modal-title">${pod.name}</div>
       <div class="modal-sub">${slotTime} · Available</div>
       <div class="modal-actions">
-        <button class="btn-modal btn-modal-green" onclick="showToast('Manual booking added','success');closeModalBtn()">➕ Manual Booking</button>
+        <button class="btn-modal btn-modal-green" onclick="openManualBookingModal()">➕ Manual Booking</button>
         <button class="btn-modal btn-modal-amber" onclick="confirmBlockSlot('${pod.name}','${slotTime}')">🔒 Block Slot</button>
       </div>`;
-  } else if (booking.type === 'blocked') {
-    content = `
-      <button class="modal-close" onclick="closeModalBtn()">✕</button>
-      <div class="modal-title">${pod.name}</div>
-      <div class="modal-sub">${slotTime} · Blocked</div>
-      <div class="modal-actions">
-        <button class="btn-modal btn-modal-green" onclick="showToast('Slot unblocked','success');closeModalBtn()">✓ Unblock Slot</button>
-      </div>`;
   } else {
+    const customer = `${booking.first_name} ${booking.last_name}`;
     content = `
       <button class="modal-close" onclick="closeModalBtn()">✕</button>
       <div class="modal-title">${pod.name}</div>
       <div class="modal-sub">Booking details</div>
       <div class="card" style="margin-bottom:0;background:var(--bg3);">
         <div class="card-body" style="padding:16px 20px;">
-          <div class="detail-row"><span class="detail-key">Customer</span><span class="detail-val">${booking.customer}</span></div>
+          <div class="detail-row"><span class="detail-key">Customer</span><span class="detail-val">${customer}</span></div>
           <div class="detail-row"><span class="detail-key">Pod</span><span class="detail-val">${pod.name}</span></div>
           <div class="detail-row"><span class="detail-key">Time</span><span class="detail-val">${slotTime}</span></div>
-          <div class="detail-row"><span class="detail-key">Door Code</span><span class="detail-val" style="font-family:var(--font-h);font-size:1.6rem;letter-spacing:0.15em;">${booking.code || 'N/A'}</span></div>
-          <div class="detail-row" style="border:none;"><span class="detail-key">Type</span><span>${typeLabel(booking.type)}</span></div>
+          <div class="detail-row"><span class="detail-key">Door Code</span><span class="detail-val" style="font-family:var(--font-h);font-size:1.6rem;letter-spacing:0.15em;">${booking.door_code || 'N/A'}</span></div>
+          <div class="detail-row" style="border:none;"><span class="detail-key">Booked</span><span class="detail-val">${booking.created_at ? new Date(booking.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</span></div>
         </div>
       </div>
       <div class="modal-actions">
-        <button class="btn-modal btn-modal-red" onclick="confirmCancelBooking('${booking.customer}','${slotTime}','${pod.name}')">✕ Cancel Booking</button>
+        <button class="btn-modal btn-modal-red" onclick="confirmCancelBooking('${customer}','${slotTime}','${pod.name}','${booking.id}')">✕ Cancel Booking</button>
       </div>`;
   }
   openModal(content);
@@ -2037,32 +1991,45 @@ function openSlotModal(podIndex, hour) {
 
 // Customer modal
 function openCustomerModal(c) {
+  const name = c.full_name || '—';
+  const initials = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  const pts = c.pod_points ?? 0;
+  const statusBadge = c.banned
+    ? `<span class="badge" style="background:rgba(212,32,40,0.15);color:var(--red);border:1px solid rgba(212,32,40,0.3);">Banned</span>`
+    : c.approved ? `<span class="badge badge-green">Approved</span>` : `<span class="badge badge-amber">Pending Approval</span>`;
+
+  const approvalActions = c.banned
+    ? `<button class="btn-modal btn-modal-green" onclick="unbanCustomer('${c.id}')">✓ Unban Customer</button>`
+    : c.approved
+      ? `<button class="btn-modal btn-modal-red" onclick="banCustomer('${c.id}')">🚫 Ban Customer</button>`
+      : `<button class="btn-modal btn-modal-green" onclick="approveCustomer('${c.id}')">✓ Approve</button>
+         <button class="btn-modal btn-modal-red" onclick="banCustomer('${c.id}')">🚫 Ban</button>`;
+
   openModal(`
     <button class="modal-close" onclick="closeModalBtn()">✕</button>
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
-      <div class="customer-avatar" style="width:48px;height:48px;font-size:1.1rem;">${c.name.split(' ').map(n=>n[0]).join('')}</div>
+      <div class="customer-avatar" style="width:48px;height:48px;font-size:1.1rem;">${initials}</div>
       <div>
-        <div class="modal-title" style="font-size:1.4rem;">${c.name}</div>
-        <div style="font-size:0.82rem;color:var(--w40);">${c.email}</div>
+        <div class="modal-title" style="font-size:1.4rem;">${name}</div>
+        <div style="font-size:0.82rem;color:var(--w40);">${c.phone || '—'}</div>
       </div>
     </div>
     <div class="card" style="background:var(--bg3);margin-bottom:16px;">
       <div class="card-body" style="padding:0;">
-        <div class="detail-row" style="padding:12px 16px;"><span class="detail-key">Phone</span><span class="detail-val">${c.phone}</span></div>
-        <div class="detail-row" style="padding:12px 16px;"><span class="detail-key">Pod Points</span><span class="pts-num" style="font-size:1.4rem;">${c.points}</span></div>
-        <div class="detail-row" style="padding:12px 16px;"><span class="detail-key">Total Sessions</span><span class="detail-val">${c.sessions}</span></div>
-        <div class="detail-row" style="padding:12px 16px;border:none;"><span class="detail-key">Status</span>${c.status === 'active' ? '<span class="badge badge-green">Active</span>' : '<span class="badge" style="background:var(--w06);color:var(--w40);">Inactive</span>'}</div>
+        <div class="detail-row" style="padding:12px 16px;"><span class="detail-key">Pod Points</span><span class="pts-num" style="font-size:1.4rem;">${pts}</span></div>
+        <div class="detail-row" style="padding:12px 16px;"><span class="detail-key">Joined</span><span class="detail-val">${c.created_at ? new Date(c.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</span></div>
+        <div class="detail-row" style="padding:12px 16px;border:none;"><span class="detail-key">Status</span>${statusBadge}</div>
       </div>
     </div>
     <div class="modal-actions">
-      <button class="btn-modal btn-modal-green" onclick="openAdjustPointsModal('${c.name}',${c.points})">⭐ Adjust Points</button>
-      <button class="btn-modal btn-modal-blue" onclick="showToast('Manual booking flow coming soon','success');closeModalBtn()">➕ Add Booking</button>
+      <button class="btn-modal btn-modal-green" onclick="openAdjustPointsModal('${name.replace(/'/g,"\\'")}','${c.id}',${pts})">⭐ Adjust Points</button>
+      ${approvalActions}
     </div>
   `);
 }
 
 // Adjust points modal
-function openAdjustPointsModal(name, current) {
+function openAdjustPointsModal(name, userId, current) {
   closeModalBtn();
   setTimeout(() => {
     openModal(`
@@ -2079,21 +2046,27 @@ function openAdjustPointsModal(name, current) {
       </div>
       <div class="modal-actions">
         <button class="btn-modal" onclick="closeModalBtn()">Cancel</button>
-        <button class="btn-modal btn-modal-green" onclick="confirmAdjustPoints('${name}')">Save Changes</button>
+        <button class="btn-modal btn-modal-green" onclick="confirmAdjustPoints('${name}','${userId}',${current})">Save Changes</button>
       </div>
     `);
   }, 150);
 }
 
-function confirmAdjustPoints(name) {
-  const adj = document.getElementById('pts-adjust').value;
-  if (!adj) { return; }
+async function confirmAdjustPoints(name, userId, current) {
+  const adj = parseInt(document.getElementById('pts-adjust').value, 10);
+  const reason = document.getElementById('pts-reason').value.trim();
+  if (!adj || isNaN(adj)) { showToast('Enter a number of points to add or deduct', 'error'); return; }
+  const newBalance = Math.max(0, current + adj);
+  const { error } = await supabaseClient.from('profiles').update({ pod_points: newBalance }).eq('id', userId);
+  if (error) { showToast('Could not update points', 'error'); return; }
   showToast(`Points updated for ${name}`, 'success');
+  _customers = [];
   closeModalBtn();
+  await renderCustomers();
 }
 
 // Confirm cancel booking
-function confirmCancelBooking(customer, time, pod) {
+function confirmCancelBooking(customer, time, pod, bookingId) {
   closeModalBtn();
   setTimeout(() => {
     openModal(`
@@ -2104,10 +2077,21 @@ function confirmCancelBooking(customer, time, pod) {
       <p style="font-size:0.8rem;color:var(--w40);margin-top:8px;">Their door code will be revoked and the slot will become available again.</p>
       <div class="modal-actions">
         <button class="btn-modal" onclick="closeModalBtn()">Keep Booking</button>
-        <button class="btn-modal btn-modal-red" onclick="showToast('Booking cancelled','success');closeModalBtn()">Yes, Cancel It</button>
+        <button class="btn-modal btn-modal-red" onclick="doCancelBooking('${bookingId}','${customer}')">Yes, Cancel It</button>
       </div>
     `);
   }, 150);
+}
+
+async function doCancelBooking(bookingId, customer) {
+  const { error } = await supabaseClient
+    .from('bookings')
+    .update({ deleted_at: new Date().toISOString(), status: 'cancelled' })
+    .eq('id', bookingId);
+  if (error) { showToast('Could not cancel booking', 'error'); return; }
+  showToast(`Booking cancelled for ${customer}`, 'success');
+  closeModalBtn();
+  await Promise.all([renderTodaysBookings(), renderBookingGrid(), renderCodes(), loadOverviewStats()]);
 }
 
 // Block slot modal
@@ -2170,18 +2154,18 @@ function openManualBookingModal() {
     <div class="modal-sub">Book a slot on behalf of a customer</div>
     <div class="field-group">
       <label class="field-label">Customer</label>
-      <input class="field-input" type="text" placeholder="Search customer name or email..." list="customer-list" />
+      <input class="field-input" type="text" placeholder="Search customer name..." list="customer-list" />
       <datalist id="customer-list">
-        ${mockCustomers.map(c => `<option value="${c.name}">${c.email}</option>`).join('')}
+        ${_customers.map(c => `<option value="${c.full_name||''}">${c.phone||''}</option>`).join('')}
       </datalist>
     </div>
     <div class="field-group">
       <label class="field-label">Pod</label>
-      <select class="field-input">${pods.map(p=>`<option>${p}</option>`).join('')}</select>
+      <select class="field-input">${PODS.map(p=>`<option>${p.name}</option>`).join('')}</select>
     </div>
     <div class="field-group">
       <label class="field-label">Date</label>
-      <input class="field-input" type="date" value="${new Date().toISOString().split('T')[0]}" />
+      <input class="field-input" type="date" value="${getToday()}" />
     </div>
     <div class="field-group">
       <label class="field-label">Time</label>
@@ -2189,7 +2173,7 @@ function openManualBookingModal() {
     </div>
     <div class="modal-actions">
       <button class="btn-modal" onclick="closeModalBtn()">Cancel</button>
-      <button class="btn-modal btn-modal-green" onclick="showToast('Booking added successfully','success');closeModalBtn()">➕ Add Booking</button>
+      <button class="btn-modal btn-modal-green" onclick="showToast('Manual booking feature coming soon','success');closeModalBtn()">➕ Add Booking</button>
     </div>
   `);
 }
@@ -2232,7 +2216,7 @@ function openAddPointsModal() {
       <label class="field-label">Customer</label>
       <input class="field-input" type="text" placeholder="Search customer..." list="customer-list2" />
       <datalist id="customer-list2">
-        ${mockCustomers.map(c=>`<option value="${c.name}">`).join('')}
+        ${_customers.map(c=>`<option value="${c.full_name||''}">`).join('')}
       </datalist>
     </div>
     <div class="field-group">
@@ -2250,25 +2234,26 @@ function openAddPointsModal() {
   `);
 }
 
-function openGiftModal(code) {
-  const gift = mockGifts.find(g => g.code === code);
-  openModal(`
+async function openGiftModal(giftId) {
+  openModal(`<button class="modal-close" onclick="closeModalBtn()">✕</button><div class="modal-title">Gift Card</div><div style="padding:20px;color:var(--w40);">Loading…</div>`);
+  const { data: gift } = await supabaseClient.from('gift_cards').select('*').eq('id', giftId).single();
+  if (!gift) { document.getElementById('modal-box').innerHTML += '<p style="color:var(--red);padding:0 20px;">Could not load gift card.</p>'; return; }
+  document.getElementById('modal-box').innerHTML = `
     <button class="modal-close" onclick="closeModalBtn()">✕</button>
     <div class="modal-title">Gift Card</div>
     <div class="card" style="background:var(--bg3);margin-bottom:16px;">
       <div class="card-body" style="padding:0;">
         <div class="detail-row" style="padding:12px 16px;"><span class="detail-key">Code</span><span style="font-family:monospace;font-size:0.9rem;">${gift.code}</span></div>
-        <div class="detail-row" style="padding:12px 16px;"><span class="detail-key">Recipient</span><span class="detail-val">${gift.recipient}</span></div>
-        <div class="detail-row" style="padding:12px 16px;"><span class="detail-key">Value</span><span style="color:var(--green);font-weight:700;">${gift.value}</span></div>
-        <div class="detail-row" style="padding:12px 16px;"><span class="detail-key">Issued</span><span class="detail-val">${gift.issued}</span></div>
-        <div class="detail-row" style="padding:12px 16px;border:none;"><span class="detail-key">Status</span>${gift.status === 'redeemed' ? '<span class="badge badge-green">Redeemed</span>' : '<span class="badge badge-amber">Unredeemed</span>'}</div>
+        <div class="detail-row" style="padding:12px 16px;"><span class="detail-key">Recipient</span><span class="detail-val">${gift.recipient_name||'—'}</span></div>
+        <div class="detail-row" style="padding:12px 16px;"><span class="detail-key">Value</span><span style="color:var(--green);font-weight:700;">£${Number(gift.amount_paid||0).toFixed(0)}</span></div>
+        <div class="detail-row" style="padding:12px 16px;"><span class="detail-key">Issued</span><span class="detail-val">${gift.created_at ? new Date(gift.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</span></div>
+        <div class="detail-row" style="padding:12px 16px;border:none;"><span class="detail-key">Status</span>${gift.redeemed_at ? '<span class="badge badge-green">Redeemed</span>' : '<span class="badge badge-amber">Unredeemed</span>'}</div>
       </div>
     </div>
     <div class="modal-actions">
       <button class="btn-modal" onclick="closeModalBtn()">Close</button>
-      ${gift.status === 'unredeemed' ? `<button class="btn-modal btn-modal-red" onclick="showToast('Gift card revoked','success');closeModalBtn()">Revoke Card</button>` : ''}
-    </div>
-  `);
+      ${!gift.redeemed_at ? `<button class="btn-modal btn-modal-red" onclick="showToast('Revoke feature coming soon','success');closeModalBtn()">Revoke Card</button>` : ''}
+    </div>`;
 }
 
 function confirmSendNotification() {
@@ -2296,12 +2281,12 @@ function openGenerateCodeModal() {
       <label class="field-label">Customer</label>
       <input class="field-input" type="text" placeholder="Search customer..." list="customer-list3" />
       <datalist id="customer-list3">
-        ${mockCustomers.map(c=>`<option value="${c.name}">`).join('')}
+        ${_customers.map(c=>`<option value="${c.full_name||''}">`).join('')}
       </datalist>
     </div>
     <div class="field-group">
       <label class="field-label">Pod</label>
-      <select class="field-input">${pods.map(p=>`<option>${p}</option>`).join('')}</select>
+      <select class="field-input">${PODS.map(p=>`<option>${p.name}</option>`).join('')}</select>
     </div>
     <div class="field-group">
       <label class="field-label">Date & Time</label>

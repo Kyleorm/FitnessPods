@@ -11,11 +11,13 @@ import Book from './screens/Book'
 import BookConfirm from './screens/BookConfirm'
 import Shop from './screens/Shop'
 import Profile from './screens/Profile'
+import Pending from './screens/Pending'
+import Banned from './screens/Banned'
 
 const NAV_ROUTES = ['/', '/home', '/pods', '/book', '/shop', '/profile']
 
 function ProtectedRoute({ children }) {
-  const { user, loading } = useAuth()
+  const { user, profile, loading } = useAuth()
 
   if (loading) {
     return (
@@ -25,7 +27,10 @@ function ProtectedRoute({ children }) {
     )
   }
 
-  return user ? children : <Navigate to="/welcome" replace />
+  if (!user) return <Navigate to="/welcome" replace />
+  if (profile?.banned) return <Banned />
+  if (profile && !profile.approved) return <Pending />
+  return children
 }
 
 export default function App() {

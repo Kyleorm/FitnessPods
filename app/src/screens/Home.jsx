@@ -1,34 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 
-const pods = [
-  { id: 1, name: 'FitnessPod 1', free: true  },
-  { id: 2, name: 'FitnessPod 2', free: true  },
-  { id: 3, name: 'FitnessPod 3', free: false },
-  { id: 4, name: 'FitnessPod 4', free: true  },
-  { id: 5, name: 'HIITPod',      free: false },
-  { id: 6, name: 'PowerPod',     free: true  },
+const POD_LIST = [
+  { index: 0, name: 'FitnessPod 1', offset: 0  },
+  { index: 1, name: 'FitnessPod 2', offset: 15 },
+  { index: 2, name: 'FitnessPod 3', offset: 30 },
+  { index: 3, name: 'FitnessPod 4', offset: 45 },
+  { index: 4, name: 'HIITPod',      offset: 0  },
+  { index: 5, name: 'PowerPod',     offset: 30 },
 ];
-
-const freePods = pods.filter(p => p.free).length;
-
-const now = new Date();
-const calYear  = now.getFullYear();
-const calMonth = now.getMonth();
-const today    = 28; // demo date — shows a full month of activity
-const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-// Monday-first offset (Sun=0 → 6, Mon=1 → 0, etc.)
-const startOffset = (new Date(calYear, calMonth, 1).getDay() + 6) % 7;
-// Dummy seeded activity — past days only
-const activity = Array.from({ length: daysInMonth }, (_, i) => {
-  const day = i + 1;
-  if (day > today) return 'future';
-  if (day === today) return 'today';
-  const restDays = [2, 5, 8, 9, 12, 15, 16, 19, 20, 23, 24, 27];
-  return restDays.includes(day) ? 'rest' : 'trained';
-});
-const sessionsThisMonth = activity.filter(a => a === 'trained' || a === 'today').length;
 
 function AnimatedCoin() {
   return (
@@ -58,12 +40,120 @@ function CountUp({ target, duration = 1200 }) {
   return val;
 }
 
+function fmtSlot(hour, offset) {
+  const pad = n => String(n).padStart(2, '0');
+  const startMins = hour * 60 + offset;
+  const endMins   = startMins + 60;
+  return `${pad(Math.floor(startMins/60)%24)}:${pad(startMins%60)} – ${pad(Math.floor(endMins/60)%24)}:${pad(endMins%60)}`;
+}
+
+function fmtDateBadge(iso) {
+  const today = new Date().toISOString().split('T')[0];
+  if (iso === today) return 'Today';
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
+function NextSessionCard({ session, navigate }) {
+  const [copied, setCopied] = useState(false);
+  const pod = POD_LIST[session.pod_index] ?? { name: `Pod ${session.pod_index}`, offset: 0 };
+  const slotStr = fmtSlot(session.booking_hour, pod.offset);
+  const badge   = fmtDateBadge(session.booking_date);
+
+  function copyCode() {
+    if (!session.door_code) return;
+    navigator.clipboard.writeText(session.door_code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  return (
+    <div style={s.nextCard} className="card">
+      <div style={s.nextBg} />
+      <div style={s.shimmer} />
+      <div style={s.nextLeft}>
+        <div style={s.nextBadge}>{badge} · {slotStr.split(' – ')[0]}</div>
+        <h3 style={s.nextPod}>{pod.name}</h3>
+        <p style={s.nextTime}>{slotStr} · 1 hour</p>
+      </div>
+      {session.door_code ? (
+        <div style={s.nextRight} onClick={copyCode}>
+          <p style={s.codeLabel}>Door code</p>
+          <p style={s.codeNum}>{session.door_code}</p>
+          <p style={s.codeSub}>{copied ? 'Copied!' : 'Tap to copy'}</p>
+        </div>
+      ) : (
+        <div style={s.nextRight} onClick={() => navigate('/sessions')}>
+          <p style={s.codeLabel}>Door code</p>
+          <p style={{ ...s.codeNum, fontSize: '1rem', color: '#f59e0b' }}>Pending</p>
+          <p style={s.codeSub}>View sessions</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Home() {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
   const firstName = profile?.full_name?.split(' ')[0] || 'there';
+
+  // Live data state
+  const [podStatus,    setPodStatus]    = useState(POD_LIST.map(p => ({ ...p, free: true })));
+  const [nextSession,  setNextSession]  = useState(null);
+  const [sessionCount, setSessionCount] = useState({ month: 0, total: 0 });
+  const [activityDays, setActivityDays] = useState([]);
+
+  useEffect(() => {
+    async function loadData() {
+      const todayISO    = new Date().toISOString().split('T')[0];
+      const currentHour = new Date().getHours();
+      const now = new Date();
+      const monthStart  = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+
+      const [occupiedRes, upcomingRes, allRes] = await Promise.all([
+        supabase.from('bookings').select('pod_index').eq('booking_date', todayISO).eq('booking_hour', currentHour).eq('status', 'confirmed').is('deleted_at', null),
+        supabase.from('bookings').select('*').eq('status', 'confirmed').is('deleted_at', null).or(`booking_date.gt.${todayISO},and(booking_date.eq.${todayISO},booking_hour.gte.${currentHour})`).order('booking_date').order('booking_hour').limit(1),
+        supabase.from('bookings').select('booking_date').eq('status', 'confirmed').is('deleted_at', null).gte('booking_date', monthStart).lte('booking_date', todayISO),
+      ]);
+
+      // Pod status
+      const occupiedIndexes = new Set((occupiedRes.data || []).map(b => b.pod_index));
+      setPodStatus(POD_LIST.map(p => ({ ...p, free: !occupiedIndexes.has(p.index) })));
+
+      // Next session
+      setNextSession(upcomingRes.data?.[0] ?? null);
+
+      // Session counts
+      const monthBookings  = allRes.data || [];
+      const uniqueDays     = new Set(monthBookings.map(b => b.booking_date));
+      setSessionCount({ month: uniqueDays.size, total: 0 }); // total needs separate query if needed
+
+      // Activity grid for current month
+      const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      const trainedSet  = new Set(monthBookings.map(b => parseInt(b.booking_date.split('-')[2], 10)));
+      const todayDay    = now.getDate();
+      setActivityDays(Array.from({ length: daysInMonth }, (_, i) => {
+        const d = i + 1;
+        if (d > todayDay) return 'future';
+        if (d === todayDay) return 'today';
+        return trainedSet.has(d) ? 'trained' : 'rest';
+      }));
+    }
+    loadData();
+  }, []);
+
+  const calNow      = new Date();
+  const calYear     = calNow.getFullYear();
+  const calMonth    = calNow.getMonth();
+  const startOffset = (new Date(calYear, calMonth, 1).getDay() + 6) % 7;
+  const activity    = activityDays.length ? activityDays : Array.from({ length: new Date(calYear, calMonth + 1, 0).getDate() }, (_, i) => i + 1 < calNow.getDate() ? 'rest' : i + 1 === calNow.getDate() ? 'today' : 'future');
+  const sessionsThisMonth = sessionCount.month;
+  const freePods = podStatus.filter(p => p.free).length;
+
   const quotes = [
     "Own the hour.",
     "No crowd. No excuses.",
@@ -99,7 +189,7 @@ export default function Home() {
   const weekOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 1)) / (7 * 24 * 60 * 60 * 1000));
   const motivational = quotes[weekOfYear % quotes.length];
 
-  const hasUpcomingSession = true;
+  const hasUpcomingSession = !!nextSession;
   const pointsBalance = profile?.pod_points ?? 0;
   const daytimeSessions = Math.floor(pointsBalance);
   const eveningSessions = Math.floor(pointsBalance / 1.5);
@@ -143,13 +233,13 @@ export default function Home() {
           </div>
           <div style={s.statDivider} />
           <div style={s.statItem}>
-            <span style={s.statNum}><CountUp target={84} /></span>
-            <span style={s.statLabel}>Total<br/>sessions</span>
+            <span style={s.statNum}><CountUp target={pointsBalance} /></span>
+            <span style={s.statLabel}>Pod<br/>Points</span>
           </div>
           <div style={s.statDivider} />
           <div style={s.statItem}>
-            <span style={s.statNum}><CountUp target={9} /></span>
-            <span style={s.statLabel}>Week<br/>streak</span>
+            <span style={s.statNum}><CountUp target={freePods} /></span>
+            <span style={s.statLabel}>Pods<br/>free now</span>
           </div>
         </div>
       </div>
@@ -160,20 +250,7 @@ export default function Home() {
         <div className="fade-up fade-up-2">
           <p style={s.sectionLabel}>Next session</p>
           {hasUpcomingSession ? (
-            <div style={s.nextCard} className="card">
-              <div style={s.nextBg} />
-              <div style={s.shimmer} />
-              <div style={s.nextLeft}>
-                <div style={s.nextBadge}>Today · 18:00</div>
-                <h3 style={s.nextPod}>PowerPod</h3>
-                <p style={s.nextTime}>18:30 – 19:30 · 1 hour</p>
-              </div>
-              <div style={s.nextRight}>
-                <p style={s.codeLabel}>Door code</p>
-                <p style={s.codeNum}>7241</p>
-                <p style={s.codeSub}>Tap to copy</p>
-              </div>
-            </div>
+            <NextSessionCard session={nextSession} navigate={navigate} />
           ) : (
             <div style={s.emptyCard} className="card">
               <div style={s.emptyIcon}>🏋️</div>
@@ -308,11 +385,11 @@ export default function Home() {
         <div className="fade-up fade-up-5">
           <div style={s.sectionRow}>
             <p style={s.sectionLabel}>Live pod status</p>
-            <span style={{ ...s.sectionSub, color: '#22c55e' }}>● {freePods} available</span>
+            <span style={{ ...s.sectionSub, color: freePods > 0 ? '#22c55e' : 'var(--red)' }}>● {freePods} available</span>
           </div>
           <div style={s.podOrbs}>
-            {pods.map((pod, i) => (
-              <div key={pod.id} style={{ ...s.podOrbWrap, animation: `orbFadeIn 0.4s ease both`, animationDelay: `${0.1 + i * 0.07}s` }} onClick={() => navigate('/pods')}>
+            {podStatus.map((pod, i) => (
+              <div key={pod.index} style={{ ...s.podOrbWrap, animation: `orbFadeIn 0.4s ease both`, animationDelay: `${0.1 + i * 0.07}s` }} onClick={() => navigate('/pods')}>
                 <div style={{
                   ...s.podOrb,
                   background: pod.free ? 'radial-gradient(circle at 35% 35%, rgba(34,197,94,0.3), rgba(34,197,94,0.05))' : 'radial-gradient(circle at 35% 35%, rgba(212,32,40,0.25), rgba(212,32,40,0.05))',

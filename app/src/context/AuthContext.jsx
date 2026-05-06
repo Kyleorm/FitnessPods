@@ -54,10 +54,13 @@ export function AuthProvider({ children }) {
       const { error: profileError } = await supabase.from('profiles').insert({
         id: data.user.id,
         full_name: fullName,
+        email,
         phone,
         signup_source: 'app',
         pod_points: 1.5,
         app_free_session_used: false,
+        approved: false,
+        banned: false,
       })
       if (profileError) throw profileError
     }

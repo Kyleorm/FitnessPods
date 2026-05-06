@@ -30,8 +30,20 @@ export default function Signup() {
     setLoading(true)
     try {
       await signUp({ email: email.trim(), password, fullName: fullName.trim(), phone: phone.trim() })
+
+      // Fire welcome email + owner notification — don't block signup if this fails
+      fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'welcome',
+          customerEmail: email.trim(),
+          customerName: fullName.trim(),
+          customerPhone: phone.trim(),
+        }),
+      }).catch(() => {})
+
       setSuccess(true)
-      setTimeout(() => navigate('/home', { replace: true }), 3000)
     } catch (err) {
       if (err.message?.toLowerCase().includes('already registered') || err.message?.toLowerCase().includes('already exists')) {
         setError('An account with this email already exists. Please log in instead.')
@@ -55,16 +67,16 @@ export default function Signup() {
               </svg>
             </div>
           </div>
-          <h1 style={s.successTitle}>Welcome to<br /><span style={{ color: 'var(--red)' }}>FitnessPod!</span></h1>
-          <p style={s.successMsg}>Your free session has been added to your account. Book any pod to get started.</p>
+          <h1 style={s.successTitle}>You're on<br /><span style={{ color: 'var(--red)' }}>the list!</span></h1>
+          <p style={s.successMsg}>Account created. The FitnessPod team will approve your account shortly — usually within a few hours.</p>
           <div style={s.podPointBadge}>
             <img src="/podpoint.png" alt="Pod Point" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
             <div>
-              <p style={s.podPointLabel}>Pod Points Balance</p>
-              <p style={s.podPointNum}>1.5 <span style={{ fontSize: '1rem', fontFamily: 'var(--font-body)', color: 'var(--w60)' }}>points</span></p>
+              <p style={s.podPointLabel}>Reserved for you</p>
+              <p style={s.podPointNum}>1.5 <span style={{ fontSize: '1rem', fontFamily: 'var(--font-body)', color: 'var(--w60)' }}>free points</span></p>
             </div>
           </div>
-          <p style={s.redirectNote}>Taking you to the app…</p>
+          <p style={s.redirectNote}>Once approved, your free session will be ready to book.</p>
         </div>
       </div>
     )

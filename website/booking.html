@@ -1344,14 +1344,14 @@
     document.getElementById('btn-continue').addEventListener('click', async () => {
       if (!state.pod) { showGridError('Please select a time slot before continuing.'); return; }
       if (state.currentUser && state.currentProfile) {
-        await prefillAndGoToPayment();
+        await onAuthSuccess();
       } else {
         // Re-check session in case it changed
         const { data: { session } } = await db.auth.getSession();
         if (session?.user) {
           state.currentUser = session.user;
           await loadUserProfile(session.user.id);
-          await prefillAndGoToPayment();
+          await onAuthSuccess();
         } else {
           showAuthModal();
         }
@@ -1551,9 +1551,11 @@
           phone,
           signup_source: 'website',
           pod_points: 0,
+          approved: false,
+          banned: false,
         });
         state.currentUser = data.user;
-        state.currentProfile = { full_name: fullName, phone, signup_source: 'website', pod_points: 0 };
+        state.currentProfile = { full_name: fullName, phone, signup_source: 'website', pod_points: 0, approved: false, banned: false };
       }
 
       await onAuthSuccess();
@@ -1593,7 +1595,46 @@
 
     async function onAuthSuccess() {
       closeAuthModal();
+      const profile = state.currentProfile;
+      if (profile?.banned) {
+        showAccountStatusBlock('banned');
+        return;
+      }
+      if (profile && !profile.approved) {
+        showAccountStatusBlock('pending');
+        return;
+      }
       await prefillAndGoToPayment();
+    }
+
+    function showAccountStatusBlock(status) {
+      const isPending = status === 'pending';
+      const existing = document.getElementById('account-status-block');
+      if (existing) existing.remove();
+      const block = document.createElement('div');
+      block.id = 'account-status-block';
+      block.style.cssText = `
+        position:fixed;inset:0;z-index:9999;background:rgba(8,12,24,0.96);
+        display:flex;align-items:center;justify-content:center;padding:32px;
+      `;
+      block.innerHTML = `
+        <div style="max-width:400px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:20px;">
+          <div style="width:72px;height:72px;border-radius:50%;background:${isPending ? 'rgba(245,158,11,0.1)' : 'rgba(212,32,40,0.1)'};border:2px solid ${isPending ? 'rgba(245,158,11,0.4)' : 'rgba(212,32,40,0.4)'};display:flex;align-items:center;justify-content:center;font-size:2rem;">
+            ${isPending ? '⏳' : '🚫'}
+          </div>
+          <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.4rem;line-height:1;color:#fff;">
+            ${isPending ? "You're on the list" : 'Account suspended'}
+          </h2>
+          <p style="font-size:0.9rem;color:rgba(255,255,255,0.55);line-height:1.6;max-width:300px;">
+            ${isPending
+              ? 'Your account is pending approval. The FitnessPod team will approve you shortly — usually within a few hours. Once approved, you can come back and book your session.'
+              : 'Your account has been suspended. Please contact us at hello@fitnesspod.im if you believe this is a mistake.'}
+          </p>
+          <button onclick="document.getElementById('account-status-block').remove();db.auth.signOut();" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:rgba(255,255,255,0.5);font-size:0.85rem;padding:12px 28px;cursor:pointer;font-family:'Barlow',sans-serif;">
+            Sign Out
+          </button>
+        </div>`;
+      document.body.appendChild(block);
     }
 
     async function prefillAndGoToPayment() {
