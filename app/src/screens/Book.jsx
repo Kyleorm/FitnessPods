@@ -114,6 +114,19 @@ export default function Book() {
     setLocking(true);
     setLockError('');
 
+    // Rate limit: max 10 slot lock attempts per 5 minutes
+    const { data: allowed } = await supabase.rpc('check_rate_limit', {
+      p_action: 'lock_slot',
+      p_max_attempts: 10,
+      p_window_minutes: 5,
+    });
+
+    if (!allowed) {
+      setLocking(false);
+      setLockError('Too many attempts. Please wait a few minutes before trying again.');
+      return;
+    }
+
     const { data: locked, error } = await supabase.rpc('try_lock_slot', {
       p_pod_index:    selectedPod,
       p_booking_date: selectedDate,
