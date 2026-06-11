@@ -668,71 +668,105 @@
       0%, 100% { transform: scale(1); }
       50%       { transform: scale(1.15); }
     }
+    /* Desktop: section is fixed height, card floats over the map */
+    #find-us { position: relative; height: 520px; overflow: hidden; }
+    .find-us-map { position: absolute; inset: 0; }
+    .find-us-card-outer {
+      position: absolute; inset: 0; z-index: 5;
+      display: flex; align-items: center; pointer-events: none;
+    }
+    .find-us-card-outer .container { pointer-events: all; }
+    .find-us-card {
+      max-width: 420px;
+      background: rgba(8,12,24,0.75);
+      border: 1px solid rgba(232,24,26,0.3);
+      box-shadow: 0 0 48px rgba(232,24,26,0.12), 0 24px 64px rgba(0,0,0,0.5);
+      border-radius: 16px; padding: 36px; backdrop-filter: blur(16px);
+    }
+    /* Mobile: stack map above, card below */
+    @media (max-width: 767px) {
+      #find-us { height: auto; overflow: visible; }
+      .find-us-map { position: relative; height: 260px; overflow: hidden; }
+      .find-us-card-outer {
+        position: static; display: block; pointer-events: all;
+        background: rgba(8,12,24,0.98);
+        border-top: 1px solid rgba(232,24,26,0.2);
+        padding: 28px 20px;
+      }
+      .find-us-card {
+        max-width: 100%;
+        background: transparent;
+        border: none; box-shadow: none;
+        border-radius: 0; padding: 0;
+        backdrop-filter: none;
+      }
+    }
   </style>
-  <section id="find-us" style="position:relative;height:520px;overflow:hidden;">
+  <section id="find-us">
 
-    <!-- Full-width map (zoomed in, locked) -->
-    <iframe
-      src="https://maps.google.com/maps?q=32+White+Hoe+Industrial+Estate,+Old+Castletown+Road,+Douglas,+Isle+of+Man,+IM2+1QD&output=embed&z=16"
-      style="position:absolute;inset:0;width:100%;height:100%;border:0;display:block;"
-      allowfullscreen=""
-      loading="lazy"
-      referrerpolicy="no-referrer-when-downgrade"
-      title="FitnessPod IOM location">
-    </iframe>
+    <!-- Map layer: iframe + interaction blocker + gradient + We Are Here badge -->
+    <div class="find-us-map">
+      <iframe
+        src="https://maps.google.com/maps?q=32+White+Hoe+Industrial+Estate,+Old+Castletown+Road,+Douglas,+Isle+of+Man,+IM2+1QD&output=embed&z=16"
+        style="position:absolute;inset:0;width:100%;height:100%;border:0;display:block;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="FitnessPod IOM location">
+      </iframe>
 
-    <!-- Interaction blocker — prevents panning/zooming so overlay stays on the pin -->
-    <div style="position:absolute;inset:0;z-index:2;"></div>
+      <!-- Interaction blocker -->
+      <div style="position:absolute;inset:0;z-index:2;"></div>
 
-    <!-- Gradient overlay — dark on left, fades to transparent on right -->
-    <div style="position:absolute;inset:0;z-index:3;pointer-events:none;
-      background:linear-gradient(to right,
-        rgba(8,12,24,0.95) 0%,
-        rgba(8,12,24,0.85) 30%,
-        rgba(8,12,24,0.4) 55%,
-        transparent 75%);"></div>
+      <!-- Gradient overlay — dark left on desktop, subtle bottom fade on mobile -->
+      <div style="position:absolute;inset:0;z-index:3;pointer-events:none;
+        background:linear-gradient(to right,
+          rgba(8,12,24,0.95) 0%,
+          rgba(8,12,24,0.85) 30%,
+          rgba(8,12,24,0.4) 55%,
+          transparent 75%);"></div>
 
-    <!-- We Are Here badge — positioned over the pin -->
-    <div style="position:absolute;left:50%;top:47%;transform:translate(-50%,-100%);z-index:4;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;">
-      <!-- Label -->
-      <div style="background:rgba(8,12,24,0.88);border:1px solid rgba(232,24,26,0.5);border-radius:8px;padding:6px 14px;backdrop-filter:blur(8px);white-space:nowrap;">
-        <p style="font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#e8181a;margin:0;">We Are Here</p>
-      </div>
-      <!-- Arrow -->
-      <div style="width:1px;height:12px;background:rgba(232,24,26,0.6);"></div>
-      <!-- Pulsing dot -->
-      <div style="position:relative;width:18px;height:18px;display:flex;align-items:center;justify-content:center;">
-        <div style="position:absolute;width:18px;height:18px;border-radius:50%;background:rgba(232,24,26,0.35);animation:wah-ring 1.6s ease-out infinite;"></div>
-        <div style="position:absolute;width:18px;height:18px;border-radius:50%;background:rgba(232,24,26,0.2);animation:wah-ring 1.6s ease-out 0.5s infinite;"></div>
-        <div style="width:10px;height:10px;border-radius:50%;background:#e8181a;border:2px solid #fff;animation:wah-dot 1.6s ease-in-out infinite;box-shadow:0 0 10px rgba(232,24,26,0.8);"></div>
+      <!-- We Are Here badge — positioned over the pin -->
+      <div style="position:absolute;left:50%;top:47%;transform:translate(-50%,-100%);z-index:4;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;">
+        <div style="background:rgba(8,12,24,0.88);border:1px solid rgba(232,24,26,0.5);border-radius:8px;padding:6px 14px;backdrop-filter:blur(8px);white-space:nowrap;">
+          <p style="font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#e8181a;margin:0;">We Are Here</p>
+        </div>
+        <div style="width:1px;height:12px;background:rgba(232,24,26,0.6);"></div>
+        <div style="position:relative;width:18px;height:18px;display:flex;align-items:center;justify-content:center;">
+          <div style="position:absolute;width:18px;height:18px;border-radius:50%;background:rgba(232,24,26,0.35);animation:wah-ring 1.6s ease-out infinite;"></div>
+          <div style="position:absolute;width:18px;height:18px;border-radius:50%;background:rgba(232,24,26,0.2);animation:wah-ring 1.6s ease-out 0.5s infinite;"></div>
+          <div style="width:10px;height:10px;border-radius:50%;background:#e8181a;border:2px solid #fff;animation:wah-dot 1.6s ease-in-out infinite;box-shadow:0 0 10px rgba(232,24,26,0.8);"></div>
+        </div>
       </div>
     </div>
 
-    <!-- Floating info card -->
-    <div class="container" style="position:relative;z-index:5;height:100%;display:flex;align-items:center;">
-      <div style="max-width:420px;background:rgba(8,12,24,0.75);border:1px solid rgba(232,24,26,0.3);box-shadow:0 0 48px rgba(232,24,26,0.12),0 24px 64px rgba(0,0,0,0.5);border-radius:16px;padding:36px;backdrop-filter:blur(16px);">
+    <!-- Info card — floats over map on desktop, stacks below on mobile -->
+    <div class="find-us-card-outer">
+      <div class="container">
+        <div class="find-us-card">
 
-        <p style="font-size:0.7rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#e8181a;margin-bottom:12px;">Find Us</p>
-        <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:0.04em;line-height:1;margin-bottom:20px;">FitnessPod<br /><span style="color:#e8181a;">Isle of Man</span></h2>
+          <p style="font-size:0.7rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#e8181a;margin-bottom:12px;">Find Us</p>
+          <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:0.04em;line-height:1;margin-bottom:20px;">FitnessPod<br /><span style="color:#e8181a;">Isle of Man</span></h2>
 
-        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;">
-          <div style="display:flex;gap:12px;align-items:flex-start;">
-            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="rgba(232,24,26,0.8)" stroke-width="1.5" style="flex-shrink:0;margin-top:2px;"><path d="M10 2a6 6 0 016 6c0 4-6 10-6 10S4 12 4 8a6 6 0 016-6z"/><circle cx="10" cy="8" r="2"/></svg>
-            <p style="font-size:0.88rem;color:rgba(255,255,255,0.75);line-height:1.65;margin:0;">32 White Hoe Industrial Estate<br />Old Castletown Road, Douglas<br />Isle of Man, IM2 1QD</p>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;">
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="rgba(232,24,26,0.8)" stroke-width="1.5" style="flex-shrink:0;margin-top:2px;"><path d="M10 2a6 6 0 016 6c0 4-6 10-6 10S4 12 4 8a6 6 0 016-6z"/><circle cx="10" cy="8" r="2"/></svg>
+              <p style="font-size:0.88rem;color:rgba(255,255,255,0.75);line-height:1.65;margin:0;">32 White Hoe Industrial Estate<br />Old Castletown Road, Douglas<br />Isle of Man, IM2 1QD</p>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="rgba(232,24,26,0.8)" stroke-width="1.5" style="flex-shrink:0;"><path d="M2 3a1 1 0 011-1h3.5a1 1 0 01.95.68l1 3a1 1 0 01-.23 1.05L6.91 8.05a11.05 11.05 0 005.04 5.04l1.32-1.31a1 1 0 011.05-.23l3 1a1 1 0 01.68.95V17a1 1 0 01-1 1A16 16 0 012 3z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <a href="tel:07624488843" style="font-size:0.88rem;color:rgba(255,255,255,0.75);text-decoration:none;">07624 488843</a>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="rgba(232,24,26,0.8)" stroke-width="1.5" style="flex-shrink:0;"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3" stroke-linecap="round"/></svg>
+              <p style="font-size:0.88rem;color:rgba(255,255,255,0.75);margin:0;">Open 24/7 — every day</p>
+            </div>
           </div>
-          <div style="display:flex;gap:12px;align-items:center;">
-            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="rgba(232,24,26,0.8)" stroke-width="1.5" style="flex-shrink:0;"><path d="M2 3a1 1 0 011-1h3.5a1 1 0 01.95.68l1 3a1 1 0 01-.23 1.05L6.91 8.05a11.05 11.05 0 005.04 5.04l1.32-1.31a1 1 0 011.05-.23l3 1a1 1 0 01.68.95V17a1 1 0 01-1 1A16 16 0 012 3z" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <a href="tel:07624488843" style="font-size:0.88rem;color:rgba(255,255,255,0.75);text-decoration:none;">07624 488843</a>
-          </div>
-          <div style="display:flex;gap:12px;align-items:center;">
-            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="rgba(232,24,26,0.8)" stroke-width="1.5" style="flex-shrink:0;"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3" stroke-linecap="round"/></svg>
-            <p style="font-size:0.88rem;color:rgba(255,255,255,0.75);margin:0;">Open 24/7 — every day</p>
-          </div>
+
+          <a href="https://maps.google.com/maps?q=32+White+Hoe+Industrial+Estate,+Old+Castletown+Road,+Douglas,+Isle+of+Man,+IM2+1QD" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--block">
+            Get Directions →
+          </a>
         </div>
-
-        <a href="https://maps.google.com/maps?q=32+White+Hoe+Industrial+Estate,+Old+Castletown+Road,+Douglas,+Isle+of+Man,+IM2+1QD" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--block">
-          Get Directions →
-        </a>
       </div>
     </div>
   </section>
