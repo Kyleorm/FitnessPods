@@ -27,7 +27,7 @@ module.exports = defineConfig({
     },
   ],
   webServer: {
-    command: 'node ../serve.mjs',
+    command: 'node serve.mjs',
     url: 'http://localhost:3000',
     reuseExistingServer: true,
     timeout: 10000,
