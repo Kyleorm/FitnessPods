@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ── TOKENS ── */
 :root {
@@ -1138,8 +1139,13 @@ body {
 </div>
 
 <script>
+// ── SUPABASE ──
+const SUPABASE_URL  = 'https://hrehdtpewfdtjfyhkzws.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhyZWhkdHBld2ZkdGpmeWhrendzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Njg0MjIsImV4cCI6MjA5MjU0NDQyMn0.w1Iu0GzCMlaomtjjE7u_0GJOYuFfE_NSVjlSeJV7dg8';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
 // ── AUTH ──
-function handleLogin() {
+async function handleLogin() {
   const email    = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
   const btn      = document.getElementById('login-btn');
@@ -1148,22 +1154,35 @@ function handleLogin() {
   if (!email || !password) { showError('Please enter your email and password.'); return; }
   btn.disabled = true; btn.textContent = 'Signing in…'; errEl.style.display = 'none';
 
-  setTimeout(() => {
-    if (email === 'admin@fitnesspod.im' && password === 'admin123') {
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'block';
-      document.getElementById('sidebar-name').textContent = 'Admin';
-      document.getElementById('sidebar-avatar').textContent = 'AD';
-      document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-      initDashboard();
-    } else {
-      showError('Invalid email or password.');
-      btn.disabled = false; btn.textContent = 'Sign In';
-    }
-  }, 600);
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) {
+    showError('Invalid email or password.');
+    btn.disabled = false; btn.textContent = 'Sign In';
+    return;
+  }
+
+  const { data: adminCheck } = await supabaseClient.from('admins').select('id').eq('user_id', data.user.id).single();
+  if (!adminCheck) {
+    await supabaseClient.auth.signOut();
+    showError('Access denied. This area is for authorised staff only.');
+    btn.disabled = false; btn.textContent = 'Sign In';
+    return;
+  }
+
+  showDashboard(data.user.email);
 }
 
-function handleSignOut() {
+function showDashboard(email) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('sidebar-name').textContent = email.split('@')[0];
+  document.getElementById('sidebar-avatar').textContent = email.slice(0, 2).toUpperCase();
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  initDashboard();
+}
+
+async function handleSignOut() {
+  await supabaseClient.auth.signOut();
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('login-email').value = '';
@@ -1176,6 +1195,13 @@ function showError(msg) {
   const el = document.getElementById('login-error');
   el.textContent = msg; el.style.display = 'block';
 }
+
+// Check for existing session on load
+window.addEventListener('load', () => {
+  supabaseClient.auth.getSession().then(({ data: { session } }) => {
+    if (session) showDashboard(session.user.email);
+  });
+});
 
 document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
 document.getElementById('login-email').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('login-password').focus(); });
