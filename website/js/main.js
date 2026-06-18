@@ -120,6 +120,22 @@ document.querySelectorAll('.marquee-track').forEach(track => {
   });
 });
 
+/* ── WHO-FOR: light up dots on scroll ─────────── */
+const dotObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const dot = entry.target.querySelector('.who-for__dot');
+    if (dot) dot.classList.add('active');
+  });
+}, {
+  threshold: 0.35,
+  rootMargin: '0px 0px -8% 0px'
+});
+
+document.querySelectorAll('.who-for__row').forEach(row => {
+  dotObserver.observe(row);
+});
+
 /* ── CONTACT FORM: client-side validation ──────── */
 const contactForm = document.getElementById('contact-form');
 if (contactForm) {

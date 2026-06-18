@@ -2418,7 +2418,8 @@ a.contact__detail-value:hover { color: var(--red); }
   transition: background 0.3s var(--ease), color 0.3s var(--ease);
 }
 
-.who-for__row:hover .who-for__dot {
+.who-for__row:hover .who-for__dot,
+.who-for__dot.active {
   background: var(--red);
   color: #fff;
 }
