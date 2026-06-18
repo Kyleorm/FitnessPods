@@ -2354,6 +2354,10 @@ a.contact__detail-value:hover { color: var(--red); }
   margin-bottom: 80px;
 }
 
+.who-for__header .section__sub {
+  margin: 0 auto;
+}
+
 /* Rows wrapper — holds the vertical spine */
 .who-for__rows {
   position: relative;
