@@ -2347,6 +2347,7 @@ a.contact__detail-value:hover { color: var(--red); }
 .who-for {
   padding: 100px 0 120px;
   background: var(--bg-2);
+  overflow: hidden;
 }
 
 .who-for__header {
@@ -2425,18 +2426,18 @@ a.contact__detail-value:hover { color: var(--red); }
 /* Content column */
 .who-for__content {
   position: relative;
-  overflow: hidden;
 }
 
 /* Large background number — pure depth, no meaning */
 .who-for__bg-num {
   position: absolute;
-  right: -10px;
-  top: -36px;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
   font-family: var(--font-head);
-  font-size: 220px;
+  font-size: 200px;
   line-height: 1;
-  color: rgba(255,255,255,0.028);
+  color: rgba(255,255,255,0.03);
   letter-spacing: -8px;
   user-select: none;
   pointer-events: none;
