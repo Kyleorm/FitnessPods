@@ -2339,3 +2339,153 @@ a.contact__detail-value:hover { color: var(--red); }
   .contact__form-row { grid-template-columns: 1fr; }
   .contact__form-wrap { padding: 24px; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   WHO IS THIS FOR — ALTERNATING FEATURE ROWS
+═══════════════════════════════════════════════════════ */
+
+.who-for {
+  padding: 100px 0 120px;
+  background: var(--bg-2);
+}
+
+.who-for__header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+/* Rows wrapper — holds the vertical spine */
+.who-for__rows {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Vertical red spine */
+.who-for__rows::before {
+  content: '';
+  position: absolute;
+  left: 27px;
+  top: 48px;
+  bottom: 48px;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--red) 10%, var(--red) 90%, transparent);
+  pointer-events: none;
+}
+
+/* Each entry row */
+.who-for__row {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 0 56px;
+  padding: 64px 0;
+  position: relative;
+  align-items: start;
+}
+
+.who-for__row + .who-for__row {
+  border-top: 1px solid var(--w06);
+}
+
+/* Node column */
+.who-for__node {
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.who-for__dot {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid var(--red);
+  background: var(--bg-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: 20px;
+  letter-spacing: 0.05em;
+  color: var(--red);
+  flex-shrink: 0;
+  transition: background 0.3s var(--ease), color 0.3s var(--ease);
+}
+
+.who-for__row:hover .who-for__dot {
+  background: var(--red);
+  color: #fff;
+}
+
+/* Content column */
+.who-for__content {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Large background number — pure depth, no meaning */
+.who-for__bg-num {
+  position: absolute;
+  right: -10px;
+  top: -36px;
+  font-family: var(--font-head);
+  font-size: 220px;
+  line-height: 1;
+  color: rgba(255,255,255,0.028);
+  letter-spacing: -8px;
+  user-select: none;
+  pointer-events: none;
+}
+
+.who-for__tag {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.who-for__name {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 3.5vw, 54px);
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 20px;
+}
+
+.who-for__desc {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--w60);
+  max-width: 640px;
+}
+
+.who-for__bar {
+  width: 40px;
+  height: 2px;
+  background: var(--red);
+  border-radius: 2px;
+  margin-top: 28px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .who-for { padding: 72px 0 80px; }
+  .who-for__header { margin-bottom: 48px; }
+  .who-for__row { grid-template-columns: 44px 1fr; gap: 0 32px; padding: 48px 0; }
+  .who-for__rows::before { left: 21px; }
+  .who-for__dot { width: 44px; height: 44px; font-size: 17px; }
+  .who-for__bg-num { font-size: 140px; top: -20px; }
+}
+
+@media (max-width: 480px) {
+  .who-for__row { gap: 0 20px; padding: 40px 0; }
+  .who-for__name { font-size: 28px; }
+  .who-for__desc { font-size: 15px; }
+}
