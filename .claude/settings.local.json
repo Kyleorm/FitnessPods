@@ -21,7 +21,8 @@
       "Bash(npm run *)",
       "Skill(update-config)",
       "Bash(claude doctor *)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "mcp__filesystem__list_directory"
     ]
   }
 }

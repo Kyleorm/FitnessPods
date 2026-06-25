@@ -4,6 +4,11 @@ dist-ssr/
 .env
 .env.local
 *.local
+
+# SECRETS — never commit (this repo is PUBLIC)
+# ClubSolution / Halbooking API credentials shared by the client
+website/Clubsolution API/
+website/Clubsolution API/**
 test-results/
 playwright-report/
 .playwright-mcp/

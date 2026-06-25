@@ -56,12 +56,12 @@
 
       <p class="hero__body">
         Book a fully equipped private gym pod. Pay per session or join a plan.
-        Get your door code. Show up and lift.
+        Get your door code. Show up and train.
       </p>
 
       <div class="hero__ctas">
-        <a href="https://fitnesspod.clubsolution.co.uk" class="btn btn--primary btn--lg" target="_blank" rel="noopener noreferrer">Sign Up &amp; Get a FREE Session</a>
-        <a href="booking.html" class="btn btn--ghost btn--lg">
+        <a href="https://fitnesspod.clubsolution.co.uk" class="btn btn--primary btn--lg" target="_blank" rel="noopener noreferrer">Sign Up</a>
+        <a href="booking.html" class="btn btn--primary btn--lg">
           Book a Session
           <svg class="btn__icon" viewBox="0 0 20 20" fill="none">
             <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -79,7 +79,7 @@
           <svg viewBox="0 0 20 20" fill="#e8181a" width="14" height="14"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
         </div>
         <p class="hero__testimonial-quote">"I have been using the Fitness Pods for around two months now and the facilities are great, I particularly like the variety of equipment across the different pods. It's also nice to be able to train without feeling like you are being scrutinised by others."</p>
-        <span class="hero__testimonial-author">— Gary Cooper</span>
+        <span class="hero__testimonial-author">— Gary</span>
       </div>
 
       <!-- Live pod status strip inside hero -->
@@ -128,7 +128,7 @@
           </div>
           <div class="pod-card__body">
             <h3 class="pod-card__name">FitnessPod 1</h3>
-            <p class="pod-card__desc">Treadmill, elliptical, spin bike, rower, dumbbells and more. A complete cardio and conditioning session.</p>
+            <p class="pod-card__desc">Treadmill, elliptical, fitness bike, rower, dumbbells and more. A complete cardio and conditioning session.</p>
             <div class="pod-card__footer">
               <span class="pod-card__cap">Up to 3 people</span>
               <a href="booking.html" class="btn btn--primary btn--sm">Book Now</a>
@@ -284,27 +284,13 @@
           </div>
         </div>
 
-        <!-- Entry 3: PT -->
+        <!-- Entry 3: Night -->
         <div class="who-for__row reveal">
           <div class="who-for__node">
             <div class="who-for__dot">03</div>
           </div>
           <div class="who-for__content">
             <span class="who-for__bg-num" aria-hidden="true">03</span>
-            <p class="who-for__tag">Personal Trainers &amp; Coaches</p>
-            <h3 class="who-for__name">Your clients deserve<br>a proper environment.</h3>
-            <p class="who-for__desc">Shared gym floors are noisy, distracting, and never truly feel professional. Book a FitnessPod for your sessions and give your clients the focused, private environment they're paying for. Fully equipped, completely yours for the hour. A space that reflects the quality of your service.</p>
-            <div class="who-for__bar"></div>
-          </div>
-        </div>
-
-        <!-- Entry 4: Night -->
-        <div class="who-for__row reveal">
-          <div class="who-for__node">
-            <div class="who-for__dot">04</div>
-          </div>
-          <div class="who-for__content">
-            <span class="who-for__bg-num" aria-hidden="true">04</span>
             <p class="who-for__tag">Shift Workers &amp; Night Owls</p>
             <h3 class="who-for__name">Work nights?<br>We're always open.</h3>
             <p class="who-for__desc">Finishing a night shift at 6am. Starting work before dawn. Whatever your hours look like, FitnessPod is open 24 hours a day, 365 days a year. Book at midnight, show up at 3am — the pods are always ready. Because good training shouldn't have a closing time.</p>
@@ -350,6 +336,25 @@
             <a href="booking.html" class="btn btn--primary btn--block">Book an Evening Slot</a>
           </div>
         </div>
+
+        <!-- Top-up promo banner -->
+        <div class="topup-banner reveal" data-delay="150">
+          <div class="topup-banner__head">
+            <span class="topup-banner__tag">Account Top-Up Bonus</span>
+            <h3 class="topup-banner__title">Top Up &amp; Train for Less</h3>
+            <p class="topup-banner__sub">Add credit to your account and we'll stack free sessions on top.</p>
+          </div>
+          <div class="topup-banner__tiers">
+            <div class="topup-tier">
+              <div class="topup-tier__amount">£50</div>
+              <div class="topup-tier__reward"><span class="topup-tier__plus">+</span>1 free daytime session</div>
+            </div>
+            <div class="topup-tier topup-tier--featured">
+              <div class="topup-tier__amount">£100</div>
+              <div class="topup-tier__reward"><span class="topup-tier__plus">+</span>2 free evening sessions</div>
+            </div>
+          </div>
+        </div>
     </div>
   </section>
 
@@ -376,9 +381,20 @@
           <div class="stat-block__sub">And growing every week</div>
         </div>
         <div class="stat-block reveal" data-delay="300">
-          <div class="stat-block__num" data-count="3" data-prefix="Up to ">0</div>
+          <div class="stat-block__num stat-block__num--prefixed">
+            <span class="stat-block__prefix"><span>Up</span><span>to</span></span>
+            <span class="stat-block__count" data-count="3">0</span>
+          </div>
           <div class="stat-block__label">People Per Pod</div>
           <div class="stat-block__sub">One flat price, split between you</div>
+        </div>
+        <div class="stat-block reveal" data-delay="400">
+          <div class="stat-block__num stat-block__num--static stat-block__num--time">
+            <span>6:30am</span>
+            <span>&ndash; 10pm</span>
+          </div>
+          <div class="stat-block__label">Admin Available</div>
+          <div class="stat-block__sub">On-site support &mdash; pods stay open 24/7</div>
         </div>
       </div>
     </div>
@@ -406,9 +422,9 @@
           </div>
           <p class="review-card__quote">"It's really good for when you wanna get in shape but are too scared of what people will think of you in a gym because it's completely private!"</p>
           <div class="review-card__author">
-            <div class="review-card__avatar">AM</div>
+            <div class="review-card__avatar">A</div>
             <div>
-              <div class="review-card__name">Adam Marven</div>
+              <div class="review-card__name">Adam</div>
               <div class="review-card__loc"></div>
             </div>
           </div>
@@ -424,9 +440,9 @@
           </div>
           <p class="review-card__quote">"I have been using the Fitness Pods for around two months now and the facilities are great, I particularly like the variety of equipment across the different pods. It's also nice to be able to train without feeling like you are being scrutinised by others."</p>
           <div class="review-card__author">
-            <div class="review-card__avatar">GC</div>
+            <div class="review-card__avatar">G</div>
             <div>
-              <div class="review-card__name">Gary Cooper</div>
+              <div class="review-card__name">Gary</div>
               <div class="review-card__loc"></div>
             </div>
           </div>
@@ -442,9 +458,9 @@
           </div>
           <p class="review-card__quote">"Really easy to use, good value for money. Good range of equipment. Clean and well maintained, no pressure as you can work at your own pace."</p>
           <div class="review-card__author">
-            <div class="review-card__avatar">KH</div>
+            <div class="review-card__avatar">K</div>
             <div>
-              <div class="review-card__name">Karen Hopkins</div>
+              <div class="review-card__name">Karen</div>
               <div class="review-card__loc"></div>
             </div>
           </div>
@@ -481,7 +497,7 @@
       <div class="section__header reveal">
         <p class="section__eyebrow">How It Works</p>
         <h2 class="section__title">Simple to Book.<br /><span class="text-red">Even Simpler to Train.</span></h2>
-        <p class="section__sub">Sign up, grab your free first session, pick your pod and time. That's it.</p>
+        <p class="section__sub">Sign up, pick your pod and time, and you're ready to train. That's it.</p>
       </div>
 
       <div style="max-width:720px;margin:0 auto;">
@@ -656,6 +672,18 @@
               <p>Yes — personal trainers are welcome to use the pods with their clients. Just book as normal and bring your PT along. The only rule is the standard one: no more than 3 people in a pod at any time.</p>
             </div>
           </div>
+
+          <div class="faq__item reveal" data-delay="320">
+            <button class="faq__q" aria-expanded="false">
+              Can children use the pods?
+              <svg class="faq__chevron" viewBox="0 0 20 20" fill="none">
+                <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq__a">
+              <p>Children over the age of 12 are welcome to train as long as they are accompanied by an adult over the age of 18.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -676,7 +704,7 @@
           <span>Isle of Man</span><span class="msep">✦</span>
           <span>6 Private Pods</span><span class="msep">✦</span>
           <span>From £7/hr</span><span class="msep">✦</span>
-          <span>Free First Session</span><span class="msep">✦</span>
+          <span>Top Up &amp; Save</span><span class="msep">✦</span>
         </div>
         <div class="marquee-content" aria-hidden="true">
           <span>Train Private</span><span class="msep">✦</span>
@@ -686,7 +714,7 @@
           <span>Isle of Man</span><span class="msep">✦</span>
           <span>6 Private Pods</span><span class="msep">✦</span>
           <span>From £7/hr</span><span class="msep">✦</span>
-          <span>Free First Session</span><span class="msep">✦</span>
+          <span>Top Up &amp; Save</span><span class="msep">✦</span>
         </div>
       </div>
     </div>
@@ -901,7 +929,8 @@
         <!-- Right: form -->
         <div class="contact__form-wrap reveal" style="transition-delay:0.1s">
           <form class="contact__form" id="contact-form" novalidate>
-            <input type="hidden" name="access_key" value="FITNESSPOD_WEB3FORMS_KEY" />
+            <!-- TEMPORARY test key (dev's email). SWAP for FitnessPod owner's key (enquiries@fitnesspod.im) before go-live. -->
+            <input type="hidden" name="access_key" value="86c71914-e4cc-42b8-b10d-35b88941a9aa" />
             <input type="hidden" name="subject" value="New enquiry from FitnessPod website" />
             <input type="hidden" name="from_name" value="FitnessPod Website" />
             <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />

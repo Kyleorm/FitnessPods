@@ -1,0 +1,46 @@
+FitnessPod Website - Project Context & Next Steps
+
+I need you to fully understand where this project is at right now before we do anything else. Please read this carefully.
+
+BACKGROUND
+I am building a website for a client called FitnessPod IOM, a private gym on the Isle of Man with 6 individual workout pods. The website has already been built with branding, pages, and a custom designed booking grid UI (showing pods as columns and time slots as rows).
+
+WHAT HAS CHANGED
+Originally the plan was to build a fully custom booking system with Pod Points (a loyalty currency), gift cards, and our own payment + door code integration. The client has now decided NOT to go ahead with that. They want to keep using their existing booking system, which is called ClubSolution (run by a company called Globus Data).
+
+I have already removed the Pod Points and gift card features from the website per the client's request. The custom booking grid UI design itself should remain - the client wants to keep that visual design and layout.
+
+WHAT NEEDS TO HAPPEN NOW
+ClubSolution has an API that I am getting access to. I confirmed directly with their support (a contact named Brian) what this API can and cannot do:
+
+WHAT THE API CAN DO:
+- Retrieve booking/court data and class data
+- Allow me to build a visible UI showing availability (using my own design)
+- Allow linking through to the ClubSolution booking pages
+
+WHAT THE API CANNOT DO:
+- No external user login through my website
+- No creating bookings externally (no POST data)
+- No class booking or membership purchases through my website
+- All actual booking, payment and login logic MUST happen on ClubSolution's own pages
+
+SO THE FINAL FLOW WILL BE:
+1. Customer visits my custom designed website
+2. Customer sees the booking grid (my design) showing live pod availability pulled from the ClubSolution API
+3. Customer clicks an available slot
+4. Customer is redirected to ClubSolution's own booking page to log in, complete the booking and pay (this happens on ClubSolution's site, not mine - their payment processor is called SecurePay360)
+
+WHAT I NEED FROM YOU
+1. Please review the current state of the FitnessPod website project and confirm what's already built, especially the existing booking grid UI and confirm the Pod Points/gift card features have been fully and cleanly removed with nothing broken.
+
+2. Once I provide you with the ClubSolution API key and any documentation, I need you to connect the existing booking grid UI to pull REAL live availability data from the API instead of any placeholder/static data.
+
+3. Build the functionality so that when a customer clicks an available slot in the booking grid, they are redirected to the correct corresponding ClubSolution booking page for that pod/time slot.
+
+4. This should all be tested first on the Vercel preview/temporary URL - NOT on the live domain. The client's real domain (fitnesspod.im) will only be connected once everything is fully tested and approved.
+
+5. Follow all the security and testing standards in the agency CLAUDE.md file, including running a full security review and Playwright tests before anything is considered ready to show the client.
+
+6. Please confirm back to me in plain English (not just code) what state the website is currently in, what still needs to be done, and flag anything that you are not certain about or that needs my input before proceeding.
+
+I want to make sure nothing is rushed and that I fully understand each step before moving to the next one. Please be thorough and don't assume anything - ask me if you're unsure about any part of this.

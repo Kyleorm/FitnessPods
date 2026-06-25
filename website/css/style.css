@@ -734,6 +734,83 @@ h1, h2, h3, h4 {
   color: var(--w60);
 }
 
+/* Top-up promo banner */
+.topup-banner {
+  max-width: 700px;
+  margin: 28px auto 0;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--red);
+  border-radius: var(--r);
+  background:
+    radial-gradient(130% 150% at 0% 0%, rgba(212,32,40,0.18), transparent 58%),
+    var(--bg-3);
+  box-shadow: 0 0 36px var(--red-glow);
+  padding: 30px 32px;
+}
+.topup-banner__tag {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 10px;
+}
+.topup-banner__title {
+  font-family: var(--font-head);
+  font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+  line-height: 1.02;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  margin: 0 0 6px;
+}
+.topup-banner__sub {
+  font-size: 0.92rem;
+  color: var(--w60);
+  line-height: 1.5;
+  margin: 0 0 22px;
+  max-width: 480px;
+}
+.topup-banner__tiers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.topup-tier {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border: 1px solid var(--w06);
+  border-radius: var(--r-sm);
+  background: rgba(255,255,255,0.02);
+}
+.topup-tier--featured {
+  border-color: var(--red);
+  background: var(--red-dim);
+}
+.topup-tier__amount {
+  font-family: var(--font-head);
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  flex-shrink: 0;
+}
+.topup-tier__reward {
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--w80);
+}
+.topup-tier__plus {
+  color: var(--red);
+  font-weight: 700;
+  margin-right: 6px;
+}
+
 /* Memberships */
 .membership-grid {
   display: grid;
@@ -1451,7 +1528,7 @@ h1, h2, h3, h4 {
 
 .stats__grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 0;
   position: relative;
   z-index: 1;
@@ -1473,6 +1550,42 @@ h1, h2, h3, h4 {
   margin-bottom: 8px;
 }
 .stat-block__num--static { /* no JS counter, shown as-is */ }
+
+/* "Up to 3" — stack the qualifier vertically beside the big figure, in the
+   same white display font, so "up" sits level with the top of the 3 and
+   "to" level with the bottom, filling its full height */
+.stat-block__num--prefixed {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 12px;
+}
+.stat-block__prefix {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  font-family: var(--font-head);
+  font-size: clamp(1.6rem, 2.6vw, 2.6rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  padding: 0.08em 0 0.16em;
+}
+
+/* Admin hours — a time range can't be one giant figure, so stack it on two
+   lines at a size that carries the same visual weight as the other stats */
+.stat-block__num--time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: clamp(2.1rem, 2.7vw, 2.9rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
 
 .stat-block__label {
   font-family: var(--font-head);
@@ -2112,6 +2225,8 @@ h1, h2, h3, h4 {
   .stats__grid { grid-template-columns: repeat(2, 1fr); }
   .stat-block { border-right: none; border-bottom: 1px solid var(--w06); }
   .stat-block:last-child { border-bottom: none; }
+  /* 5th block is an orphan in a 2-col grid — let it span the full width */
+  .stat-block:nth-child(5) { grid-column: 1 / -1; }
   .membership-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
   .membership-card--featured { transform: none; }
   .membership-card--featured:hover { transform: translateY(-4px); }
@@ -2193,6 +2308,8 @@ h1, h2, h3, h4 {
 
   /* Pricing */
   .payg-grid { grid-template-columns: 1fr; max-width: 360px; margin: 0 auto; }
+  .topup-banner { max-width: 360px; padding: 26px 22px; }
+  .topup-banner__tiers { grid-template-columns: 1fr; }
 
   /* Pod Points + Shop */
   .pp-bundles { max-width: 360px; }
