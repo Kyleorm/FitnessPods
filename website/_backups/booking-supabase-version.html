@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     .booking-page {
       min-height: 100vh;
@@ -697,7 +698,18 @@
         <p class="booking-header__sub">6 pods available 24/7 — select a date and tap any green slot to book it.</p>
       </div>
 
-      <!-- AVAILABILITY VIEW -->
+      <!-- STEPPER -->
+      <div class="stepper">
+        <div class="step step--active" data-step="1"><div class="step__num">1</div><span class="step__label">Choose Time</span></div>
+        <div class="step__connector"></div>
+        <div class="step" data-step="2"><div class="step__num">2</div><span class="step__label">Account</span></div>
+        <div class="step__connector"></div>
+        <div class="step" data-step="3"><div class="step__num">3</div><span class="step__label">Payment</span></div>
+        <div class="step__connector"></div>
+        <div class="step" data-step="4"><div class="step__num">4</div><span class="step__label">Confirmed</span></div>
+      </div>
+
+      <!-- STEP 1: AVAILABILITY VIEW -->
       <div id="view-step1">
 
         <!-- Day picker -->
@@ -745,12 +757,216 @@
 
       </div>
 
+      <!-- STEP 2: DETAILS -->
+      <div id="view-step2" style="display:none;">
+        <div class="step-card">
+          <div class="step-card__body">
+            <h2 class="step-title">Your Details</h2>
+            <p class="step-sub">We'll send your door code to your email and phone instantly after payment.</p>
+            <div class="details-grid">
+              <div class="field-group">
+                <label class="field-label">First Name</label>
+                <input type="text" class="field-input" id="first-name" placeholder="John" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Last Name</label>
+                <input type="text" class="field-input" id="last-name" placeholder="Smith" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Email Address</label>
+                <input type="email" class="field-input" id="email" placeholder="john@example.com" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Phone Number</label>
+                <input type="tel" class="field-input" id="phone" placeholder="+44 7700 000000" />
+              </div>
+              <div class="field-group field-group--full">
+                <label class="field-label">Number of People</label>
+                <select class="field-input" id="people">
+                  <option value="1">Just me (1 person)</option>
+                  <option value="2">2 people</option>
+                  <option value="3">3 people</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="step-card__footer">
+            <button class="btn btn--ghost" id="btn-back-2">← Back</button>
+            <button class="btn btn--primary" id="btn-next-2">Continue →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: PAYMENT -->
+      <div id="view-step3" style="display:none;">
+        <div class="step-card">
+          <div class="step-card__body">
+            <h2 class="step-title">Payment</h2>
+            <p class="step-sub">Review your booking and complete payment to get your door code.</p>
+            <div class="order-summary">
+              <div class="order-summary__title">ORDER SUMMARY</div>
+              <div class="order-row"><span class="order-row__label">Pod</span><span class="order-row__value" id="os-pod">—</span></div>
+              <div class="order-row"><span class="order-row__label">Date</span><span class="order-row__value" id="os-date">—</span></div>
+              <div class="order-row"><span class="order-row__label">Time</span><span class="order-row__value" id="os-time">—</span></div>
+              <div class="order-row"><span class="order-row__label">Duration</span><span class="order-row__value">1 hour</span></div>
+              <div class="order-row"><span class="order-row__label">Rate</span><span class="order-row__value" id="os-rate">—</span></div>
+              <div class="order-row order-row--total"><span class="order-row__label">Total</span><span class="order-row__value" id="os-total">—</span></div>
+            </div>
+            <div class="payment-methods">
+              <div class="payment-method selected" data-method="paypal">
+                <div class="payment-method__icon payment-method__icon--paypal">PayPal</div>
+                <div class="payment-method__info">
+                  <div class="payment-method__name">PayPal</div>
+                  <div class="payment-method__desc">Pay securely with your PayPal account or card</div>
+                </div>
+                <div class="payment-method__radio"></div>
+              </div>
+              <div class="payment-method" data-method="sumup">
+                <div class="payment-method__icon payment-method__icon--sumup">SumUp</div>
+                <div class="payment-method__info">
+                  <div class="payment-method__name">SumUp</div>
+                  <div class="payment-method__desc">Pay by card via SumUp</div>
+                </div>
+                <div class="payment-method__radio"></div>
+              </div>
+            </div>
+            <button class="btn btn--primary pay-btn" id="pay-btn">
+              Complete Booking
+              <svg class="btn__icon" viewBox="0 0 20 20" fill="none"><path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="secure-note">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+              Secure payment — your details are encrypted
+            </div>
+          </div>
+          <div class="step-card__footer">
+            <button class="btn btn--ghost" id="btn-back-3">← Back</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: CONFIRMATION -->
+      <div id="view-step4" style="display:none;">
+        <div class="step-card">
+          <div class="step-card__body">
+            <div class="confirmation">
+              <div class="confirmation__icon">
+                <svg viewBox="0 0 40 40" fill="none"><path d="M8 20L16 28L32 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <h2 class="confirmation__title">You're Booked!</h2>
+              <p class="confirmation__sub">Your door code has been sent to your email and phone. Show up and train.</p>
+              <div class="door-code-box">
+                <div class="door-code-box__label">Your Door Code</div>
+                <div class="door-code-box__code" id="door-code" style="font-size:1.2rem;letter-spacing:0.05em;">Sent to your email &amp; phone</div>
+                <div class="door-code-box__note">Check your inbox — your unique code will arrive within 2 minutes</div>
+              </div>
+              <div class="conf-details">
+                <div class="conf-row"><span class="conf-row__label">Pod</span><span class="conf-row__value" id="conf-pod">—</span></div>
+                <div class="conf-row"><span class="conf-row__label">Date & Time</span><span class="conf-row__value" id="conf-datetime">—</span></div>
+                <div class="conf-row"><span class="conf-row__label">Duration</span><span class="conf-row__value">1 hour</span></div>
+                <div class="conf-row"><span class="conf-row__label">Total Paid</span><span class="conf-row__value" id="conf-total">—</span></div>
+              </div>
+              <a href="index.html" class="btn btn--outline">Back to Homepage</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
+
+  <!-- STICKY BOOKING BAR (appears when slot selected) -->
+  <div class="booking-bar hidden" id="booking-bar">
+    <div class="booking-bar__info">
+      <div class="booking-bar__selection" id="bar-selection">No slot selected</div>
+      <div class="booking-bar__price" id="bar-price">— <span>per hour · up to 3 people</span></div>
+      <div id="lock-countdown" style="font-size:0.72rem;color:#f59e0b;margin-top:3px;font-weight:600;"></div>
+    </div>
+    <button class="btn btn--primary" id="btn-continue" style="flex-shrink:0;">
+      Continue to Book →
+    </button>
+  </div>
+
+  <!-- AUTH MODAL -->
+  <div id="auth-modal" class="auth-modal hidden" role="dialog" aria-modal="true" aria-label="Sign in to FitnessPod">
+    <div class="auth-modal__backdrop"></div>
+    <div class="auth-modal__card">
+
+      <div class="auth-modal__top">
+        <div class="auth-logo-mark"><span>FP</span></div>
+        <button id="auth-close" class="auth-close" aria-label="Close">✕</button>
+      </div>
+
+      <div id="auth-slot-reminder" class="auth-slot-reminder">
+        Slot reserved: <strong id="auth-slot-text">—</strong> — sign in to complete your booking
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login">Log In</button>
+        <button class="auth-tab" id="tab-signup">Create Account</button>
+      </div>
+
+      <!-- ── LOGIN FORM ── -->
+      <div id="auth-login-form">
+        <div class="auth-field">
+          <label>Email Address</label>
+          <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <p id="auth-error" class="auth-error hidden"></p>
+        <button id="auth-login-btn" class="btn btn--primary" style="width:100%;margin-top:4px;">Log In</button>
+        <button id="auth-forgot-btn" class="auth-forgot">Forgot password?</button>
+      </div>
+
+      <!-- ── SIGNUP FORM ── -->
+      <div id="auth-signup-form" style="display:none;">
+        <div class="auth-field">
+          <label>Full Name</label>
+          <input type="text" id="auth-fullname" placeholder="John Smith" autocomplete="name" />
+        </div>
+        <div class="auth-field">
+          <label>Email Address</label>
+          <input type="email" id="auth-signup-email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <div class="auth-field">
+          <label>Phone Number</label>
+          <input type="tel" id="auth-phone" placeholder="+44 7700 000000" autocomplete="tel" />
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" id="auth-signup-password" placeholder="Min. 8 characters" autocomplete="new-password" />
+        </div>
+        <p id="auth-signup-error" class="auth-error hidden"></p>
+        <button id="auth-signup-btn" class="btn btn--primary" style="width:100%;margin-top:4px;">Create Account</button>
+      </div>
+
+      <!-- ── FORGOT PASSWORD FORM ── -->
+      <div id="auth-reset-form" style="display:none;">
+        <div class="auth-field">
+          <label>Email Address</label>
+          <input type="email" id="auth-reset-email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <p id="auth-reset-error" class="auth-error hidden"></p>
+        <p id="auth-reset-success" class="auth-success hidden"></p>
+        <button id="auth-reset-btn" class="btn btn--primary" style="width:100%;margin-top:4px;">Send Reset Link</button>
+        <button id="auth-back-to-login" class="auth-forgot">← Back to Login</button>
+      </div>
+
+    </div>
+  </div>
 
   <script src="js/main.js"></script>
   <script>
   (function () {
+
+    // ── SUPABASE ─────────────────────────────────────────────────
+    const SUPABASE_URL  = 'https://hrehdtpewfdtjfyhkzws.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhyZWhkdHBld2ZkdGpmeWhrendzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Njg0MjIsImV4cCI6MjA5MjU0NDQyMn0.w1Iu0GzCMlaomtjjE7u_0GJOYuFfE_NSVjlSeJV7dg8';
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
     // ── CONFIG ──────────────────────────────────────────────────
     const PODS = [
@@ -763,11 +979,42 @@
     ];
     const RATES = { daytime: 7.00, evening: 10.00 };
 
+    // ── SESSION ID (identifies this browser tab for slot locking) ─
+    function getSessionId() {
+      let id = sessionStorage.getItem('fp_session');
+      if (!id) {
+        id = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now());
+        sessionStorage.setItem('fp_session', id);
+      }
+      return id;
+    }
+
     // ── STATE ────────────────────────────────────────────────────
     const state = {
       pod: null, podIndex: null, hour: null,
       timeLabel: null, timeRate: null, date: null,
+      sessionId: getSessionId(),
+      lockExpiresAt: null, lockTimer: null,
+      currentUser: null, currentProfile: null,
     };
+
+    // ── AUTH INIT ────────────────────────────────────────────────
+    (async () => {
+      const { data: { session } } = await db.auth.getSession();
+      if (session?.user) {
+        state.currentUser = session.user;
+        await loadUserProfile(session.user.id);
+      }
+    })();
+
+    db.auth.onAuthStateChange((_event, session) => {
+      state.currentUser = session?.user ?? null;
+    });
+
+    async function loadUserProfile(userId) {
+      const { data } = await db.from('profiles').select('*').eq('id', userId).single();
+      state.currentProfile = data;
+    }
 
     // ── HELPERS ──────────────────────────────────────────────────
     function fmtTime(h, offset) {
@@ -800,6 +1047,13 @@
       return n + (s[(v - 20) % 10] || s[v] || s[0]);
     }
 
+    // Cryptographically random 6-digit door code
+    function generateDoorCode() {
+      const arr = new Uint32Array(1);
+      crypto.getRandomValues(arr);
+      return String(100000 + (arr[0] % 900000));
+    }
+
     // ── ERROR HELPERS ─────────────────────────────────────────────
     function showGridError(msg) {
       let banner = document.getElementById('grid-error-banner');
@@ -814,12 +1068,34 @@
       setTimeout(() => { banner.style.display = 'none'; }, 7000);
     }
 
-    // ── AVAILABILITY ──────────────────────────────────────────────
-    // TODO (ClubSolution): fetch live availability from the ClubSolution
-    // API here and return a Set of booked "podIndex-hour" keys. Until the
-    // API key is wired in, every slot renders as available.
+    function showPayError(msg) {
+      let el = document.getElementById('pay-error');
+      if (!el) {
+        el = document.createElement('p');
+        el.id = 'pay-error';
+        el.style.cssText = 'color:#ff6b6b;font-size:0.85rem;margin-top:12px;text-align:center;';
+        document.getElementById('pay-btn').insertAdjacentElement('afterend', el);
+      }
+      el.textContent = msg;
+    }
+
+    // ── FETCH REAL AVAILABILITY FROM SUPABASE ─────────────────────
     async function getBookedForDate(dateStr) {
-      return new Set();
+      const [bookingsRes, locksRes] = await Promise.all([
+        db.from('bookings')
+          .select('pod_index, booking_hour')
+          .eq('booking_date', dateStr)
+          .eq('status', 'confirmed'),
+        db.from('slot_locks')
+          .select('pod_index, booking_hour')
+          .eq('booking_date', dateStr)
+          .gt('expires_at', new Date().toISOString())
+          .neq('session_id', state.sessionId),
+      ]);
+      const booked = new Set();
+      (bookingsRes.data || []).forEach(b => booked.add(`${b.pod_index}-${b.booking_hour}`));
+      (locksRes.data   || []).forEach(l => booked.add(`${l.pod_index}-${l.booking_hour}`));
+      return booked;
     }
 
     // ── DAY PICKER ───────────────────────────────────────────────
@@ -854,7 +1130,7 @@
       document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       state.date = dateStr;
-      clearSelection();
+      await clearSelection();
       await buildScheduleGrid(dateStr);
     }
 
@@ -863,7 +1139,7 @@
       const wrap  = document.querySelector('.schedule-wrap');
       const table = document.getElementById('schedule-table');
 
-      // Show loading state while availability is resolved
+      // Show loading state while fetching from Supabase
       table.innerHTML = '<caption style="caption-side:top;padding:28px;color:rgba(255,255,255,0.4);font-size:0.9rem;text-align:center;">Loading availability…</caption>';
 
       // Shimmer flash on day switch
@@ -940,34 +1216,88 @@
       table.appendChild(tbody);
     }
 
+    // ── COUNTDOWN TIMER ───────────────────────────────────────────
+    function stopLockCountdown() {
+      if (state.lockTimer) { clearInterval(state.lockTimer); state.lockTimer = null; }
+    }
+
+    function startLockCountdown() {
+      stopLockCountdown();
+      const countdownEl = document.getElementById('lock-countdown');
+      state.lockTimer = setInterval(async () => {
+        const remaining = Math.max(0, state.lockExpiresAt - Date.now());
+        const mins = Math.floor(remaining / 60000);
+        const secs = Math.floor((remaining % 60000) / 1000);
+        if (remaining > 0) {
+          countdownEl.textContent = `Slot reserved for ${mins}:${secs.toString().padStart(2,'0')} — complete payment to confirm`;
+        } else {
+          countdownEl.textContent = 'Time expired — slot released';
+          await clearSelection();
+          showGridError('Your slot reservation expired. Please select a slot and try again.');
+        }
+      }, 1000);
+    }
+
     // ── SLOT SELECTION ───────────────────────────────────────────
-    function clearSelection() {
+    async function clearSelection() {
+      stopLockCountdown();
+      // Release any active slot lock in the database
+      if (state.podIndex !== null && state.hour !== null && state.date) {
+        await db.from('slot_locks')
+          .delete()
+          .eq('session_id', state.sessionId)
+          .eq('pod_index', state.podIndex)
+          .eq('booking_date', state.date)
+          .eq('booking_hour', state.hour);
+      }
       document.querySelectorAll('.sg-slot--selected').forEach(s => {
         s.classList.remove('sg-slot--selected');
         s.classList.add('sg-slot--free');
       });
       document.getElementById('slot-summary').classList.add('hidden');
+      document.getElementById('booking-bar').classList.add('hidden');
+      document.getElementById('lock-countdown').textContent = '';
       state.pod = null; state.podIndex = null; state.hour = null;
-      state.timeLabel = null; state.timeRate = null;
+      state.timeLabel = null; state.timeRate = null; state.lockExpiresAt = null;
     }
 
-    function handleSlotClick(btn, podIndex) {
-      // Clear any previous selection
-      if (state.pod) clearSelection();
+    async function handleSlotClick(btn, podIndex) {
+      // Release any previous lock before trying to claim this one
+      if (state.pod) await clearSelection();
 
       const hour = parseInt(btn.dataset.hour);
 
-      // Highlight the chosen slot
+      // Try to lock this slot in Supabase (prevents race conditions)
+      const { data: locked, error } = await db.rpc('try_lock_slot', {
+        p_pod_index:    podIndex,
+        p_booking_date: state.date,
+        p_booking_hour: hour,
+        p_session_id:   state.sessionId,
+        p_lock_minutes: 10,
+      });
+
+      if (error || !locked) {
+        // Slot was grabbed by someone else — mark it booked in the UI
+        btn.classList.remove('sg-slot--free');
+        btn.classList.add('sg-slot--booked');
+        btn.disabled = true;
+        btn.innerHTML = `<span class="sg-slot__time">${btn.dataset.timeLabel}</span>`;
+        showGridError('That slot was just taken. Please choose another time.');
+        return;
+      }
+
+      // Lock acquired — update UI
       btn.classList.remove('sg-slot--free');
       btn.classList.remove('sg-slot--selected');
       void btn.offsetWidth; // trigger animation restart
       btn.classList.add('sg-slot--selected');
 
-      state.pod       = btn.dataset.pod;
-      state.podIndex  = podIndex;
-      state.hour      = hour;
-      state.timeLabel = btn.dataset.timeLabel;
-      state.timeRate  = btn.dataset.rate;
+      state.pod           = btn.dataset.pod;
+      state.podIndex      = podIndex;
+      state.hour          = hour;
+      state.timeLabel     = btn.dataset.timeLabel;
+      state.timeRate      = btn.dataset.rate;
+      state.lockExpiresAt = Date.now() + 10 * 60 * 1000;
 
       // Inline summary
       const summary = document.getElementById('slot-summary');
@@ -976,17 +1306,354 @@
       document.getElementById('ss-time').textContent  = state.timeLabel;
       document.getElementById('ss-price').textContent = btn.dataset.price;
 
-      // TODO (ClubSolution): redirect the customer to the matching
-      // ClubSolution booking page for this pod/date/time once the API
-      // and booking-page URL structure are available, e.g.:
-      //   window.location.href = clubSolutionUrlFor(podIndex, state.date, hour);
+      // Sticky bar
+      document.getElementById('booking-bar').classList.remove('hidden');
+      document.getElementById('bar-selection').textContent = `${state.pod} — ${state.timeLabel}`;
+      document.getElementById('bar-price').innerHTML = `${getTotal()} <span>per hour · up to 3 people</span>`;
+
+      startLockCountdown();
+    }
+
+    // ── STEP NAVIGATION ──────────────────────────────────────────
+    function goToStep(n) {
+      ['view-step1','view-step2','view-step3','view-step4'].forEach((id, i) => {
+        document.getElementById(id).style.display = i + 1 === n ? 'block' : 'none';
+      });
+      document.getElementById('booking-bar').style.display = n === 1 ? 'flex' : 'none';
+      document.querySelectorAll('.step').forEach(s => {
+        const sn = parseInt(s.dataset.step);
+        s.classList.remove('step--active','step--done');
+        if (sn === n) s.classList.add('step--active');
+        if (sn < n)  s.classList.add('step--done');
+      });
+      if (n === 3) populateOrderSummary();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function populateOrderSummary() {
+      document.getElementById('os-pod').textContent   = state.pod || '—';
+      document.getElementById('os-date').textContent  = formatDate(state.date);
+      document.getElementById('os-time').textContent  = state.timeLabel || '—';
+      document.getElementById('os-rate').textContent  = state.timeRate
+        ? `£${RATES[state.timeRate].toFixed(2)}/hr (${state.timeRate})`
+        : '—';
+      document.getElementById('os-total').textContent = getTotal() || '—';
+    }
+
+    // ── WIRE UP BUTTONS ──────────────────────────────────────────
+    document.getElementById('btn-continue').addEventListener('click', async () => {
+      if (!state.pod) { showGridError('Please select a time slot before continuing.'); return; }
+      if (state.currentUser && state.currentProfile) {
+        await onAuthSuccess();
+      } else {
+        // Re-check session in case it changed
+        const { data: { session } } = await db.auth.getSession();
+        if (session?.user) {
+          state.currentUser = session.user;
+          await loadUserProfile(session.user.id);
+          await onAuthSuccess();
+        } else {
+          showAuthModal();
+        }
+      }
+    });
+    document.getElementById('btn-next-2').addEventListener('click', () => {
+      const fn = document.getElementById('first-name').value.trim();
+      const ln = document.getElementById('last-name').value.trim();
+      const em = document.getElementById('email').value.trim();
+      const ph = document.getElementById('phone').value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneRegex = /^[\+\d][\d\s\-\(\)]{6,19}$/;
+      if (!fn || !ln) { showFieldError('first-name', 'Please enter your full name.'); return; }
+      if (!em || !emailRegex.test(em)) { showFieldError('email', 'Please enter a valid email address.'); return; }
+      if (!ph || !phoneRegex.test(ph)) { showFieldError('phone', 'Please enter a valid phone number (e.g. +44 7700 000000).'); return; }
+      goToStep(3);
+    });
+
+    function showFieldError(fieldId, msg) {
+      const field = document.getElementById(fieldId);
+      field.style.borderColor = '#e8181a';
+      field.focus();
+      const existing = field.parentElement.querySelector('.field-error');
+      if (existing) existing.remove();
+      const err = document.createElement('p');
+      err.className = 'field-error';
+      err.style.cssText = 'color:#e8181a;font-size:0.78rem;margin-top:5px;';
+      err.textContent = msg;
+      field.parentElement.appendChild(err);
+      field.addEventListener('input', () => {
+        field.style.borderColor = '';
+        const e = field.parentElement.querySelector('.field-error');
+        if (e) e.remove();
+      }, { once: true });
+    }
+    document.getElementById('btn-back-2').addEventListener('click', () => goToStep(1));
+    document.getElementById('btn-back-3').addEventListener('click', () => goToStep(1));
+
+    document.querySelectorAll('.payment-method').forEach(m => {
+      m.addEventListener('click', () => {
+        document.querySelectorAll('.payment-method').forEach(x => x.classList.remove('selected'));
+        m.classList.add('selected');
+      });
+    });
+
+    document.getElementById('pay-btn').addEventListener('click', async () => {
+      const payBtn = document.getElementById('pay-btn');
+      payBtn.disabled = true;
+      payBtn.textContent = 'Processing…';
+
+      const fn = document.getElementById('first-name').value.trim();
+      const ln = document.getElementById('last-name').value.trim();
+      const em = document.getElementById('email').value.trim();
+      const ph = document.getElementById('phone').value.trim();
+      const pp = document.querySelector('.payment-method.selected')?.dataset.method || 'paypal';
+      const numPeople = parseInt(document.getElementById('people').value);
+
+      const { data: bookingId, error } = await db.rpc('confirm_booking', {
+        p_pod_index:      state.podIndex,
+        p_booking_date:   state.date,
+        p_booking_hour:   state.hour,
+        p_session_id:     state.sessionId,
+        p_first_name:     fn,
+        p_last_name:      ln,
+        p_email:          em,
+        p_phone:          ph,
+        p_people:         numPeople,
+        p_payment_method: pp,
+        p_amount:         RATES[state.timeRate],
+      });
+
+      if (error || !bookingId) {
+        payBtn.disabled = false;
+        payBtn.innerHTML = 'Complete Booking <svg class="btn__icon" viewBox="0 0 20 20" fill="none"><path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        const isExpired = error?.message?.toLowerCase().includes('expired') || error?.message?.toLowerCase().includes('lock') || !bookingId;
+        showPayError(isExpired
+          ? 'Your slot reservation expired. Please go back and choose your time again.'
+          : 'Booking could not be completed. Please try again or contact us.');
+        return;
+      }
+
+      stopLockCountdown();
+      document.getElementById('conf-pod').textContent      = state.pod;
+      document.getElementById('conf-datetime').textContent = `${formatDate(state.date)} at ${state.timeLabel}`;
+      document.getElementById('conf-total').textContent    = getTotal() || '—';
+      goToStep(4);
+    });
+
+    // ── AUTH MODAL FUNCTIONS ─────────────────────────────────────
+    function showAuthModal() {
+      document.getElementById('auth-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('auth-slot-text').textContent = `${state.pod} — ${state.timeLabel}`;
+      document.getElementById('auth-email').focus();
+    }
+
+    function closeAuthModal() {
+      document.getElementById('auth-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function showAuthError(formId, msg) {
+      const el = document.getElementById(formId);
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+
+    function clearAuthErrors() {
+      document.querySelectorAll('.auth-error, .auth-success').forEach(el => {
+        el.textContent = '';
+        el.classList.add('hidden');
+      });
+    }
+
+    document.getElementById('auth-close').addEventListener('click', closeAuthModal);
+    document.getElementById('auth-modal').addEventListener('click', e => {
+      if (e.target.id === 'auth-modal') closeAuthModal();
+    });
+
+    document.getElementById('tab-login').addEventListener('click', () => {
+      document.getElementById('tab-login').classList.add('active');
+      document.getElementById('tab-signup').classList.remove('active');
+      document.getElementById('auth-login-form').style.display = '';
+      document.getElementById('auth-signup-form').style.display = 'none';
+      document.getElementById('auth-reset-form').style.display = 'none';
+      clearAuthErrors();
+    });
+
+    document.getElementById('tab-signup').addEventListener('click', () => {
+      document.getElementById('tab-signup').classList.add('active');
+      document.getElementById('tab-login').classList.remove('active');
+      document.getElementById('auth-signup-form').style.display = '';
+      document.getElementById('auth-login-form').style.display = 'none';
+      document.getElementById('auth-reset-form').style.display = 'none';
+      clearAuthErrors();
+    });
+
+    document.getElementById('auth-login-btn').addEventListener('click', async () => {
+      clearAuthErrors();
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      if (!email || !password) { showAuthError('auth-error', 'Please enter your email and password.'); return; }
+
+      const btn = document.getElementById('auth-login-btn');
+      btn.textContent = 'Logging in…'; btn.disabled = true;
+
+      const { data, error } = await db.auth.signInWithPassword({ email, password });
+
+      btn.textContent = 'Log In'; btn.disabled = false;
+
+      if (error) { showAuthError('auth-error', 'Incorrect email or password. Please try again.'); return; }
+
+      state.currentUser = data.user;
+      await loadUserProfile(data.user.id);
+      await onAuthSuccess();
+    });
+
+    document.getElementById('auth-signup-btn').addEventListener('click', async () => {
+      clearAuthErrors();
+      const fullName = document.getElementById('auth-fullname').value.trim();
+      const email = document.getElementById('auth-signup-email').value.trim();
+      const phone = document.getElementById('auth-phone').value.trim();
+      const password = document.getElementById('auth-signup-password').value;
+
+      if (!fullName || fullName.split(' ').filter(Boolean).length < 2) {
+        showAuthError('auth-signup-error', 'Please enter your full name (first and last).'); return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showAuthError('auth-signup-error', 'Please enter a valid email address.'); return;
+      }
+      if (!/^[\+\d][\d\s\-\(\)]{6,19}$/.test(phone)) {
+        showAuthError('auth-signup-error', 'Please enter a valid phone number (e.g. +44 7700 000000).'); return;
+      }
+      if (password.length < 8) {
+        showAuthError('auth-signup-error', 'Password must be at least 8 characters.'); return;
+      }
+
+      const btn = document.getElementById('auth-signup-btn');
+      btn.textContent = 'Creating account…'; btn.disabled = true;
+
+      const { data, error } = await db.auth.signUp({ email, password });
+
+      btn.textContent = 'Create Account'; btn.disabled = false;
+
+      if (error) {
+        const msg = (error.message || '').toLowerCase().includes('already')
+          ? 'An account with this email already exists. Please log in instead.'
+          : (error.message || 'Could not create account. Please try again.');
+        showAuthError('auth-signup-error', msg);
+        return;
+      }
+
+      if (data.user) {
+        await db.from('profiles').insert({
+          id: data.user.id,
+          full_name: fullName,
+          phone,
+          signup_source: 'website',
+          pod_points: 0,
+          approved: false,
+          banned: false,
+        });
+        state.currentUser = data.user;
+        state.currentProfile = { full_name: fullName, phone, signup_source: 'website', pod_points: 0, approved: false, banned: false };
+      }
+
+      await onAuthSuccess();
+    });
+
+    document.getElementById('auth-forgot-btn').addEventListener('click', () => {
+      document.getElementById('auth-login-form').style.display = 'none';
+      document.getElementById('auth-reset-form').style.display = '';
+      document.getElementById('auth-reset-email').value = document.getElementById('auth-email').value;
+      clearAuthErrors();
+    });
+
+    document.getElementById('auth-back-to-login').addEventListener('click', () => {
+      document.getElementById('auth-reset-form').style.display = 'none';
+      document.getElementById('auth-login-form').style.display = '';
+      clearAuthErrors();
+    });
+
+    document.getElementById('auth-reset-btn').addEventListener('click', async () => {
+      clearAuthErrors();
+      const email = document.getElementById('auth-reset-email').value.trim();
+      if (!email) { showAuthError('auth-reset-error', 'Please enter your email address.'); return; }
+
+      const btn = document.getElementById('auth-reset-btn');
+      btn.textContent = 'Sending…'; btn.disabled = true;
+
+      const { error } = await db.auth.resetPasswordForEmail(email);
+
+      btn.textContent = 'Send Reset Link'; btn.disabled = false;
+
+      if (error) { showAuthError('auth-reset-error', 'Could not send reset email. Please check the address and try again.'); return; }
+
+      const successEl = document.getElementById('auth-reset-success');
+      successEl.textContent = `Reset link sent to ${email}. Check your inbox.`;
+      successEl.classList.remove('hidden');
+    });
+
+    async function onAuthSuccess() {
+      closeAuthModal();
+      const profile = state.currentProfile;
+      if (profile?.banned) {
+        showAccountStatusBlock('banned');
+        return;
+      }
+      if (profile && !profile.approved) {
+        showAccountStatusBlock('pending');
+        return;
+      }
+      await prefillAndGoToPayment();
+    }
+
+    function showAccountStatusBlock(status) {
+      const isPending = status === 'pending';
+      const existing = document.getElementById('account-status-block');
+      if (existing) existing.remove();
+      const block = document.createElement('div');
+      block.id = 'account-status-block';
+      block.style.cssText = `
+        position:fixed;inset:0;z-index:9999;background:rgba(8,12,24,0.96);
+        display:flex;align-items:center;justify-content:center;padding:32px;
+      `;
+      block.innerHTML = `
+        <div style="max-width:400px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:20px;">
+          <div style="width:72px;height:72px;border-radius:50%;background:${isPending ? 'rgba(245,158,11,0.1)' : 'rgba(212,32,40,0.1)'};border:2px solid ${isPending ? 'rgba(245,158,11,0.4)' : 'rgba(212,32,40,0.4)'};display:flex;align-items:center;justify-content:center;font-size:2rem;">
+            ${isPending ? '⏳' : '🚫'}
+          </div>
+          <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.4rem;line-height:1;color:#fff;">
+            ${isPending ? "You're on the list" : 'Account suspended'}
+          </h2>
+          <p style="font-size:0.9rem;color:rgba(255,255,255,0.55);line-height:1.6;max-width:300px;">
+            ${isPending
+              ? 'Your account is pending approval. The FitnessPod team will approve you shortly — usually within a few hours. Once approved, you can come back and book your session.'
+              : 'Your account has been suspended. Please contact us at hello@fitnesspod.im if you believe this is a mistake.'}
+          </p>
+          <button onclick="document.getElementById('account-status-block').remove();db.auth.signOut();" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:rgba(255,255,255,0.5);font-size:0.85rem;padding:12px 28px;cursor:pointer;font-family:'Barlow',sans-serif;">
+            Sign Out
+          </button>
+        </div>`;
+      document.body.appendChild(block);
+    }
+
+    async function prefillAndGoToPayment() {
+      const profile = state.currentProfile;
+      if (!profile) return;
+      const nameParts = (profile.full_name || '').split(' ');
+      document.getElementById('first-name').value = nameParts[0] || '';
+      document.getElementById('last-name').value = nameParts.slice(1).join(' ') || '';
+      document.getElementById('email').value = state.currentUser?.email || '';
+      document.getElementById('phone').value = profile.phone || '';
+      document.getElementById('people').value = '1';
+      goToStep(3);
     }
 
     // ── INIT — runs immediately on page load ────────────────────
     const todayISO = new Date().toISOString().split('T')[0];
     state.date = todayISO;
     buildDayPicker();
-    buildScheduleGrid(todayISO);
+    buildScheduleGrid(todayISO); // async — loading state shown while Supabase responds
 
   }()); // end IIFE
   </script>
