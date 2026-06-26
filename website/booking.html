@@ -357,6 +357,7 @@
       color: var(--w30);
       margin-top: 3px;
     }
+    .slot-summary__cta { flex-shrink: 0; white-space: nowrap; align-self: center; }
 
     /* ── BOTTOM BOOKING BAR ── */
     .booking-bar {
@@ -675,6 +676,7 @@
       .field-group--full { grid-column: 1; }
       .slot-summary { gap: 14px; padding: 14px 16px; }
       .slot-summary__price-block { margin-left: 0; text-align: left; }
+      .slot-summary__cta { width: 100%; justify-content: center; }
     }
   </style>
 </head>
@@ -754,6 +756,10 @@
             <span class="slot-summary__price" id="ss-price">—</span>
             <span class="slot-summary__price-sub">up to 3 people · 1 hour</span>
           </div>
+          <a href="https://fitnesspod.clubsolution.co.uk" target="_blank" rel="noopener noreferrer" class="btn btn--primary slot-summary__cta" id="slot-cta">
+            Book on ClubSolution
+            <svg class="btn__icon" viewBox="0 0 20 20" fill="none"><path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
         </div>
 
       </div>
