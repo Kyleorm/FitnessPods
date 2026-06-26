@@ -815,11 +815,20 @@
     }
 
     // ── AVAILABILITY ──────────────────────────────────────────────
-    // TODO (ClubSolution): fetch live availability from the ClubSolution
-    // API here and return a Set of booked "podIndex-hour" keys. Until the
-    // API key is wired in, every slot renders as available.
+    // Pull live booked slots from the ClubSolution "FitnessPOD Bookings" report
+    // via our secure /api/availability proxy (the proxy holds the API credentials
+    // server-side). Returns a Set of booked "podIndex-hour" keys; every other slot
+    // within opening hours is shown as available.
     async function getBookedForDate(dateStr) {
-      return new Set();
+      const res = await fetch(`/api/availability?date=${encodeURIComponent(dateStr)}`);
+      if (!res.ok) throw new Error('availability request failed: ' + res.status);
+      const json = await res.json();
+      const booked = new Set();
+      (json.booked || []).forEach(b => {
+        const podIndex = PODS.findIndex(p => p.name === b.pod);
+        if (podIndex !== -1) booked.add(`${podIndex}-${b.hour}`);
+      });
+      return booked;
     }
 
     // ── DAY PICKER ───────────────────────────────────────────────
