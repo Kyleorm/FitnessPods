@@ -947,13 +947,17 @@
 
         PODS.forEach((pod, pi) => {
           const isBooked = booked.has(`${pi}-${h}`);
-          const isPast   = isToday && (h * 60 + pod.offset) < nowMinutes;
+          // A slot only counts as "passed" once its whole hour has elapsed, so an
+          // in-progress slot (e.g. the 9:00 slot at 9:15) can still be booked late.
+          const slotEndMin = h * 60 + pod.offset + 60;
+          const isPast = isToday && nowMinutes >= slotEndMin;
           const rate     = getRate(h, pod.offset);
           const price    = rate === 'daytime' ? '£7' : '£10';
           const timeStr  = fmtTime(h, pod.offset);
 
-          // State precedence: passed (grey) → booked (red) → available (green)
-          const stateClass = isPast ? 'past' : (isBooked ? 'booked' : 'free');
+          // Booked always shows red — even earlier today — so the grid reflects the
+          // day's bookings. Otherwise a fully-passed slot is grey; the rest green.
+          const stateClass = isBooked ? 'booked' : (isPast ? 'past' : 'free');
           const clickable  = stateClass === 'free';
 
           const td = document.createElement('td');
