@@ -134,7 +134,8 @@
     .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--w60); }
     .legend-pip { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
     .legend-pip--free { background: rgba(34,197,94,0.5); }
-    .legend-pip--booked { background: var(--w12); }
+    .legend-pip--booked { background: rgba(212,32,40,0.7); }
+    .legend-pip--past { background: rgba(255,255,255,0.12); }
     .legend-pip--selected { background: #3b82f6; }
     .grid-meta__note { font-size: 0.75rem; color: var(--w30); margin-left: auto; }
 
@@ -283,14 +284,25 @@
     }
 
     .sg-slot--booked {
+      background: rgba(212,32,40,0.14);
+      border: 1px solid rgba(212,32,40,0.45);
+      cursor: not-allowed;
+    }
+    .sg-slot--booked .sg-slot__time {
+      color: #f1707a;
+      font-size: 0.68rem;
+      text-decoration: line-through;
+    }
+
+    /* Time has already passed today — cannot be booked */
+    .sg-slot--past {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.06);
       cursor: not-allowed;
     }
-    .sg-slot--booked .sg-slot__time {
+    .sg-slot--past .sg-slot__time {
       color: rgba(255,255,255,0.2);
       font-size: 0.68rem;
-      text-decoration: line-through;
     }
 
     .sg-slot--selected {
@@ -712,6 +724,7 @@
         <div class="grid-meta">
           <div class="legend-item"><div class="legend-pip legend-pip--free"></div> Available</div>
           <div class="legend-item"><div class="legend-pip legend-pip--booked"></div> Booked</div>
+          <div class="legend-item"><div class="legend-pip legend-pip--past"></div> Passed</div>
           <div class="legend-item"><div class="legend-pip legend-pip--selected"></div> Selected</div>
           <span class="grid-meta__note">All times in Isle of Man local time</span>
         </div>
@@ -831,6 +844,12 @@
       return booked;
     }
 
+    // Local calendar date as YYYY-MM-DD (avoids the UTC day-shift that
+    // toISOString() causes in timezones ahead of UTC, e.g. IOM in summer).
+    function ymd(d) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
     // ── DAY PICKER ───────────────────────────────────────────────
     function buildDayPicker() {
       const picker = document.getElementById('day-picker');
@@ -841,7 +860,7 @@
       for (let i = 0; i < 7; i++) {
         const d = new Date(todayDate);
         d.setDate(todayDate.getDate() + i);
-        const iso = d.toISOString().split('T')[0];
+        const iso = ymd(d);
 
         const btn = document.createElement('button');
         btn.className = 'day-btn' + (i === 0 ? ' active' : '');
@@ -904,6 +923,10 @@
       thead.appendChild(headerRow);
       table.appendChild(thead);
 
+      // For "today", any slot whose start time has already passed can't be booked.
+      const isToday = (dateStr || state.date) === ymd(new Date());
+      const nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
+
       // TBODY — 24 rows
       const tbody = document.createElement('tbody');
       for (let h = 0; h < 24; h++) {
@@ -918,16 +941,21 @@
 
         PODS.forEach((pod, pi) => {
           const isBooked = booked.has(`${pi}-${h}`);
+          const isPast   = isToday && (h * 60 + pod.offset) < nowMinutes;
           const rate     = getRate(h, pod.offset);
           const price    = rate === 'daytime' ? '£7' : '£10';
           const timeStr  = fmtTime(h, pod.offset);
+
+          // State precedence: passed (grey) → booked (red) → available (green)
+          const stateClass = isPast ? 'past' : (isBooked ? 'booked' : 'free');
+          const clickable  = stateClass === 'free';
 
           const td = document.createElement('td');
           td.className = 'st-slot-cell';
 
           const btn = document.createElement('button');
-          btn.className = `sg-slot sg-slot--${isBooked ? 'booked' : 'free'}`;
-          btn.disabled = isBooked;
+          btn.className = `sg-slot sg-slot--${stateClass}`;
+          btn.disabled = !clickable;
           btn.dataset.pod = pod.name;
           btn.dataset.podIndex = pi;
           btn.dataset.hour = h;
@@ -935,11 +963,11 @@
           btn.dataset.rate = rate;
           btn.dataset.price = price;
 
-          btn.innerHTML = isBooked
-            ? `<span class="sg-slot__time">${timeStr}</span>`
-            : `<span class="sg-slot__time">${timeStr}</span><span class="sg-slot__price">${price}</span>`;
+          btn.innerHTML = clickable
+            ? `<span class="sg-slot__time">${timeStr}</span><span class="sg-slot__price">${price}</span>`
+            : `<span class="sg-slot__time">${timeStr}</span>`;
 
-          if (!isBooked) btn.addEventListener('click', () => handleSlotClick(btn, pi));
+          if (clickable) btn.addEventListener('click', () => handleSlotClick(btn, pi));
 
           td.appendChild(btn);
           tr.appendChild(td);
@@ -992,7 +1020,7 @@
     }
 
     // ── INIT — runs immediately on page load ────────────────────
-    const todayISO = new Date().toISOString().split('T')[0];
+    const todayISO = ymd(new Date());
     state.date = todayISO;
     buildDayPicker();
     buildScheduleGrid(todayISO);

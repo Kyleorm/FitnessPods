@@ -1079,7 +1079,8 @@
       const chips = document.querySelectorAll('.hero__pod-chips .pod-chip');
       if (!cards.length && !chips.length) return;
 
-      const todayISO = new Date().toISOString().split('T')[0];
+      const d = new Date();
+      const todayISO = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       const booked = new Set();
       try {
         const res = await fetch(`/api/availability?date=${todayISO}`);
