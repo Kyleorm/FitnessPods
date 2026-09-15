@@ -1,5 +1,9 @@
 {
   "buildCommand": "",
   "installCommand": "",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "redirects": [
+    { "source": "/booking.html", "destination": "https://fitnesspod.clubsolution.co.uk", "permanent": false },
+    { "source": "/booking", "destination": "https://fitnesspod.clubsolution.co.uk", "permanent": false }
+  ]
 }
