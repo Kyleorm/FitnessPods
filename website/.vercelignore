@@ -1,0 +1,10 @@
+# Local development and testing only — never served on the public website.
+tests/
+test-results/
+playwright-report/
+playwright.config.js
+serve.mjs
+temporary screenshots/
+node_modules/
+.env*
+Clubsolution API/

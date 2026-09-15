@@ -7,7 +7,7 @@ test.describe('Legal pages', () => {
     await page.goto('/privacy.html');
     await expect(page).toHaveTitle(/Privacy Policy/);
     await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('a[href="mailto:hello@fitnesspod.im"]').first()).toBeVisible();
+    await expect(page.locator('a[href="mailto:enquiries@fitnesspod.im"]').first()).toBeVisible();
   });
 
   test('Terms of Use page loads', async ({ page }) => {
@@ -19,6 +19,15 @@ test.describe('Legal pages', () => {
   test('Privacy Policy has cookie section', async ({ page }) => {
     await page.goto('/privacy.html#cookies');
     await expect(page.locator('#cookies')).toBeVisible();
+  });
+
+  test('Book Now on the legal pages goes straight to ClubSolution', async ({ page }) => {
+    for (const path of ['/privacy.html', '/terms.html']) {
+      await page.goto(path);
+      const bookNow = page.locator('#main-nav a', { hasText: 'Book Now' });
+      await expect(bookNow).toHaveAttribute('href', 'https://fitnesspod.clubsolution.co.uk');
+      await expect(bookNow).toHaveAttribute('target', '_blank');
+    }
   });
 
   test('footer links on homepage point to real legal pages', async ({ page }) => {

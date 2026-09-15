@@ -136,34 +136,6 @@ document.querySelectorAll('.who-for__row').forEach(row => {
   dotObserver.observe(row);
 });
 
-/* ── CONTACT FORM: client-side validation ──────── */
-const contactForm = document.getElementById('contact-form');
-if (contactForm) {
-  contactForm.addEventListener('submit', (e) => {
-    const name    = contactForm.querySelector('#contact-name').value.trim();
-    const email   = contactForm.querySelector('#contact-email').value.trim();
-    const message = contactForm.querySelector('#contact-message').value.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const msgEl   = document.getElementById('contact-form-msg');
-
-    if (!name || !email || !message) {
-      e.preventDefault();
-      showContactMsg('Please fill in your name, email and message.', 'error');
-      return;
-    }
-    if (!emailRegex.test(email)) {
-      e.preventDefault();
-      showContactMsg('Please enter a valid email address.', 'error');
-      return;
-    }
-  });
-
-  function showContactMsg(text, type) {
-    const el = document.getElementById('contact-form-msg');
-    el.textContent = text;
-    el.style.display = 'block';
-    el.style.background = type === 'error' ? 'rgba(232,24,26,0.15)' : 'rgba(34,197,94,0.15)';
-    el.style.border = type === 'error' ? '1px solid rgba(232,24,26,0.4)' : '1px solid rgba(34,197,94,0.4)';
-    el.style.color = type === 'error' ? '#ff6b6b' : '#4ade80';
-  }
-}
+/* ── CONTACT FORM ──────── */
+/* Validation and sending live together in the form's own script in index.html,
+   so a message is only sent once it has passed validation. */
