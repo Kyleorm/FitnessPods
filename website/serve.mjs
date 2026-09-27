@@ -21,6 +21,15 @@ try {
   }
 } catch { /* no .env.local — fine */ }
 
+// Apply the same security headers as production (vercel.json), so local tests
+// run under the real Content-Security-Policy and catch anything it would block.
+const securityHeaders = {};
+try {
+  const vercelConfig = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+  const siteWide = (vercelConfig.headers || []).find(rule => rule.source === '/(.*)');
+  for (const { key, value } of (siteWide ? siteWide.headers : [])) securityHeaders[key] = value;
+} catch { /* no vercel.json headers — serve without them */ }
+
 const mime = {
   '.html': 'text/html',
   '.css':  'text/css',
@@ -36,7 +45,7 @@ const mime = {
 
 // Minimal Vercel-style res shim so /api functions run unchanged locally.
 function makeRes(res) {
-  const headers = {};
+  const headers = { ...securityHeaders };
   let statusCode = 200;
   return {
     setHeader(k, v) { headers[k] = v; },
@@ -64,7 +73,7 @@ http.createServer(async (req, res) => {
     const query = Object.fromEntries(new URLSearchParams(rawQuery));
     try {
       const handler = require(fnPath);
-      await handler({ method: req.method, query, url: req.url }, makeRes(res));
+      await handler({ method: req.method, query, url: req.url, headers: req.headers }, makeRes(res));
     } catch (e) {
       res.writeHead(500); res.end('API error: ' + e.message);
     }
@@ -80,7 +89,7 @@ http.createServer(async (req, res) => {
       return;
     }
     const ext = path.extname(filePath).toLowerCase();
-    res.writeHead(200, { 'Content-Type': mime[ext] || 'application/octet-stream' });
+    res.writeHead(200, { ...securityHeaders, 'Content-Type': mime[ext] || 'application/octet-stream' });
     res.end(data);
   });
 }).listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));

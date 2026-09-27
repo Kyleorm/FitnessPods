@@ -32,3 +32,6 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Saved Facebook page with personal account details — keep off GitHub (repo is PUBLIC)
+IMAGES/photo.htm
