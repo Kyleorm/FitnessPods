@@ -26,11 +26,12 @@ FitnessPod is staying on **ClubSolution** (Globus Data) for bookings, payments, 
 - [x] Solo training confirmed as allowed — most customers train alone
 - [x] Old admin and booking pages, unused email endpoint and dev files removed from the live site
 - [x] Contact form only sends after validation passes
-- [x] Playwright tests for homepage, pods page, legal pages, retired pages and availability API (desktop + mobile)
+- [x] Playwright tests for homepage, pods page, legal pages, retired pages, availability API and security headers (desktop + mobile)
+- [x] Security review (2026-09-27): rate limit + date window + short cache on `/api/availability`, security headers (CSP etc.) on every page, no inline scripts, unused Supabase package removed, 0 npm vulnerabilities
 
 ## To do before go-live
 
-- [ ] Full security review (rate limiting on `/api/availability`, security headers, dependencies)
+- [ ] Decide what to do with the old Supabase project and the old `fitness-pods-app` Vercel deployment (both still live; the old `bookings` and `slot_locks` tables can be read by anyone). Back up, then pause or delete.
 - [ ] Swap the temporary Web3Forms key for the owner's key (enquiries@fitnesspod.im)
 - [ ] Connect fitnesspod.im (Kyle has DNS access at 20i). This is go-live, so do it after client approval. Do not touch the Microsoft 365 email records.
 - [ ] UptimeRobot monitoring
