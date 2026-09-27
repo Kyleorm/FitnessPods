@@ -1,6 +1,6 @@
 # FitnessPod — Project Status
 
-Last updated: 2026-09-15
+Last updated: 2026-09-27
 
 ## Direction
 
@@ -22,18 +22,17 @@ FitnessPod is staying on **ClubSolution** (Globus Data) for bookings, payments, 
 ## Done
 
 - [x] Book buttons go straight to ClubSolution (booking page retired; `/booking.html` redirects to ClubSolution)
-- [x] Booking, door-code, membership and cancellation wording matches the client's ClubSolution process
+- [x] Booking, door-code, membership and cancellation wording matches the client's ClubSolution process (confirmed by Kyle 2026-09-27; door codes are sent by text message)
+- [x] Solo training confirmed as allowed — most customers train alone
 - [x] Old admin and booking pages, unused email endpoint and dev files removed from the live site
 - [x] Contact form only sends after validation passes
 - [x] Playwright tests for homepage, pods page, legal pages, retired pages and availability API (desktop + mobile)
 
 ## To do before go-live
 
-- [ ] Client checks the new FAQ wording (door codes, cancellations, no membership fee)
-- [ ] Client confirms solo training is allowed (their current site says at least 2 people should be present)
 - [ ] Full security review (rate limiting on `/api/availability`, security headers, dependencies)
 - [ ] Swap the temporary Web3Forms key for the owner's key (enquiries@fitnesspod.im)
-- [ ] Connect fitnesspod.im (needs DNS access from the owner)
+- [ ] Connect fitnesspod.im (Kyle has DNS access at 20i). This is go-live, so do it after client approval. Do not touch the Microsoft 365 email records.
 - [ ] UptimeRobot monitoring
 - [ ] Test on a real iPhone and Android phone
 - [ ] Client review, approval and handover document
