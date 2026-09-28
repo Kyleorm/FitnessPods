@@ -770,7 +770,17 @@
       position: absolute; inset: 0; z-index: 5;
       display: flex; align-items: center; pointer-events: none;
     }
-    .find-us-card-outer .container { pointer-events: all; }
+    /* Only the card itself takes clicks, so the rest of the map stays tappable */
+    .find-us-card-outer .find-us-card { pointer-events: all; }
+    .find-us-map-link { position: absolute; inset: 0; z-index: 2; cursor: pointer; }
+    .find-us-map-link::after {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(232,24,26,0.06); opacity: 0;
+      transition: opacity 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .find-us-map-link:hover::after { opacity: 1; }
+    .find-us-map-link:active::after { opacity: 1; background: rgba(232,24,26,0.12); }
+    .find-us-map-link:focus-visible { outline: 2px solid #e8181a; outline-offset: -4px; }
     .find-us-card {
       max-width: 420px;
       background: rgba(8,12,24,0.75);
@@ -810,8 +820,9 @@
         title="FitnessPod IOM location">
       </iframe>
 
-      <!-- Interaction blocker -->
-      <div style="position:absolute;inset:0;z-index:2;"></div>
+      <!-- Map link: covers the map so phones scroll past it instead of panning it,
+           and any tap (including on Google's own map buttons) opens Google Maps -->
+      <a class="find-us-map-link" href="https://maps.google.com/maps?q=32+White+Hoe+Industrial+Estate,+Old+Castletown+Road,+Douglas,+Isle+of+Man,+IM2+1QD" target="_blank" rel="noopener noreferrer" aria-label="Open FitnessPod's location in Google Maps (opens in a new tab)"></a>
 
       <!-- Gradient overlay — dark left on desktop, subtle bottom fade on mobile -->
       <div style="position:absolute;inset:0;z-index:3;pointer-events:none;
