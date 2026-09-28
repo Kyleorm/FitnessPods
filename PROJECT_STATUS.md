@@ -1,6 +1,6 @@
 # FitnessPod — Project Status
 
-Last updated: 2026-09-27
+Last updated: 2026-09-28
 
 ## Direction
 
@@ -32,7 +32,7 @@ FitnessPod is staying on **ClubSolution** (Globus Data) for bookings, payments, 
 ## To do before go-live
 
 - [ ] Decide what to do with the old Supabase project and the old `fitness-pods-app` Vercel deployment (both still live; the old `bookings` and `slot_locks` tables can be read by anyone). Back up, then pause or delete.
-- [ ] Swap the temporary Web3Forms key for the owner's key (enquiries@fitnesspod.im)
+- [x] Contact form uses the owner's Web3Forms key (account: enquiries@fitnesspod.im, 2026-09-28)
 - [ ] Connect fitnesspod.im (Kyle has DNS access at 20i). This is go-live, so do it after client approval. Do not touch the Microsoft 365 email records.
 - [ ] UptimeRobot monitoring
 - [ ] Test on a real iPhone and Android phone
