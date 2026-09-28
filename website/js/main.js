@@ -137,5 +137,5 @@ document.querySelectorAll('.who-for__row').forEach(row => {
 });
 
 /* ── CONTACT FORM ──────── */
-/* Validation and sending live together in the form's own script in index.html,
+/* Validation and sending live together in js/contact-form.js,
    so a message is only sent once it has passed validation. */

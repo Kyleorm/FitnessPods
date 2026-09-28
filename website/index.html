@@ -540,7 +540,7 @@
               <div class="pathway__step-num">4</div>
               <div class="pathway__step-body">
                 <strong>Get your door code</strong>
-                <span>Emailed to you — and texted if your mobile is on your profile</span>
+                <span>Sent to your mobile by text message</span>
               </div>
             </li>
             <li class="pathway__step pathway__step--last">
@@ -578,7 +578,7 @@
               </svg>
             </button>
             <div class="faq__a">
-              <p>Once you've booked and paid, you'll be emailed a six-digit access code — and texted it too if your mobile number is on your profile. Enter it on the keypad by the main door. Your code works from 30 minutes before your session until it ends, as many times as you need.</p>
+              <p>Once you've booked and paid, you'll be sent a six-digit access code by text message. Enter it on the keypad by the main door. Your code works from 30 minutes before your session until it ends, as many times as you need.</p>
             </div>
           </div>
 
@@ -626,7 +626,7 @@
               </svg>
             </button>
             <div class="faq__a">
-              <p>Tap any Book button to open our online booking system. Create a free account, pick your pod and time, and pay by card or from your prepaid balance. It takes about two minutes, and your door code is emailed to you once you've paid.</p>
+              <p>Tap any Book button to open our online booking system. Create a free account, pick your pod and time, and pay by card or from your prepaid balance. It takes about two minutes, and your door code is texted to you once you've paid.</p>
             </div>
           </div>
 
@@ -923,7 +923,7 @@
         <div class="contact__form-wrap reveal" style="transition-delay:0.1s">
           <form class="contact__form" id="contact-form" novalidate>
             <!-- TEMPORARY test key (dev's email). SWAP for FitnessPod owner's key (enquiries@fitnesspod.im) before go-live. -->
-            <input type="hidden" name="access_key" value="86c71914-e4cc-42b8-b10d-35b88941a9aa" />
+            <input type="hidden" name="access_key" value="ac230ee5-8be4-463c-8622-afffcdd964df" />
             <input type="hidden" name="subject" value="New enquiry from FitnessPod website" />
             <input type="hidden" name="from_name" value="FitnessPod Website" />
             <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
@@ -953,55 +953,6 @@
               </svg>
             </button>
           </form>
-          <script>
-            document.getElementById('contact-form').addEventListener('submit', async function(e) {
-              e.preventDefault();
-              const btn = document.getElementById('contact-submit');
-              const msg = document.getElementById('contact-form-msg');
-              const form = this;
-              const errorStyle = 'display:block;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:0.9rem;background:rgba(212,32,40,0.12);color:#d42028;border:1px solid rgba(212,32,40,0.25)';
-
-              // Validate before anything is sent, so empty or malformed messages never leave the browser.
-              const name = form.querySelector('#contact-name').value.trim();
-              const email = form.querySelector('#contact-email').value.trim();
-              const message = form.querySelector('#contact-message').value.trim();
-              if (!name || !email || !message) {
-                msg.style.cssText = errorStyle;
-                msg.textContent = 'Please fill in your name, email and message.';
-                return;
-              }
-              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                msg.style.cssText = errorStyle;
-                msg.textContent = 'Please enter a valid email address.';
-                return;
-              }
-
-              btn.disabled = true;
-              btn.textContent = 'Sending…';
-              const data = Object.fromEntries(new FormData(form));
-              try {
-                const res = await fetch('https://api.web3forms.com/submit', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                  body: JSON.stringify(data)
-                });
-                const result = await res.json();
-                if (result.success) {
-                  msg.style.cssText = 'display:block;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:0.9rem;background:rgba(39,174,96,0.12);color:#4caf7d;border:1px solid rgba(39,174,96,0.25)';
-                  msg.textContent = "Message sent! We’ll be in touch shortly.";
-                  form.reset();
-                } else {
-                  throw new Error();
-                }
-              } catch {
-                msg.style.cssText = errorStyle;
-                msg.textContent = 'Something went wrong. Please email us directly at enquiries@fitnesspod.im';
-              } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'Send Message <svg class="btn__icon" viewBox="0 0 20 20" fill="none"><path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-              }
-            });
-          </script>
         </div>
 
       </div>
@@ -1061,99 +1012,7 @@
   </footer>
 
   <script src="js/main.js"></script>
-  <script>
-  // ── LIVE POD STATUS (homepage) ──────────────────────────────────
-  // Reflects real-time bookings from ClubSolution (via the /api/availability
-  // proxy) on the hero status chips and the 6 pod cards. The pods appear in the
-  // same order in the markup as the array below, so we map by position.
-  (function () {
-    const PODS = [
-      { name: 'GymPod 1', offset: 0  },
-      { name: 'GymPod 2', offset: 15 },
-      { name: 'GymPod 3', offset: 30 },
-      { name: 'GymPod 4', offset: 45 },
-      { name: 'HIITPod',  offset: 0  },
-      { name: 'PowerPod', offset: 30 },
-    ];
-
-    function fmtTime(h, offset) {
-      const suffix = offset === 0 ? '' : ':' + offset.toString().padStart(2, '0');
-      if (h === 0)  return `12${suffix}am`;
-      if (h < 12)   return `${h}${suffix}am`;
-      if (h === 12) return `12${suffix}pm`;
-      return `${h - 12}${suffix}pm`;
-    }
-
-    async function updateLivePodStatus() {
-      const cards = document.querySelectorAll('.pods-grid .pod-card');
-      const chips = document.querySelectorAll('.hero__pod-chips .pod-chip');
-      if (!cards.length && !chips.length) return;
-
-      const d = new Date();
-      const todayISO = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-      const booked = new Set();
-      try {
-        const res = await fetch(`/api/availability?date=${todayISO}`);
-        if (!res.ok) return; // leave existing markup if the feed is unavailable
-        const json = await res.json();
-        (json.booked || []).forEach(b => {
-          const i = PODS.findIndex(p => p.name === b.pod);
-          if (i !== -1) booked.add(`${i}-${b.hour}`);
-        });
-      } catch {
-        return; // offline / opened as a file — leave existing markup
-      }
-
-      const nowHour = new Date().getHours();
-
-      PODS.forEach((pod, i) => {
-        const bookedNow = booked.has(`${i}-${nowHour}`);
-
-        // Find the next free hour today, for the "Back at …" label.
-        let backAt = null;
-        if (bookedNow) {
-          for (let h = nowHour + 1; h < 24; h++) {
-            if (!booked.has(`${i}-${h}`)) { backAt = fmtTime(h, pod.offset); break; }
-          }
-        }
-
-        const card = cards[i];
-        if (card) {
-          const status = card.querySelector('.pod-card__status');
-          const btn = card.querySelector('.pod-card__footer .btn');
-          if (status) {
-            if (bookedNow) {
-              card.classList.add('pod-card--in-use');
-              status.classList.remove('pod-card__status--free');
-              status.classList.add('pod-card__status--busy');
-              status.innerHTML = '<span class="status-dot status-dot--busy"></span>In Use'
-                + (backAt ? ' — Back at ' + backAt : ' — Back tomorrow');
-            } else {
-              card.classList.remove('pod-card--in-use');
-              status.classList.remove('pod-card__status--busy');
-              status.classList.add('pod-card__status--free');
-              status.innerHTML = '<span class="status-dot status-dot--free"></span>Available Now';
-            }
-          }
-          if (btn) {
-            btn.textContent = bookedNow ? 'Book Later' : 'Book Now';
-            btn.classList.toggle('btn--outline', bookedNow);
-            btn.classList.toggle('btn--primary', !bookedNow);
-          }
-        }
-
-        const chip = chips[i];
-        if (chip) {
-          chip.classList.toggle('pod-chip--busy', bookedNow);
-          chip.classList.toggle('pod-chip--free', !bookedNow);
-        }
-      });
-    }
-
-    updateLivePodStatus();
-    // Keep the homepage current without a manual refresh.
-    setInterval(updateLivePodStatus, 60000);
-  }());
-  </script>
+  <script src="js/contact-form.js"></script>
+  <script src="js/live-status.js"></script>
 </body>
 </html>
