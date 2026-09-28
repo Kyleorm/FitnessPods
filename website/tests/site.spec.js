@@ -101,4 +101,26 @@ test.describe('Security headers', () => {
     });
   }
 
+  test('the Google map on the homepage is allowed to load', async ({ page }) => {
+    // The map is a lazy-loaded Google iframe, so only scrolling it into view shows
+    // whether the security policy blocks it. Google is stubbed so the test runs offline.
+    const violations = [];
+    page.on('console', msg => {
+      if (/Content Security Policy/i.test(msg.text())) violations.push(msg.text());
+    });
+    let mapRequested = false;
+    await page.route(/^https:\/\/(maps|www)\.google\.com\/maps/, route => {
+      mapRequested = true;
+      route.fulfill({ status: 200, contentType: 'text/html', body: '<p>map</p>' });
+    });
+    await page.route('**/api/availability**', route =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ booked: [] }) }));
+    await page.goto('/');
+    await page.locator('.find-us-map iframe').scrollIntoViewIfNeeded();
+    // Wait until the map either loads or is blocked.
+    await expect.poll(() => mapRequested || violations.length > 0).toBe(true);
+    expect(violations).toEqual([]);
+    expect(mapRequested).toBe(true);
+  });
+
 });
