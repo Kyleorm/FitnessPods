@@ -113,6 +113,25 @@ test.describe('Homepage', () => {
     expect(tab.url()).toMatch(CLUBSOLUTION_RE);
   });
 
+  test('journey: tapping anywhere on the map opens the gym in Google Maps', async ({ page, context }) => {
+    await context.route(/^https:\/\/(maps|www)\.google\.com\//, route =>
+      route.fulfill({ status: 200, contentType: 'text/html', body: '<title>Google Maps</title>' }));
+    const map = page.locator('#find-us .find-us-map');
+    await map.scrollIntoViewIfNeeded();
+    const box = await map.boundingBox();
+    // The middle of the map (the We Are Here pin) and the bottom-right corner,
+    // where Google's own map button sits.
+    for (const [x, y] of [[box.width / 2, box.height / 2], [box.width - 30, box.height - 30]]) {
+      const [tab] = await Promise.all([
+        context.waitForEvent('page', { timeout: 5000 }),
+        page.mouse.click(box.x + x, box.y + y),
+      ]);
+      await tab.waitForLoadState();
+      expect(tab.url()).toMatch(/^https:\/\/maps\.google\.com\/maps\?q=32\+White\+Hoe/);
+      await tab.close();
+    }
+  });
+
   test('live pod status shows a booked pod as In Use', async ({ page }) => {
     const hour = new Date().getHours();
     await page.route('**/api/availability**', route =>
