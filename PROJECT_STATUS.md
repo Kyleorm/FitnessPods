@@ -38,9 +38,10 @@ FitnessPod is staying on **ClubSolution** (Globus Data) for bookings, payments, 
 - [ ] Real test message through the contact form, checked in enquiries@fitnesspod.im
 - [ ] Decide what to do with the old Supabase project and the old `fitness-pods-app` Vercel deployment (both still live; the old `bookings` and `slot_locks` tables can be read by anyone). Back up, then pause or delete.
 - [x] Contact form uses the owner's Web3Forms key (account: enquiries@fitnesspod.im, 2026-09-28)
-- [ ] Connect fitnesspod.im: first add `fitnesspod.im` and `www.fitnesspod.im` in Vercel (project `fitness-pods` → Settings → Domains), then copy the records Vercel shows into 20i. Remove the old A records on root + www and the AAAA record on www. Do not touch the Microsoft 365 email records (MX, autodiscover, TXT/SPF).
+- [x] Both domains added in Vercel (2026-10-08). Main address is `www.fitnesspod.im`; `fitnesspod.im` redirects to it. Checked: Vercel serves the new site for both.
+- [ ] Chris changes the DNS at 20i: add Vercel's records, and delete the old A (185.151.30.182) and AAAA (2a07:7800::182) records on both `fitnesspod.im` and `www`. Do not touch the Microsoft 365 email records (MX, autodiscover, TXT/SPF).
 - [ ] After go-live: add fitnesspod.im to Google Search Console and submit `sitemap.xml`, so Google picks up the new icon and pages sooner
 - [ ] UptimeRobot monitoring
-- [ ] Test on a real Android phone (iPhone done)
+- [x] Tested on real phones (2026-10-08)
 - [x] Client approved the site
 - [ ] Handover document

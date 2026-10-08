@@ -5,10 +5,10 @@ const { test, expect } = require('@playwright/test');
 // address of each page, the site name, robots.txt and the sitemap.
 
 const PAGES = {
-  '/': 'https://fitnesspod.im/',
-  '/pods.html': 'https://fitnesspod.im/pods.html',
-  '/privacy.html': 'https://fitnesspod.im/privacy.html',
-  '/terms.html': 'https://fitnesspod.im/terms.html',
+  '/': 'https://www.fitnesspod.im/',
+  '/pods.html': 'https://www.fitnesspod.im/pods.html',
+  '/privacy.html': 'https://www.fitnesspod.im/privacy.html',
+  '/terms.html': 'https://www.fitnesspod.im/terms.html',
 };
 
 test.describe('Site icon', () => {
@@ -43,14 +43,14 @@ test.describe('Search and sharing details', () => {
     const data = JSON.parse(json || '{}');
     expect(data['@type']).toBe('WebSite');
     expect(data.name).toBe('FitnessPod');
-    expect(data.url).toBe('https://fitnesspod.im/');
+    expect(data.url).toBe('https://www.fitnesspod.im/');
   });
 
   test('homepage and pods page have link-preview details for WhatsApp and Facebook', async ({ page }) => {
     for (const path of ['/', '/pods.html']) {
       await page.goto(path);
       await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /FitnessPod/);
-      await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://fitnesspod.im/hero.jpg');
+      await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://www.fitnesspod.im/hero.jpg');
       await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', PAGES[path]);
     }
   });
@@ -61,7 +61,7 @@ test.describe('Search and sharing details', () => {
     const text = await res.text();
     expect(text).toContain('Allow: /');
     expect(text).not.toMatch(/Disallow:\s*\/\s*$/m);
-    expect(text).toContain('Sitemap: https://fitnesspod.im/sitemap.xml');
+    expect(text).toContain('Sitemap: https://www.fitnesspod.im/sitemap.xml');
   });
 
   test('sitemap lists every page', async ({ request }) => {
