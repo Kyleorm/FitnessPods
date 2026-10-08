@@ -23,12 +23,38 @@ try {
 
 // Apply the same security headers as production (vercel.json), so local tests
 // run under the real Content-Security-Policy and catch anything it would block.
+// The redirects in vercel.json are mirrored too, so tests check the real rules.
 const securityHeaders = {};
+let redirects = [];
 try {
   const vercelConfig = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
   const siteWide = (vercelConfig.headers || []).find(rule => rule.source === '/(.*)');
   for (const { key, value } of (siteWide ? siteWide.headers : [])) securityHeaders[key] = value;
-} catch { /* no vercel.json headers — serve without them */ }
+  redirects = (vercelConfig.redirects || []).map(rule => ({ ...routeToRegex(rule.source), ...rule }));
+} catch { /* no vercel.json — serve without headers or redirects */ }
+
+// Turn a Vercel route such as "/perch/resources/:file" or "/blog/:path*" into a
+// regex. ":name" matches one path segment; ":name*" matches any remaining path.
+function routeToRegex(source) {
+  const names = [];
+  const pattern = source
+    .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+    .replace(/\/:(\w+)\*/g, (_, name) => { names.push(name); return '(?:/(.*))?'; })
+    .replace(/:(\w+)/g, (_, name) => { names.push(name); return '([^/]+)'; });
+  return { regex: new RegExp(`^${pattern}$`), names };
+}
+
+// Return [status, location] for the first matching redirect rule, like Vercel.
+function findRedirect(urlPath) {
+  for (const rule of redirects) {
+    const match = urlPath.match(rule.regex);
+    if (!match) continue;
+    let location = rule.destination;
+    rule.names.forEach((name, i) => { location = location.replace(`:${name}`, match[i + 1] || ''); });
+    return [rule.permanent ? 308 : 307, location];
+  }
+  return null;
+}
 
 const mime = {
   '.html': 'text/html',
@@ -39,6 +65,9 @@ const mime = {
   '.png':  'image/png',
   '.svg':  'image/svg+xml',
   '.ico':  'image/x-icon',
+  '.pdf':  'application/pdf',
+  '.txt':  'text/plain',
+  '.xml':  'application/xml',
   '.woff2':'font/woff2',
   '.woff': 'font/woff',
 };
@@ -62,6 +91,13 @@ function makeRes(res) {
 http.createServer(async (req, res) => {
   const [rawPath, rawQuery = ''] = req.url.split('?');
   let urlPath = decodeURIComponent(rawPath);
+
+  const redirect = findRedirect(urlPath);
+  if (redirect) {
+    res.writeHead(redirect[0], { ...securityHeaders, Location: redirect[1] });
+    res.end();
+    return;
+  }
 
   // Run the matching serverless function for /api/* routes (mirrors Vercel).
   if (urlPath.startsWith('/api/')) {

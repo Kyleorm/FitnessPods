@@ -2,9 +2,8 @@
 const { test, expect } = require('@playwright/test');
 
 // Pages and endpoints retired from the public site. They must not be served.
-// (On Vercel, /booking.html redirects to ClubSolution; the local server just 404s.)
+// (/booking.html redirects to ClubSolution instead — see redirects.spec.js.)
 const RETIRED = [
-  '/booking.html',
   '/analytics.html',
   '/_snippets/_admin-dashboard.html',
   '/_backups/booking-supabase-version.html',
