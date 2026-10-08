@@ -4,7 +4,18 @@
   "outputDirectory": ".",
   "redirects": [
     { "source": "/booking.html", "destination": "https://fitnesspod.clubsolution.co.uk", "permanent": false },
-    { "source": "/booking", "destination": "https://fitnesspod.clubsolution.co.uk", "permanent": false }
+    { "source": "/booking", "destination": "https://fitnesspod.clubsolution.co.uk", "permanent": false },
+    { "source": "/index.php", "destination": "/", "permanent": true },
+    { "source": "/how-it-works.php", "destination": "/#how-it-works", "permanent": true },
+    { "source": "/frequently-asked-questions.php", "destination": "/#faq", "permanent": true },
+    { "source": "/contact-us.php", "destination": "/#contact", "permanent": true },
+    { "source": "/take-a-tour.php", "destination": "/pods.html", "permanent": true },
+    { "source": "/blog/:path*", "destination": "/", "permanent": true },
+    { "source": "/perch/resources/important-safety-instructions-9.pdf", "destination": "/manuals/safety-instructions.pdf", "permanent": true },
+    { "source": "/perch/resources/important-safety-instructions-10.pdf", "destination": "/manuals/safety-instructions.pdf", "permanent": true },
+    { "source": "/perch/resources/important-safety-instructions-11.pdf", "destination": "/manuals/safety-instructions.pdf", "permanent": true },
+    { "source": "/perch/resources/important-safety-instructions-12.pdf", "destination": "/manuals/safety-instructions.pdf", "permanent": true },
+    { "source": "/perch/resources/:file", "destination": "/manuals/:file", "permanent": true }
   ],
   "headers": [
     {
