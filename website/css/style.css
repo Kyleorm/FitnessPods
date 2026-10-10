@@ -2217,6 +2217,46 @@ h1, h2, h3, h4 {
 .footer__legal { display: flex; gap: 20px; }
 .footer__legal a:hover { color: var(--white); }
 
+/* Agency credit — a quiet line under the copyright row.
+   The red underline grows from the left on hover/focus (transform only). */
+.footer__credit {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--w60);
+}
+.footer__credit a {
+  position: relative;
+  display: inline-block;
+  margin-left: 2px;
+  color: var(--w80);
+  font-weight: 600;
+}
+.footer__credit a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: var(--red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.footer__credit a:hover,
+.footer__credit a:focus-visible { color: var(--white); }
+.footer__credit a:hover::after,
+.footer__credit a:focus-visible::after { transform: scaleX(1); }
+.footer__credit a:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.footer__credit a:active { opacity: 0.7; }
+
 /* ════════════════════════════════════════════════════════
    RESPONSIVE — TABLET (≤ 1024px)
 ════════════════════════════════════════════════════════ */
